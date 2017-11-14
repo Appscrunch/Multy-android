@@ -7,7 +7,7 @@
 package io.multy.util;
 
 
-public class NativeDataProcessor {
+public class NativeDataHelper {
 
     static {
         System.loadLibrary("core_jnid");

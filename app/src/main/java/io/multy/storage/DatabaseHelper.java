@@ -4,7 +4,7 @@
  *  See LICENSE for details
  */
 
-package io.multy.util;
+package io.multy.storage;
 
 import android.content.Context;
 

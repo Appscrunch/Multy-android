@@ -8,6 +8,8 @@ package io.multy.util;
 
 import android.content.Context;
 
+import io.multy.storage.DatabaseHelper;
+
 /**
  * Created by Ihar Paliashchuk on 10.11.2017.
  * ihar.paliashchuk@gmail.com

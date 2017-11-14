@@ -120,7 +120,7 @@ jclass findClass(const char* name) {
 }
 
 JNIEXPORT jbyteArray JNICALL
-Java_io_multy_util_NativeDataProcessor_makeSeed(JNIEnv *env, jobject obj, jstring string) {
+Java_io_multy_util_NativeDataHelper_makeSeed(JNIEnv *env, jobject obj, jstring string) {
     using namespace wallet_core::internal;
 
     const char *mnemonic = env->GetStringUTFChars(string, JNI_FALSE);
@@ -142,7 +142,7 @@ Java_io_multy_util_NativeDataProcessor_makeSeed(JNIEnv *env, jobject obj, jstrin
 }
 
 JNIEXPORT jstring JNICALL
-Java_io_multy_util_NativeDataProcessor_makeMnemonic(JNIEnv *jniEnv, jobject obj) {
+Java_io_multy_util_NativeDataHelper_makeMnemonic(JNIEnv *jniEnv, jobject obj) {
 
     using namespace wallet_core::internal;
 
@@ -180,7 +180,7 @@ Java_io_multy_util_NativeDataProcessor_makeMnemonic(JNIEnv *jniEnv, jobject obj)
 }
 
 JNIEXPORT jstring JNICALL
-Java_io_multy_util_NativeDataProcessor_makeAccountId(JNIEnv *env, jobject obj, jbyteArray array) {
+Java_io_multy_util_NativeDataHelper_makeAccountId(JNIEnv *env, jobject obj, jbyteArray array) {
 
     using namespace wallet_core::internal;
 
@@ -209,7 +209,7 @@ Java_io_multy_util_NativeDataProcessor_makeAccountId(JNIEnv *env, jobject obj, j
 }
 
 JNIEXPORT jstring JNICALL
-Java_io_multy_util_NativeDataProcessor_makeAccountAddress(JNIEnv *env, jobject obj, jbyteArray array) {
+Java_io_multy_util_NativeDataHelper_makeAccountAddress(JNIEnv *env, jobject obj, jbyteArray array) {
 
     using namespace wallet_core::internal;
 

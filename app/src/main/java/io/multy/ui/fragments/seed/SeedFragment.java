@@ -33,8 +33,8 @@ public class SeedFragment extends BaseSeedFragment {
     }
 
     private void initViewModel() {
-//        final String mnemonic = NativeDataProcessor.makeMnemonic();
-//        final byte[] seed = NativeDataProcessor.makeSeed(mnemonic);
+//        final String mnemonic = NativeDataHelper.makeMnemonic();
+//        final byte[] seed = NativeDataHelper.makeSeed(mnemonic);
 //
 //        seedModel = ViewModelProviders.of(getActivity()).get(SeedViewModel.class);
 //        seedModel.getPosition().setValue(0);
