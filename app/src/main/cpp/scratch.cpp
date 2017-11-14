@@ -105,7 +105,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *pjvm, void *reserved) {
     gJvm = pjvm;  // cache the JavaVM pointer
     auto env = getEnv();
     //replace with one of your classes in the line below
-    auto randomClass = env->FindClass("io/multy/MainActivity");
+    auto randomClass = env->FindClass("io/multy/util/EntropyProvider");
     jclass classClass = env->GetObjectClass(randomClass);
     auto classLoaderClass = env->FindClass("java/lang/ClassLoader");
     auto getClassLoaderMethod = env->GetMethodID(classClass, "getClassLoader", "()Ljava/lang/ClassLoader;");
@@ -120,7 +120,7 @@ jclass findClass(const char* name) {
 }
 
 JNIEXPORT jbyteArray JNICALL
-Java_io_multy_hellomultijni_NativeDataProcessor_makeSeed(JNIEnv *env, jobject obj, jstring string) {
+Java_io_multy_util_NativeDataProcessor_makeSeed(JNIEnv *env, jobject obj, jstring string) {
     using namespace wallet_core::internal;
 
     const char *mnemonic = env->GetStringUTFChars(string, JNI_FALSE);
@@ -142,12 +142,12 @@ Java_io_multy_hellomultijni_NativeDataProcessor_makeSeed(JNIEnv *env, jobject ob
 }
 
 JNIEXPORT jstring JNICALL
-Java_io_multy_hellomultijni_NativeDataProcessor_makeMnemonic(JNIEnv *jniEnv, jobject obj) {
+Java_io_multy_util_NativeDataProcessor_makeMnemonic(JNIEnv *jniEnv, jobject obj) {
 
     using namespace wallet_core::internal;
 
     auto env = getEnv();
-    auto randomClass = env->FindClass("io/multy/hellomultijni/AntropyGenerator");
+    auto randomClass = env->FindClass("io/multy/util/EntropyProvider");
 
     jmethodID mid = env->GetStaticMethodID(randomClass, "generateKey", "(I)[B");
     jbyteArray result = (jbyteArray) env->CallStaticObjectMethod(randomClass, mid, 256);
@@ -180,7 +180,7 @@ Java_io_multy_hellomultijni_NativeDataProcessor_makeMnemonic(JNIEnv *jniEnv, job
 }
 
 JNIEXPORT jstring JNICALL
-Java_io_multy_hellomultijni_NativeDataProcessor_makeAccountId(JNIEnv *env, jobject obj, jbyteArray array) {
+Java_io_multy_util_NativeDataProcessor_makeAccountId(JNIEnv *env, jobject obj, jbyteArray array) {
 
     using namespace wallet_core::internal;
 
@@ -209,7 +209,7 @@ Java_io_multy_hellomultijni_NativeDataProcessor_makeAccountId(JNIEnv *env, jobje
 }
 
 JNIEXPORT jstring JNICALL
-Java_io_multy_hellomultijni_NativeDataProcessor_makeAccountAddress(JNIEnv *env, jobject obj, jbyteArray array) {
+Java_io_multy_util_NativeDataProcessor_makeAccountAddress(JNIEnv *env, jobject obj, jbyteArray array) {
 
     using namespace wallet_core::internal;
 

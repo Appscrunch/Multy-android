@@ -11,6 +11,8 @@ import android.content.Context;
 import java.util.Arrays;
 
 import io.multy.encryption.MasterKeyGenerator;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 /**
  * Created by Ihar Paliashchuk on 10.11.2017.
