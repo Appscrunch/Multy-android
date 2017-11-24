@@ -8,20 +8,35 @@ package io.multy.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.multy.R;
+import io.multy.ui.fragments.asset.AssetInfoFragment;
 
-public class WalletActivity extends BaseActivity {
+public class AssetActivity extends BaseActivity {
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_asset_info);
         ButterKnife.bind(this);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
+
+        FragmentManager manager = getSupportFragmentManager();
+        Fragment fragment = manager.findFragmentByTag(AssetInfoFragment.TAG);
+        if (fragment == null) {
+            fragment = AssetInfoFragment.newInstance();
+        }
+        manager.beginTransaction()
+                .replace(R.id.frame_container, fragment, AssetInfoFragment.TAG)
+                .commit();
     }
 
     @OnClick(R.id.send)

@@ -14,4 +14,19 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="FullScreenDialog" parent="AppTheme">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
+    <style name="NoTitle" parent="AppTheme">
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="TextBlackMedium">
+        <item name="android:textColor">@color/common_google_signin_btn_text_dark_focused</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
 </resources>

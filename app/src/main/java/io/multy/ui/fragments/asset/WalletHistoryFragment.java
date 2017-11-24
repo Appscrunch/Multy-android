@@ -4,7 +4,7 @@
  *  See LICENSE for details
  */
 
-package io.multy.ui.fragments.wallet;
+package io.multy.ui.fragments.asset;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
