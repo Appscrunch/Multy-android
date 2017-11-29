@@ -17,7 +17,7 @@
         android:id="@+id/constraint_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#FFF9FAFF">
+        android:background="#f9faff">
 
         <TextView
             android:id="@+id/text_main"
@@ -35,7 +35,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-            <android.support.v4.view.ViewPager
+        <android.support.v4.view.ViewPager
             android:id="@+id/pager_portfolios"
             android:layout_width="0dp"
             android:layout_height="186dp"
@@ -62,14 +62,17 @@
 
         <TextView
             android:id="@+id/text_wallets"
-            android:layout_width="134dp"
+            android:layout_width="wrap_content"
             android:layout_height="41dp"
             android:layout_marginEnd="221dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="8dp"
+            android:fontFamily="@font/montserrat"
+            android:gravity="center_vertical"
             android:text="My Wallets"
-            android:textColor="#FF87A1C5"
-            android:textSize="26sp"
+            android:textColor="#87a1c5"
+            android:textSize="20sp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -78,17 +81,16 @@
         <ImageView
             android:id="@+id/image_plus"
             android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginStart="173dp"
-            android:padding="16dp"
-            android:scaleType="center"
+            android:layout_height="0dp"
+            android:layout_marginEnd="16dp"
+            android:padding="8dp"
+            android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="@+id/text_wallets"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toEndOf="@+id/text_wallets"
             app:layout_constraintTop_toTopOf="@+id/text_wallets"
-            app:srcCompat="@drawable/add_new_wallet" />
+            app:srcCompat="@drawable/ic_add_new_wallet" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_wallets"
@@ -99,6 +101,7 @@
             android:focusableInTouchMode="false"
             android:focusedByDefault="false"
             android:touchscreenBlocksFocus="false"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -32,6 +32,10 @@
         <activity
             android:name=".ui.activities.SeedActivity"
             android:screenOrientation="portrait" />
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>

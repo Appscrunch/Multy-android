@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#f6faff">
@@ -24,46 +23,51 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <LinearLayout
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                tools:layout_editor_absoluteY="19dp">
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/text_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left|center_vertical|start"
+                    android:fontFamily="@font/montserrat"
+                    android:gravity="center"
+                    android:paddingEnd="16dp"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:paddingStart="16dp"
+                    android:text="Create Wallet"
+                    android:textAlignment="center"
+                    android:textColor="#000000"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/text_cancel"
-                    android:layout_width="100dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="0"
+                    android:layout_gravity="right|center_vertical|end"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:fontFamily="@font/montserrat"
                     android:gravity="center"
+                    android:paddingEnd="16dp"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:paddingStart="16dp"
                     android:text="Cancel"
                     android:textColor="#FF000000"
                     android:textSize="16sp" />
 
-                <TextView
-                    android:id="@+id/text_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="Create Wallet"
-                    android:textAlignment="center"
-                    android:textColor="#FF000000"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <View
-                    android:layout_width="100dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0" />
-            </LinearLayout>
+            </FrameLayout>
         </android.support.v7.widget.Toolbar>
 
         <View
             android:id="@+id/devider1"
             android:layout_width="0dp"
             android:layout_height="1dp"
-            android:background="#aaaaaa"
+            android:background="#e0e3ea"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbar" />
@@ -71,13 +75,14 @@
         <android.support.design.widget.TextInputLayout
             android:id="@+id/layout_name"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="64dp"
             android:layout_marginTop="16dp"
             android:background="#ffffff"
             android:paddingEnd="16dp"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:paddingStart="16dp"
+            android:textColorHint="#87a1c5"
             app:layout_constraintTop_toBottomOf="@+id/devider1">
 
             <android.support.design.widget.TextInputEditText
@@ -85,16 +90,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="#00000000"
+                android:fontFamily="@font/montserrat"
                 android:hint="Wallet Name"
                 android:inputType="textCapSentences"
-                android:maxLines="1" />
+                android:maxLines="1"
+                android:textColor="#363636"
+                android:textColorHint="#87a1c5"
+                android:textSize="14sp"
+                android:textStyle="bold" />
         </android.support.design.widget.TextInputLayout>
 
         <View
             android:id="@+id/devider2"
             android:layout_width="0dp"
             android:layout_height="1dp"
-            android:background="#aaaaaa"
+            android:layout_marginStart="16dp"
+            android:background="#e0e3ea"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -103,12 +114,13 @@
         <android.support.design.widget.TextInputLayout
             android:id="@+id/layout_chain"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="64dp"
             android:background="#ffffff"
             android:paddingEnd="16dp"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:paddingStart="16dp"
+            android:textColorHint="#87a1c5"
             app:layout_constraintTop_toBottomOf="@+id/devider2">
 
             <android.support.design.widget.TextInputEditText
@@ -116,17 +128,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="#00000000"
-                android:drawableRight="@drawable/chevron"
+                android:drawableEnd="@drawable/ic_chevron"
+                android:fontFamily="@font/montserrat"
                 android:hint="Chain"
                 android:inputType="textCapSentences"
-                android:maxLines="1" />
+                android:maxLines="1"
+                android:textColor="#363636"
+                android:textColorHint="#87a1c5"
+                android:textSize="14sp"
+                android:textStyle="bold" />
         </android.support.design.widget.TextInputLayout>
 
         <View
             android:id="@+id/devider3"
             android:layout_width="0dp"
             android:layout_height="1dp"
-            android:background="#aaaaaa"
+            android:layout_marginStart="16dp"
+            android:background="#e0e3ea"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -135,12 +153,13 @@
         <android.support.design.widget.TextInputLayout
             android:id="@+id/layout_option"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="64dp"
             android:background="#ffffff"
             android:paddingEnd="16dp"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:paddingStart="16dp"
+            android:textColorHint="#87a1c5"
             android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@+id/devider3">
 
@@ -149,17 +168,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="#00000000"
-                android:drawableRight="@drawable/chevron"
+                android:drawableEnd="@drawable/ic_chevron"
+                android:fontFamily="@font/montserrat"
                 android:hint="Wallet Options"
                 android:inputType="textCapSentences"
-                android:maxLines="1" />
+                android:maxLines="1"
+                android:textColor="#363636"
+                android:textColorHint="#87a1c5"
+                android:textSize="14sp"
+                android:textStyle="bold" />
         </android.support.design.widget.TextInputLayout>
 
         <View
             android:id="@+id/devider4"
             android:layout_width="0dp"
             android:layout_height="1dp"
-            android:background="#aaaaaa"
+            android:layout_marginStart="16dp"
+            android:background="#e0e3ea"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -169,12 +194,13 @@
         <android.support.design.widget.TextInputLayout
             android:id="@+id/layout_currency"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="64dp"
             android:background="#ffffff"
             android:paddingEnd="16dp"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:paddingStart="16dp"
+            android:textColorHint="#87a1c5"
             app:layout_constraintTop_toBottomOf="@+id/devider4">
 
             <android.support.design.widget.TextInputEditText
@@ -182,17 +208,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="#00000000"
-                android:drawableRight="@drawable/chevron"
+                android:drawableEnd="@drawable/ic_chevron"
+                android:fontFamily="@font/montserrat"
                 android:hint="Currency to convert"
                 android:inputType="textCapSentences"
-                android:maxLines="1" />
+                android:maxLines="1"
+                android:textColor="#363636"
+                android:textColorHint="#87a1c5"
+                android:textSize="14sp"
+                android:textStyle="bold" />
         </android.support.design.widget.TextInputLayout>
 
         <View
             android:id="@+id/devider5"
             android:layout_width="0dp"
             android:layout_height="1dp"
-            android:background="#aaaaaa"
+            android:layout_marginStart="16dp"
+            android:background="#e0e3ea"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -201,15 +233,17 @@
         <TextView
             android:id="@+id/text_create"
             android:layout_width="0dp"
-            android:layout_height="56dp"
+            android:layout_height="64dp"
             android:layout_alignParentBottom="true"
             android:background="#bec8d2"
             android:enabled="false"
+            android:fontFamily="@font/montserrat"
             android:foreground="?android:attr/selectableItemBackground"
             android:gravity="center"
             android:text="Create"
             android:textColor="#ffffff"
             android:textSize="16sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

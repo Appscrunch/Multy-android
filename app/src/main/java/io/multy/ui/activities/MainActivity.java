@@ -7,15 +7,20 @@
 package io.multy.ui.activities;
 
 
-import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.multy.R;
 import io.multy.ui.fragments.main.AssetsFragment;
 import io.multy.ui.fragments.main.ContactsFragment;
@@ -30,6 +35,7 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
     TabLayout tabLayout;
 
     private boolean isFirstFragmentCreation;
+    private int lastTabPosition = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +47,8 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
         setupFooter();
         setFragment(R.id.inner_container, AssetsFragment.newInstance());
 
-        startActivity(new Intent(this, SeedActivity.class));
+//        startActivity(new Intent(this, SeedActivity.class));
+//        NativeDataHelper.runTest();
     }
 
     private void setFragment(@IdRes int container, Fragment fragment) {
@@ -65,18 +72,21 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
 
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
+        changeStateLastTab(lastTabPosition, false);
+        lastTabPosition = tab.getPosition();
+        changeStateLastTab(lastTabPosition, true);
         switch (tab.getPosition()) {
             case Constants.POSITION_ASSETS:
-                setFragment(R.id.full_container, AssetsFragment.newInstance());
+                setFragment(R.id.inner_container, AssetsFragment.newInstance());
                 break;
             case Constants.POSITION_FEED:
-                setFragment(R.id.full_container, FeedFragment.newInstance());
+                setFragment(R.id.inner_container, FeedFragment.newInstance());
                 break;
             case Constants.POSITION_CONTACTS:
-                setFragment(R.id.full_container, ContactsFragment.newInstance());
+                setFragment(R.id.inner_container, ContactsFragment.newInstance());
                 break;
             case Constants.POSITION_SETTINGS:
-                setFragment(R.id.full_container, SettingsFragment.newInstance());
+                setFragment(R.id.inner_container, SettingsFragment.newInstance());
                 break;
         }
     }
@@ -92,20 +102,40 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
     }
 
     private void setupFooter() {
-        tabLayout.addTab(tabLayout.newTab().setCustomView(R.layout.footer_assets));
-        tabLayout.addTab(tabLayout.newTab().setCustomView(R.layout.footer_feed));
-        tabLayout.addTab(tabLayout.newTab().setCustomView(R.layout.footer_main));
-        tabLayout.addTab(tabLayout.newTab().setCustomView(R.layout.footer_contacts));
-        tabLayout.addTab(tabLayout.newTab().setCustomView(R.layout.footer_settings));
         tabLayout.addOnTabSelectedListener(this);
     }
 
-    ;
+    private void changeStateLastTab(int position, boolean mustEnable) {
+        TabLayout.Tab tab = tabLayout.getTabAt(position);
+        if (tab == null) {
+            return;
+        }
+        View view = tab.getCustomView();
+        if (view == null) {
+            return;
+        }
+        TextView title = view.findViewById(R.id.title);
+        ImageView image = view.findViewById(R.id.image);
+        int filterColor;
+        if (mustEnable) {
+            filterColor = ContextCompat.getColor(this, R.color.tab_active);
+        }
+        else {
+            filterColor = ContextCompat.getColor(this, R.color.tab_inactive);
+        }
+        title.setTextColor(filterColor);
+        image.setColorFilter(filterColor, PorterDuff.Mode.SRC_IN);
+    }
 
     private void unCheckAllTabs() {
         tabLayout.getTabAt(0).getCustomView().setSelected(false);
         tabLayout.getTabAt(1).getCustomView().setSelected(false);
         tabLayout.getTabAt(3).getCustomView().setSelected(false);
         tabLayout.getTabAt(4).getCustomView().setSelected(false);
+    }
+
+    @OnClick(R.id.fast_operations)
+    void onFastOperationsClick() {
+
     }
 }

@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.multy.R;
 import io.multy.ui.adapter.AssetTransactionsAdapter;
 import io.multy.ui.fragments.BaseFragment;
@@ -86,5 +87,10 @@ public class AssetInfoFragment extends BaseFragment {
 
     private void subscribeViewModel() {
 
+    }
+
+    @OnClick(R.id.close)
+    void onCloseClick() {
+        getActivity().finish();
     }
 }

@@ -1,137 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/relative_parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#fc007aff">
+    android:background="#b3007aff">
 
     <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraint_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#fafafa">
 
-        <android.support.v7.widget.CardView
-            android:id="@+id/card_text"
+        <TextView
+            android:id="@+id/text_title"
             android:layout_width="0dp"
             android:layout_height="56dp"
-            android:layout_marginBottom="1dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="16dp"
-            app:cardBackgroundColor="#d1f8f8f8"
-            app:cardCornerRadius="8dp"
-            app:contentPadding="16dp"
-            app:layout_constraintBottom_toTopOf="@+id/card_add"
+            android:fontFamily="@font/montserrat"
+            android:gravity="left|center_vertical|start"
+            android:paddingLeft="16dp"
+            android:paddingStart="16dp"
+            android:text="Create or Import New Wallet"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toTopOf="@+id/text_create"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Create or Import New Wallet"
-                android:textAlignment="center"
-                android:textSize="16sp" />
-        </android.support.v7.widget.CardView>
-
-        <android.support.v7.widget.CardView
-            android:id="@+id/card_add"
+        <TextView
+            android:id="@+id/text_create"
             android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_marginBottom="1dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="16dp"
-            android:clickable="true"
-            android:foreground="?android:attr/selectableItemBackground"
-            app:cardBackgroundColor="#d1f8f8f8"
-            app:cardCornerRadius="8dp"
-            app:contentPadding="16dp"
-            app:layout_constraintBottom_toTopOf="@+id/card_import"
+            android:layout_height="48dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:drawableLeft="@drawable/ic_wallet_create_new"
+            android:drawablePadding="32dp"
+            android:fontFamily="@font/montserrat"
+            android:gravity="center_vertical"
+            android:paddingLeft="16dp"
+            android:paddingStart="16dp"
+            android:text="Create New"
+            android:textColor="#de000000"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/text_import"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintStart_toStartOf="parent" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Create New"
-                android:textAlignment="center"
-                android:textColor="#000000"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-        </android.support.v7.widget.CardView>
-
-        <android.support.v7.widget.CardView
-            android:id="@+id/card_import"
+        <TextView
+            android:id="@+id/text_import"
             android:layout_width="0dp"
-            android:layout_height="56dp"
+            android:layout_height="48dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:drawableLeft="@drawable/ic_wallet_import"
+            android:drawablePadding="32dp"
+            android:fontFamily="@font/montserrat"
+            android:gravity="center_vertical"
+            android:paddingLeft="16dp"
+            android:paddingStart="16dp"
+            android:text="Import Wallet"
+            android:textColor="#de000000"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/text_cancel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/text_cancel"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
             android:layout_marginBottom="8dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="16dp"
-            android:foreground="?android:attr/selectableItemBackground"
-            app:cardBackgroundColor="#d1f8f8f8"
-            app:cardCornerRadius="8dp"
-            app:contentPadding="16dp"
-            app:layout_constraintBottom_toTopOf="@+id/card_cancel"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Import Wallet"
-                android:textAlignment="center"
-                android:textColor="#000000"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-        </android.support.v7.widget.CardView>
-
-        <android.support.v7.widget.CardView
-            android:id="@+id/card_cancel"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_marginBottom="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="16dp"
-            android:foreground="?android:attr/selectableItemBackground"
-            app:cardBackgroundColor="#ffffff"
-            app:cardCornerRadius="8dp"
-            app:contentPadding="16dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:drawableLeft="@drawable/ic_cancel_blue"
+            android:drawablePadding="32dp"
+            android:fontFamily="@font/montserrat"
+            android:gravity="center_vertical"
+            android:paddingLeft="16dp"
+            android:paddingStart="16dp"
+            android:text="Cancel"
+            android:textColor="#de000000"
+            android:textSize="16sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Cancel"
-                android:textAlignment="center"
-                android:textColor="#000000"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-        </android.support.v7.widget.CardView>
-
-        <android.support.v7.widget.CardView
-            android:id="@+id/back"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:cardBackgroundColor="#d1f8f8f8"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="0dp"
-            app:layout_constraintBottom_toBottomOf="@+id/card_import"
-            app:layout_constraintEnd_toEndOf="@+id/card_text"
-            app:layout_constraintStart_toStartOf="@+id/card_text"
-            app:layout_constraintTop_toTopOf="@+id/card_text" />
-
-        <ImageView
-            android:id="@+id/image_wallet"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="36dp"
-            android:clickable="false"
-            android:elevation="2dp"
-            app:layout_constraintBottom_toBottomOf="@+id/card_text"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@drawable/walleticon" />
+            app:layout_constraintStart_toStartOf="parent" />
 
     </android.support.constraint.ConstraintLayout>
 

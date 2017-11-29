@@ -98,6 +98,7 @@ public class AssetsFragment extends BaseFragment {
     private void setupViewPager() {
         pagerPortfolios.setAdapter(portfoliosAdapter);
         pagerPortfolios.setPageMargin(40);
+        setVisibilityToPortfolios(false);
     }
 
     private void onItemClick() {
@@ -138,6 +139,11 @@ public class AssetsFragment extends BaseFragment {
 
     private void onWalletAddClick() {
         startActivity(new Intent(getContext(), CreateAssetActivity.class));
+    }
+
+    private void setVisibilityToPortfolios(boolean isVisible) {
+        int visibility = isVisible ? View.VISIBLE : View.GONE;
+        pagerPortfolios.setVisibility(visibility);
     }
 
     @OnClick(R.id.image_plus)

@@ -10,6 +10,7 @@
     android:layout_marginRight="16dp"
     android:layout_marginStart="16dp"
     android:layout_marginTop="6dp"
+    android:foreground="?android:attr/selectableItemBackground"
     app:cardBackgroundColor="#FFFFFFFF"
     app:cardCornerRadius="8dp"
     app:cardElevation="2dp">
@@ -17,89 +18,95 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/constraint_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/text_name"
             android:layout_width="wrap_content"
-            android:layout_height="22dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="58dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="11dp"
+            android:fontFamily="@font/montserrat"
             android:text="BTC ∙ Personal"
             android:textColor="#FFFF9500"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toStartOf="@+id/image_chevron"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/badge_background"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/badge_background"
-            android:layout_width="33dp"
-            android:layout_height="33dp"
-            android:layout_marginBottom="29dp"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="30dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="7dp"
+            app:layout_constraintBottom_toBottomOf="@+id/text_equals"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/btc_medium_icon" />
+            app:layout_constraintTop_toTopOf="@+id/text_name"
+            app:srcCompat="@drawable/ic_btc" />
 
         <TextView
             android:id="@+id/text_amount"
             android:layout_width="wrap_content"
-            android:layout_height="22dp"
-            android:layout_marginTop="2dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="7dp"
+            android:layout_marginTop="1dp"
+            android:fontFamily="@font/montserrat"
             android:text="0.1234"
             android:textColor="#FF363636"
             android:textSize="20sp"
-            app:layout_constraintStart_toStartOf="@+id/text_name"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/text_currency"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toEndOf="@+id/badge_background"
             app:layout_constraintTop_toBottomOf="@+id/text_name" />
 
         <TextView
             android:id="@+id/text_currency"
-            android:layout_width="37dp"
-            android:layout_height="22dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
+            android:fontFamily="@font/montserrat"
             android:text="BTC"
-            android:textColor="#FF390000"
+            android:textColor="#87a1c5"
             android:textSize="20sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/text_amount"
             app:layout_constraintEnd_toStartOf="@+id/image_chevron"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/text_amount"
             app:layout_constraintTop_toTopOf="@+id/text_amount" />
 
         <TextView
             android:id="@+id/text_equals"
-            android:layout_width="50dp"
-            android:layout_height="20dp"
-            android:layout_marginBottom="9dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginTop="6dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="11dp"
+            android:layout_marginTop="5dp"
+            android:fontFamily="@font/montserrat"
             android:text="1 233 $"
-            android:textColor="#FF87A1C5"
-            android:textSize="15sp"
+            android:textColor="#87a1c5"
+            android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/image_chevron"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/text_amount"
             app:layout_constraintTop_toBottomOf="@+id/text_amount" />
 
         <ImageView
             android:id="@+id/image_chevron"
-            android:layout_width="14dp"
-            android:layout_height="14dp"
-            android:layout_marginBottom="40dp"
-            android:layout_marginEnd="12dp"
-            android:layout_marginTop="38dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
             android:scaleType="center"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/chevron" />
+            app:srcCompat="@drawable/ic_chevron" />
 
     </android.support.constraint.ConstraintLayout>
 
