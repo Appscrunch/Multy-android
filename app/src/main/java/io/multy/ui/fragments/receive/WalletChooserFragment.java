@@ -41,10 +41,8 @@ public class WalletChooserFragment extends BaseFragment implements WalletAdapter
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_wallet_chooser, container, false);
         ButterKnife.bind(this, view);
-
         viewModel = ViewModelProviders.of(getActivity()).get(AssetRequestViewModel.class);
         viewModel.setContext(getActivity());
-
 //        adapter = new WalletAdapter(viewModel.getWallets(), this) //TODO uncomment when real wallets will be added
         adapter = new WalletAdapter(this);
         recyclerView.setAdapter(adapter);

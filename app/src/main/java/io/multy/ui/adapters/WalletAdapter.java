@@ -65,14 +65,14 @@ public class WalletAdapter extends RecyclerView.Adapter<WalletAdapter.WalletHold
 
         @BindView(R.id.root)
         ConstraintLayout root;
-        @BindView(R.id.image)
-        ImageView image;
-        @BindView(R.id.name)
-        TextView name;
-        @BindView(R.id.balance_original)
-        TextView balanceOriginal;
-        @BindView(R.id.balance_currency)
-        TextView balanceUsd;
+        @BindView(R.id.image_logo)
+        ImageView imageLogo;
+        @BindView(R.id.textName)
+        TextView textName;
+        @BindView(R.id.text_balance_original)
+        TextView textBalanceOriginal;
+        @BindView(R.id.text_balance_currency)
+        TextView textBalanceUsd;
 
         public WalletHolder(View itemView) {
             super(itemView);
@@ -80,9 +80,9 @@ public class WalletAdapter extends RecyclerView.Adapter<WalletAdapter.WalletHold
         }
 
         void bind(final Wallet wallet) {
-            name.setText(wallet.getName());
-            balanceOriginal.setText(wallet.getBalanceWithCode());
-            balanceUsd.setText(wallet.getBalanceWithCode());
+            textName.setText(wallet.getName());
+            textBalanceOriginal.setText(wallet.getBalanceWithCode());
+            textBalanceUsd.setText(wallet.getBalanceWithCode());
             root.setOnClickListener(view -> listener.onWalletClick(wallet));
         }
     }

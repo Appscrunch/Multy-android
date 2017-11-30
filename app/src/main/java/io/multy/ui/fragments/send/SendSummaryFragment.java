@@ -27,22 +27,22 @@ public class SendSummaryFragment extends BaseFragment {
         return new SendSummaryFragment();
     }
 
-    @BindView(R.id.receiver_balance_original)
-    TextView receiverBalanceOriginal;
-    @BindView(R.id.receiver_balance_usd)
-    TextView receiverBalanceUsd;
-    @BindView(R.id.receiver_address)
-    TextView receiverAddress;
-    @BindView(R.id.wallet_name)
-    TextView walletName;
-    @BindView(R.id.sender_balance_original)
-    TextView senderBalanceOriginal;
-    @BindView(R.id.sender_balance_currency)
-    TextView senderBalanceCurrency;
-    @BindView(R.id.transaction_fee_speed)
-    TextView feeSpeed;
-    @BindView(R.id.transaction_fee_amount)
-    TextView feeAmount;
+    @BindView(R.id.text_receiver_balance_original)
+    TextView textReceiverBalanceOriginal;
+    @BindView(R.id.text_receiver_balance_currency)
+    TextView textReceiverBalanceCurrency;
+    @BindView(R.id.text_receiver_address)
+    TextView textReceiverAddress;
+    @BindView(R.id.text_wallet_name)
+    TextView textWalletName;
+    @BindView(R.id.text_sender_balance_original)
+    TextView textSenderBalanceOriginal;
+    @BindView(R.id.text_sender_balance_currency)
+    TextView textSenderBalanceCurrency;
+    @BindView(R.id.text_fee_speed)
+    TextView textFeeSpeed;
+    @BindView(R.id.text_fee_amount)
+    TextView textFeeAmount;
 
     private AssetSendViewModel viewModel;
 
@@ -51,29 +51,26 @@ public class SendSummaryFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_send_summary, container, false);
         ButterKnife.bind(this, view);
-
         viewModel = ViewModelProviders.of(getActivity()).get(AssetSendViewModel.class);
-
         setInfo();
-
         return view;
     }
 
-    @OnClick(R.id.btn_next)
+    @OnClick(R.id.button_next)
     void onClickNext(){
         AssetSendDialogFragment dialog = new AssetSendDialogFragment();
         dialog.show(getActivity().getFragmentManager(), null);
     }
 
     private void setInfo(){
-        receiverBalanceOriginal.setText(String.valueOf(viewModel.getAmount()));
-        receiverBalanceUsd.setText(String.valueOf(viewModel.getAmount()));
-        receiverAddress.setText(viewModel.getReceiverAddress().getValue());
-        walletName.setText(viewModel.getWallet().getName());
-        senderBalanceOriginal.setText(viewModel.getWallet().getBalanceWithCode());
-        senderBalanceCurrency.setText(viewModel.getWallet().getBalanceWithCode());
-        feeSpeed.setText(viewModel.getFee().getName());
-        feeAmount.setText(String.valueOf(viewModel.getFee().getBalance()));
+        textReceiverBalanceOriginal.setText(String.valueOf(viewModel.getAmount()));
+        textReceiverBalanceCurrency.setText(String.valueOf(viewModel.getAmount()));
+        textReceiverAddress.setText(viewModel.getReceiverAddress().getValue());
+        textWalletName.setText(viewModel.getWallet().getName());
+        textSenderBalanceOriginal.setText(viewModel.getWallet().getBalanceWithCode());
+        textSenderBalanceCurrency.setText(viewModel.getWallet().getBalanceWithCode());
+        textFeeSpeed.setText(viewModel.getFee().getName());
+        textFeeAmount.setText(String.valueOf(viewModel.getFee().getBalance()));
     }
 
 }

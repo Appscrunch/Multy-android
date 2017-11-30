@@ -12,8 +12,4 @@
     <corners
         android:radius="12dp">
     </corners>
-
-    <!--<stroke-->
-        <!--android:width="0.5dp"-->
-        <!--android:color="@android:color/black" />-->
 </shape>

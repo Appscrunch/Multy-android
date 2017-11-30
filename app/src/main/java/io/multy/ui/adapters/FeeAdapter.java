@@ -33,7 +33,7 @@ public class FeeAdapter extends RecyclerView.Adapter<FeeAdapter.FeeHolder> {
     private List<String> blockIds;
     private List<Wallet> wallets;
     private OnFeeClickListener listener;
-    private int prevPosition;
+    private int previousPosition;
     private ImageView prevMark;
 
     public FeeAdapter(Context context, OnFeeClickListener listener) {
@@ -42,10 +42,10 @@ public class FeeAdapter extends RecyclerView.Adapter<FeeAdapter.FeeHolder> {
         iconIds = new int[]{R.drawable.ic_very_fast, R.drawable.ic_fast, R.drawable.ic_medium, R.drawable.ic_slow, R.drawable.ic_very_slow, R.drawable.ic_custom};
         names = Arrays.asList(context.getResources().getStringArray(R.array.fees));
         blockIds = Arrays.asList(context.getResources().getStringArray(R.array.blocks));
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 6; i++) { // TODO remove with real fees
             wallets.add(new BitcoinWallet("Fast " + i + " hour", "", i));
         }
-        prevPosition = -1;
+        previousPosition = -1;
     }
 
     @Override
@@ -69,18 +69,18 @@ public class FeeAdapter extends RecyclerView.Adapter<FeeAdapter.FeeHolder> {
 
         @BindView(R.id.root)
         ConstraintLayout root;
-        @BindView(R.id.image)
-        ImageView image;
-        @BindView(R.id.name)
-        TextView name;
-        @BindView(R.id.balance_original)
-        TextView balanceOriginal;
-        @BindView(R.id.blocks)
-        TextView blocks;
+        @BindView(R.id.image_logo)
+        ImageView imageLogo;
+        @BindView(R.id.textName)
+        TextView textName;
+        @BindView(R.id.text_balance_original)
+        TextView textBalanceOriginal;
+        @BindView(R.id.text_blocks)
+        TextView textBlocks;
         @BindView(R.id.divider)
         View divider;
-        @BindView(R.id.mark)
-        ImageView mark;
+        @BindView(R.id.image_mark)
+        ImageView imageMark;
 
         public FeeHolder(View itemView) {
             super(itemView);
@@ -89,27 +89,27 @@ public class FeeAdapter extends RecyclerView.Adapter<FeeAdapter.FeeHolder> {
         }
 
         void bind(final Wallet wallet) {
-            name.setText(names.get(getAdapterPosition()));
-            balanceOriginal.setText(wallet.getBalanceWithCode());
-            image.setImageResource(iconIds[getAdapterPosition()]);
-            blocks.setText(blockIds.get(getAdapterPosition()));
+            textName.setText(names.get(getAdapterPosition()));
+            textBalanceOriginal.setText(wallet.getBalanceWithCode());
+            imageLogo.setImageResource(iconIds[getAdapterPosition()]);
+            textBlocks.setText(blockIds.get(getAdapterPosition()));
             if (getAdapterPosition() == getItemCount() - 1){
                 divider.setVisibility(View.GONE);
-                balanceOriginal.setVisibility(View.GONE);
+                textBalanceOriginal.setVisibility(View.GONE);
             }
             root.setOnClickListener(view -> {
-                if (prevPosition != getAdapterPosition()) {
-                    mark.setVisibility(View.VISIBLE);
+                if (previousPosition != getAdapterPosition()) {
+                    imageMark.setVisibility(View.VISIBLE);
                     if (prevMark != null){
                         prevMark.setVisibility(View.GONE);
-                        notifyItemChanged(prevPosition);
+                        notifyItemChanged(previousPosition);
                     }
                     notifyItemChanged(getAdapterPosition());
-                    prevMark = mark;
-                    prevPosition = getAdapterPosition();
+                    prevMark = imageMark;
+                    previousPosition = getAdapterPosition();
                 } else {
-                    mark.setVisibility(View.GONE);
-                    prevPosition = -1;
+                    imageMark.setVisibility(View.GONE);
+                    previousPosition = -1;
                     notifyItemChanged(getAdapterPosition());
                     prevMark = null;
                 }

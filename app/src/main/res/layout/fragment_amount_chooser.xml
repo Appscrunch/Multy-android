@@ -26,7 +26,7 @@
         android:selectAllOnFocus="true"
         android:textColor="@color/text_main"
         android:textSize="30sp"
-        app:layout_constraintBottom_toTopOf="@+id/fee"
+        app:layout_constraintBottom_toTopOf="@+id/text_fee"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -54,11 +54,11 @@
         app:layout_constraintRight_toRightOf="@+id/input_balance_original"
         app:layout_constraintTop_toTopOf="@+id/divider" />
 
-    <ImageView
-        android:id="@+id/change"
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/image_swap"
         android:layout_width="@dimen/exchange_arrow_size"
         android:layout_height="@dimen/exchange_arrow_size"
-        android:src="@drawable/ic_swap"
+        app:srcCompat="@drawable/ic_swap"
         app:layout_constraintBottom_toBottomOf="@+id/divider"
         app:layout_constraintLeft_toLeftOf="@+id/divider"
         app:layout_constraintRight_toRightOf="@+id/divider"
@@ -66,7 +66,7 @@
         tools:ignore="ContentDescription" />
 
     <TextView
-        android:id="@+id/currency_top"
+        android:id="@+id/text_currency_code_original"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_5dp"
@@ -95,31 +95,31 @@
         android:textSize="30sp"/>
 
     <TextView
-        android:id="@+id/currency_bottom"
+        android:id="@+id/text_currency"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_5dp"
         android:background="@null"
         android:text="@string/usd"
-        android:textColor="@color/grey_divider"
+        android:textColor="@color/text_grey"
         android:textAppearance="@style/TextAppearance.AppCompat.Menu"
         app:layout_constraintLeft_toRightOf="@+id/input_balance_currency"
         app:layout_constraintBaseline_toBaselineOf="@+id/input_balance_currency"/>
 
     <TextView
-        android:id="@+id/fee"
+        android:id="@+id/text_fee"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/pay_for_commission"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textColor="@color/grey_divider"
         android:layout_marginBottom="@dimen/margin_45dp"
-        app:layout_constraintBottom_toTopOf="@+id/spendable"
+        app:layout_constraintBottom_toTopOf="@+id/text_spendable"
         app:layout_constraintEnd_toStartOf="@+id/switcher"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintVertical_bias="0.7"
-        app:layout_constraintTop_toBottomOf="@+id/currency_bottom" />
+        app:layout_constraintTop_toBottomOf="@+id/text_currency" />
 
     <android.support.v7.widget.SwitchCompat
         android:id="@+id/switcher"
@@ -127,13 +127,13 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:checked="true"
-        app:layout_constraintBottom_toBottomOf="@+id/fee"
-        app:layout_constraintStart_toEndOf="@+id/fee"
-        app:layout_constraintTop_toTopOf="@+id/fee"
+        app:layout_constraintBottom_toBottomOf="@+id/text_fee"
+        app:layout_constraintStart_toEndOf="@+id/text_fee"
+        app:layout_constraintTop_toTopOf="@+id/text_fee"
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <TextView
-        android:id="@+id/spendable"
+        android:id="@+id/text_spendable"
         android:layout_width="@dimen/dp0"
         android:layout_height="@dimen/spendable_height"
         android:background="@color/blue_light"
@@ -142,25 +142,25 @@
         android:paddingEnd="@dimen/activity_horizontal_margin"
         android:text="@string/spendable"
         android:textColor="@color/text_grey"
-        app:layout_constraintBottom_toTopOf="@+id/btn_next"
+        app:layout_constraintBottom_toTopOf="@+id/button_next"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
     <TextView
-        android:id="@+id/max"
+        android:id="@+id/text_max"
         android:layout_width="@dimen/dp0"
         android:layout_height="@dimen/spendable_height"
         android:layout_marginEnd="@dimen/activity_horizontal_margin"
         android:gravity="center_vertical"
         android:text="@string/max"
         android:textColor="@color/colorPrimary"
-        app:layout_constraintBottom_toTopOf="@+id/btn_next"
+        app:layout_constraintBottom_toTopOf="@+id/button_next"
         app:layout_constraintEnd_toEndOf="parent"
         android:textAppearance="@style/TextAppearance.AppCompat.Menu"/>
 
     <TextView
-        android:id="@+id/btn_next"
+        android:id="@+id/button_next"
         style="@style/ButtonNext"
         android:text="@string/next"
         android:padding="@dimen/margin_7dp"
@@ -171,17 +171,16 @@
         />
 
     <TextView
-        android:id="@+id/total"
+        android:id="@+id/text_total"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="@+id/btn_next"
+        app:layout_constraintBottom_toBottomOf="@+id/button_next"
         android:layout_marginBottom="@dimen/margin_7dp"
         android:textColor="@android:color/white"
         android:textAppearance="@style/TextAppearance.AppCompat.Menu"
         tools:text="0.11212"/>
-
 
     <android.support.constraint.Group
         android:id="@+id/group_send"

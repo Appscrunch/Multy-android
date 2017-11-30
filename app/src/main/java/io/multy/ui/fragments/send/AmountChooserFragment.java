@@ -45,7 +45,7 @@ public class AmountChooserFragment extends BaseFragment {
     EditText inputOriginal;
     @BindView(R.id.input_balance_currency)
     EditText inputCurrency;
-    @BindView(R.id.total)
+    @BindView(R.id.text_total)
     TextView total;
 
     @BindInt(R.integer.zero)
@@ -62,13 +62,11 @@ public class AmountChooserFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_amount_chooser, container, false);
         ButterKnife.bind(this, view);
-
         viewModel = ViewModelProviders.of(getActivity()).get(AssetRequestViewModel.class);
-
         return view;
     }
 
-    @OnClick(R.id.btn_next)
+    @OnClick(R.id.button_next)
     void onClickNext(){
         if (!TextUtils.isEmpty(inputOriginal.getText())){
             viewModel.setAmount(Double.valueOf(inputOriginal.getText().toString()));

@@ -17,7 +17,7 @@
     tools:showIn="io.multy.android.AssetSendActivity">
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/wallet_info"
+        android:id="@+id/container_receiver"
         android:layout_width="@dimen/dp0"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
@@ -32,7 +32,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/receiver_balance_original"
+            android:id="@+id/text_receiver_balance_original"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_vertical_margin"
@@ -44,7 +44,7 @@
             tools:text="23 BTC" />
 
         <TextView
-            android:id="@+id/receiver_balance_usd"
+            android:id="@+id/text_receiver_balance_currency"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_4dp"
@@ -52,7 +52,7 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Menu"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/receiver_balance_original"
+            app:layout_constraintTop_toBottomOf="@+id/text_receiver_balance_original"
             tools:text=" 583980 $" />
 
         <View
@@ -63,10 +63,10 @@
             android:background="@color/grey_light"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/receiver_balance_usd" />
+            app:layout_constraintTop_toBottomOf="@+id/text_receiver_balance_currency" />
 
         <TextView
-            android:id="@+id/receiver_address"
+            android:id="@+id/text_receiver_address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_vertical_margin"
@@ -79,20 +79,20 @@
 
     </android.support.constraint.ConstraintLayout>
 
-    <ImageView
-        android:id="@+id/image"
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/image_logo"
         android:layout_width="@dimen/summary_logo_size"
         android:layout_height="@dimen/summary_logo_size"
         android:elevation="@dimen/elevation_6dp"
-        android:src="@drawable/ic_btc"
-        app:layout_constraintBottom_toTopOf="@+id/wallet_info"
-        app:layout_constraintLeft_toLeftOf="@+id/wallet_info"
-        app:layout_constraintRight_toRightOf="@+id/wallet_info"
-        app:layout_constraintTop_toTopOf="@+id/wallet_info"
+        app:srcCompat="@drawable/ic_btc"
+        app:layout_constraintBottom_toTopOf="@+id/container_receiver"
+        app:layout_constraintLeft_toLeftOf="@+id/container_receiver"
+        app:layout_constraintRight_toRightOf="@+id/container_receiver"
+        app:layout_constraintTop_toTopOf="@+id/container_receiver"
         tools:ignore="ContentDescription" />
 
-    <EditText
-        android:id="@+id/note"
+    <android.support.design.widget.TextInputEditText
+        android:id="@+id/input_note"
         android:layout_width="@dimen/dp0"
         android:layout_height="@dimen/dimen_40dp"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
@@ -102,9 +102,9 @@
         android:elevation="@dimen/elevation_4dp"
         android:gravity="center"
         android:hint="@string/hint_add_note"
-        app:layout_constraintLeft_toLeftOf="@+id/wallet_info"
-        app:layout_constraintRight_toRightOf="@+id/wallet_info"
-        app:layout_constraintTop_toBottomOf="@+id/wallet_info" />
+        app:layout_constraintLeft_toLeftOf="@+id/container_receiver"
+        app:layout_constraintRight_toRightOf="@+id/container_receiver"
+        app:layout_constraintTop_toBottomOf="@+id/container_receiver" />
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/container_from"
@@ -119,10 +119,10 @@
         android:paddingTop="@dimen/margin_8dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/note">
+        app:layout_constraintTop_toBottomOf="@+id/input_note">
 
         <TextView
-            android:id="@+id/from"
+            android:id="@+id/text_from"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/sending_from"
@@ -133,36 +133,36 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Menu"/>
 
         <TextView
-            android:id="@+id/wallet_name"
+            android:id="@+id/text_wallet_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_5dp"
             android:textColor="@color/orange"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/from"
+            app:layout_constraintTop_toBottomOf="@+id/text_from"
             tools:text="BTC Personal"
             android:textSize="17sp"/>
 
         <TextView
-            android:id="@+id/sender_balance_original"
+            android:id="@+id/text_sender_balance_original"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/text_grey"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/wallet_name"
+            app:layout_constraintTop_toBottomOf="@+id/text_wallet_name"
             tools:text="B 23"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
 
         <TextView
-            android:id="@+id/sender_balance_currency"
+            android:id="@+id/text_sender_balance_currency"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/text_grey"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/sender_balance_original"
+            app:layout_constraintTop_toBottomOf="@+id/text_sender_balance_original"
             tools:text="$ 583980"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
 
@@ -173,10 +173,10 @@
             android:background="@color/grey_light"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/sender_balance_currency" />
+            app:layout_constraintTop_toBottomOf="@+id/text_sender_balance_currency" />
 
         <TextView
-            android:id="@+id/transaction_fee"
+            android:id="@+id/text_transaction_fee"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_vertical_margin"
@@ -184,37 +184,37 @@
             android:textColor="@color/text_main"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/sender_balance_currency"
+            app:layout_constraintTop_toBottomOf="@+id/text_sender_balance_currency"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
 
         <TextView
-            android:id="@+id/transaction_fee_speed"
+            android:id="@+id/text_fee_speed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_5dp"
             android:textColor="@color/text_grey"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/transaction_fee"
+            app:layout_constraintTop_toBottomOf="@+id/text_transaction_fee"
             tools:text="Fast 6 hours"
             android:textSize="17sp"/>
 
         <TextView
-            android:id="@+id/transaction_fee_amount"
+            android:id="@+id/text_fee_amount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_5dp"
             android:textColor="@color/text_grey"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/transaction_fee_speed"
+            app:layout_constraintTop_toBottomOf="@+id/text_fee_speed"
             tools:text="0.002 BTC/1.54 USD"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
 
     </android.support.constraint.ConstraintLayout>
 
     <TextView
-        android:id="@+id/btn_next"
+        android:id="@+id/button_next"
         style="@style/ButtonNext"
         android:text="@string/slide_to_send"
         app:layout_constraintBottom_toBottomOf="parent"

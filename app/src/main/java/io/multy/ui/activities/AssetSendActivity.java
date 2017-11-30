@@ -111,7 +111,7 @@ public class AssetSendActivity extends BaseActivity {
         transaction.commit();
     }
 
-    @OnClick(R.id.cancel)
+    @OnClick(R.id.button_cancel)
     void ocLickCancel(){
         finish();
     }

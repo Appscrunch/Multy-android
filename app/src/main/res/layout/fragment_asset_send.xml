@@ -44,14 +44,14 @@
         android:layout_height="@dimen/dp0"
         android:background="@drawable/shape_bottom_round_main"
         android:elevation="@dimen/elevation_6dp"
-        app:layout_constraintBottom_toBottomOf="@+id/btn_address"
-        app:layout_constraintLeft_toLeftOf="@+id/btn_address"
-        app:layout_constraintRight_toRightOf="@+id/btn_scan_qr"
-        app:layout_constraintTop_toTopOf="@+id/btn_address"
+        app:layout_constraintBottom_toBottomOf="@+id/button_address"
+        app:layout_constraintLeft_toLeftOf="@+id/button_address"
+        app:layout_constraintRight_toRightOf="@+id/button_scan_qr"
+        app:layout_constraintTop_toTopOf="@+id/button_address"
         />
 
     <TextView
-        android:id="@+id/btn_address"
+        android:id="@+id/button_address"
         style="@style/SendShareButton"
         android:drawablePadding="@dimen/margin_12dp"
         android:drawableTop="@drawable/ic_address_book2"
@@ -59,33 +59,33 @@
         android:text="@string/address_book"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/btn_scan_wireless"
+        app:layout_constraintRight_toLeftOf="@+id/button_scan_wireless"
         app:layout_constraintTop_toBottomOf="@id/input_address" />
 
     <TextView
-        android:id="@+id/btn_scan_wireless"
+        android:id="@+id/button_scan_wireless"
         style="@style/SendShareButton"
         android:drawableTop="@drawable/ic_nfc"
         android:drawablePadding="@dimen/margin_9dp"
         android:paddingTop="@dimen/margin_19dp"
         android:text="@string/wireless_scan"
-        app:layout_constraintLeft_toRightOf="@+id/btn_address"
-        app:layout_constraintRight_toLeftOf="@+id/btn_scan_qr"
+        app:layout_constraintLeft_toRightOf="@+id/button_address"
+        app:layout_constraintRight_toLeftOf="@+id/button_scan_qr"
         app:layout_constraintTop_toBottomOf="@id/input_address" />
 
     <TextView
-        android:id="@+id/btn_scan_qr"
+        android:id="@+id/button_scan_qr"
         style="@style/SendShareButton"
         android:drawablePadding="@dimen/margin_9dp"
         android:drawableTop="@drawable/ic_qr"
         android:paddingTop="@dimen/margin_21dp"
         android:text="@string/scan_qr"
-        app:layout_constraintLeft_toRightOf="@+id/btn_scan_wireless"
+        app:layout_constraintLeft_toRightOf="@+id/button_scan_wireless"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/input_address" />
 
     <View
-        android:id="@+id/footer"
+        android:id="@+id/footer_background"
         android:layout_width="@dimen/dp0"
         android:layout_height="@dimen/dp0"
         android:layout_marginTop="@dimen/margin_35dp"
@@ -94,10 +94,10 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_address" />
+        app:layout_constraintTop_toBottomOf="@id/button_address" />
 
     <TextView
-        android:id="@+id/recent"
+        android:id="@+id/text_recent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/activity_horizontal_margin"
@@ -106,7 +106,7 @@
         android:text="@string/recent_addresses"
         android:textColor="@color/text_grey"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="@id/footer"
+        app:layout_constraintTop_toTopOf="@id/footer_background"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         />
 
@@ -117,16 +117,16 @@
         android:layout_margin="@dimen/activity_horizontal_margin"
         android:elevation="@dimen/elevation_4dp"
         app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@+id/btn_next"
+        app:layout_constraintBottom_toTopOf="@+id/button_next"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recent" />
+        app:layout_constraintTop_toBottomOf="@+id/text_recent" />
 
     <TextView
-        android:id="@+id/btn_next"
+        android:id="@+id/button_next"
         style="@style/ButtonNext"
         android:text="@string/next"
-        android:background="@color/btn_disabled"
+        android:background="@color/disabled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

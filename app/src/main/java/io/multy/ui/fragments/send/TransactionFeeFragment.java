@@ -38,15 +38,14 @@ public class TransactionFeeFragment extends BaseFragment implements FeeAdapter.O
     RecyclerView recyclerView;
     @BindView(R.id.switcher)
     SwitchCompat switcher;
-    @BindView(R.id.donation_allow)
-    TextView donationAllow;
-    @BindView(R.id.donation_summ)
-    TextView donationSumm;
+    @BindView(R.id.text_donation_allow)
+    TextView textDonationAllow;
+    @BindView(R.id.text_donation_summ)
+    TextView textDonationSumm;
     @BindView(R.id.input_donation)
     EditText inputDonation;
-    @BindView(R.id.fee_currency)
-    TextView feeCurrency;
-
+    @BindView(R.id.text_fee_currency)
+    TextView textFeeCurrency;
     @BindView(R.id.group_donation)
     Group groupDonation;
 
@@ -59,16 +58,13 @@ public class TransactionFeeFragment extends BaseFragment implements FeeAdapter.O
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_transaction_fee, container, false);
         ButterKnife.bind(this, view);
-
         viewModel = ViewModelProviders.of(getActivity()).get(AssetSendViewModel.class);
-
         recyclerView.setAdapter(new FeeAdapter(getActivity(), this));
         setupSwitcher();
-
         return view;
     }
 
-    @OnClick(R.id.btn_next)
+    @OnClick(R.id.button_next)
     void onClickNext(){
         ((AssetSendActivity) getActivity()).setFragment(R.string.send, R.id.container, AmountChooserFragment.newInstance());
     }
@@ -81,10 +77,10 @@ public class TransactionFeeFragment extends BaseFragment implements FeeAdapter.O
     private void setupSwitcher(){
         switcher.setOnCheckedChangeListener((compoundButton, b) -> {
             if (b){
-                donationAllow.setBackground(getResources().getDrawable(R.drawable.shape_top_round_white, null));
+                textDonationAllow.setBackground(getResources().getDrawable(R.drawable.shape_top_round_white, null));
                 groupDonation.setVisibility(View.VISIBLE);
             } else {
-                donationAllow.setBackground(getResources().getDrawable(R.drawable.shape_squircle_white, null));
+                textDonationAllow.setBackground(getResources().getDrawable(R.drawable.shape_squircle_white, null));
                 groupDonation.setVisibility(View.GONE);
             }
         });

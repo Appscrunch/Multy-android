@@ -35,7 +35,6 @@ public class AmountChooserFragment extends BaseFragment {
     Group groupSend;
     @BindView(R.id.input_balance_original)
     EditText input;
-
     @BindInt(R.integer.zero)
     int zero;
 
@@ -48,18 +47,14 @@ public class AmountChooserFragment extends BaseFragment {
         ButterKnife.bind(this, view);
 
         viewModel = ViewModelProviders.of(getActivity()).get(AssetRequestViewModel.class);
-
-//        if (getActivity() instanceof AssetRequestActivity) {
         if (viewModel.getAmount() != zero) {
             input.setText(String.valueOf(viewModel.getAmount()));
         }
         groupSend.setVisibility(View.GONE);
-//        }
-
         return view;
     }
 
-    @OnClick(R.id.btn_next)
+    @OnClick(R.id.button_next)
     void onClickNext() {
         if (!TextUtils.isEmpty(input.getText())) {
             viewModel.setAmount(Double.valueOf(input.getText().toString()));

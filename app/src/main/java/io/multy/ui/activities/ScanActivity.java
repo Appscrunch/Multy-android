@@ -24,27 +24,27 @@ public class ScanActivity extends AppCompatActivity implements ZBarScannerView.R
     @BindInt(R.integer.zero)
     int zero;
 
-    private ZBarScannerView mScannerView;
+    private ZBarScannerView scannerView;
 
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
         ButterKnife.bind(this);
-        mScannerView = new ZBarScannerView(this);
-        setContentView(mScannerView);
+        scannerView = new ZBarScannerView(this);
+        setContentView(scannerView);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mScannerView.setResultHandler(this);
-        mScannerView.startCamera();
+        scannerView.setResultHandler(this);
+        scannerView.startCamera();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mScannerView.stopCamera();
+        scannerView.stopCamera();
     }
 
     @Override

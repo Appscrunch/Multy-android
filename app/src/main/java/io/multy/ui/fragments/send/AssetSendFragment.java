@@ -34,8 +34,8 @@ public class AssetSendFragment extends BaseFragment {
 
     @BindView(R.id.input_address)
     EditText inputAddress;
-    @BindView(R.id.btn_next)
-    TextView next;
+    @BindView(R.id.button_next)
+    TextView buttonNext;
 
     private AssetSendViewModel viewModel;
 
@@ -44,21 +44,18 @@ public class AssetSendFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_asset_send, container, false);
         ButterKnife.bind(this, view);
-
         viewModel = ViewModelProviders.of(getActivity()).get(AssetSendViewModel.class);
         viewModel.getReceiverAddress().observe(this, s -> inputAddress.setText(s));
-
         setupInputAddress();
-
         return view;
     }
 
-    @OnClick(R.id.btn_scan_qr)
+    @OnClick(R.id.button_scan_qr)
     void onClickScanQr(){
         ((AssetSendActivity) getActivity()).showScanScreen();
     }
 
-    @OnClick(R.id.btn_next)
+    @OnClick(R.id.button_next)
     void onClickNext(){
         viewModel.setReceiverAddress(inputAddress.getText().toString());
         ((AssetSendActivity) getActivity()).setFragment(R.string.send_from, R.id.container, WalletChooserFragment.newInstance());
@@ -73,11 +70,11 @@ public class AssetSendFragment extends BaseFragment {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (TextUtils.isEmpty(charSequence)){
-                    next.setBackgroundResource(R.color.btn_disabled);
-                    next.setEnabled(false);
+                    buttonNext.setBackgroundResource(R.color.disabled);
+                    buttonNext.setEnabled(false);
                 } else {
-                    next.setBackgroundResource(R.drawable.btn_gradient_blue);
-                    next.setEnabled(true);
+                    buttonNext.setBackgroundResource(R.drawable.btn_gradient_blue);
+                    buttonNext.setEnabled(true);
                 }
             }
 

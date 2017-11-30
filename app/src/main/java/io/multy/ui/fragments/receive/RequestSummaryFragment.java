@@ -36,23 +36,23 @@ public class RequestSummaryFragment extends BaseFragment {
     }
 
     @BindView(R.id.image_qr)
-    ImageView qr;
+    ImageView imageQr;
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
-    @BindView(R.id.balance_original)
-    TextView balanceOriginal;
-    @BindView(R.id.balance_currency)
-    TextView balanceUsd;
-    @BindView(R.id.balance_original_send)
-    TextView balanceOriginalSend;
-    @BindView(R.id.balance_usd_send)
-    TextView balanceUsdSend;
-    @BindView(R.id.request_amount)
-    TextView requestAmount;
-    @BindView(R.id.address)
-    TextView address;
-    @BindView(R.id.wallet_name)
-    TextView walletName;
+    @BindView(R.id.text_balance_original)
+    TextView textBalanceOriginal;
+    @BindView(R.id.text_balance_currency)
+    TextView textBalanceCurrency;
+    @BindView(R.id.text_balance_original_send)
+    TextView textBalanceOriginalSend;
+    @BindView(R.id.text_balance_currency_send)
+    TextView textBalanceCurrencySend;
+    @BindView(R.id.button_request_amount)
+    TextView textRequestAmount;
+    @BindView(R.id.text_address)
+    TextView textAddress;
+    @BindView(R.id.text_wallet_name)
+    TextView textWalletName;
 
     @BindInt(R.integer.zero)
     int zero;
@@ -74,45 +74,45 @@ public class RequestSummaryFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
 
-        address.setText(viewModel.getWallet().getAddress());
-        walletName.setText(viewModel.getWallet().getName());
-        balanceOriginal.setText(viewModel.getWallet().getBalanceWithCode());
-        balanceUsd.setText(String.valueOf(viewModel.getWallet().getBalance()));
+        textAddress.setText(viewModel.getWallet().getAddress());
+        textWalletName.setText(viewModel.getWallet().getName());
+        textBalanceOriginal.setText(viewModel.getWallet().getBalanceWithCode());
+        textBalanceCurrency.setText(String.valueOf(viewModel.getWallet().getBalance()));
 
         if (viewModel.getAmount() != zero){
-            requestAmount.setVisibility(View.INVISIBLE);
-            balanceUsdSend.setVisibility(View.VISIBLE);
-            balanceOriginalSend.setVisibility(View.VISIBLE);
-            balanceUsdSend.setText(String.valueOf(viewModel.getAmount()));
-            balanceOriginalSend.setText(String.valueOf(viewModel.getAmount()));
+            textRequestAmount.setVisibility(View.INVISIBLE);
+            textBalanceCurrencySend.setVisibility(View.VISIBLE);
+            textBalanceOriginalSend.setVisibility(View.VISIBLE);
+            textBalanceCurrencySend.setText(String.valueOf(viewModel.getAmount()));
+            textBalanceOriginalSend.setText(String.valueOf(viewModel.getAmount()));
         }
 
         new Thread(() -> {
             try {
                 final Bitmap bitmap = viewModel.generateQR(getActivity());
-                getActivity().runOnUiThread(() -> qr.setImageBitmap(bitmap));
+                getActivity().runOnUiThread(() -> imageQr.setImageBitmap(bitmap));
             } catch (WriterException e) {
                 e.printStackTrace();
             }
         }).start();
     }
 
-    @OnClick(R.id.request_amount)
+    @OnClick(R.id.button_request_amount)
     void onClickRequestAmount(){
         ((AssetRequestActivity) getActivity()).setFragment(R.string.receive, AmountChooserFragment.newInstance());
     }
 
-    @OnClick(R.id.balance_original_send)
+    @OnClick(R.id.text_balance_original_send)
     void onClickBalanceOriginalSendAmount(){
         ((AssetRequestActivity) getActivity()).setFragment(R.string.receive, AmountChooserFragment.newInstance());
     }
 
-    @OnClick(R.id.balance_usd_send)
+    @OnClick(R.id.text_balance_currency_send)
     void onClickBalanceUsdSendAmount(){
         ((AssetRequestActivity) getActivity()).setFragment(R.string.receive, AmountChooserFragment.newInstance());
     }
 
-    @OnClick(R.id.balance_currency)
+    @OnClick(R.id.text_balance_currency)
     void onClickBalanceUsdAmount(){
         getFragmentManager().popBackStack();
     }

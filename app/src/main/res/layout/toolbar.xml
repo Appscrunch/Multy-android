@@ -12,7 +12,7 @@
     android:layout_height="?attr/actionBarSize">
 
     <TextView
-        android:id="@+id/cancel"
+        android:id="@+id/button_cancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|center_horizontal"

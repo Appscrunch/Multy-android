@@ -16,7 +16,7 @@
 
     <color name="grey_divider">#afafaf</color>
 
-    <color name="btn_disabled">#D1D1D6</color>
+    <color name="disabled">#D1D1D6</color>
     <color name="background_main">#F9FAFF</color>
     <color name="gradient_blue_start">#00b2ff</color>
     <color name="gradient_blue_center">#008FFF</color>

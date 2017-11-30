@@ -72,7 +72,7 @@ public class AssetRequestActivity extends BaseActivity {
         }
     }
 
-    @OnClick(R.id.cancel)
+    @OnClick(R.id.button_cancel)
     void ocLickCancel(){
         finish();
     }
