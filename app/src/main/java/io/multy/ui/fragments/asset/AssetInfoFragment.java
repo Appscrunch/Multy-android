@@ -21,7 +21,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.multy.R;
-import io.multy.ui.adapter.AssetTransactionsAdapter;
+import io.multy.ui.adapters.AssetTransactionsAdapter;
 import io.multy.ui.fragments.BaseFragment;
 
 public class AssetInfoFragment extends BaseFragment {

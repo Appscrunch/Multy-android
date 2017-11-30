@@ -7,6 +7,7 @@
 package io.multy.ui.activities;
 
 
+import android.annotation.SuppressLint;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
@@ -15,6 +16,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -101,10 +103,31 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
 
     }
 
-    private void setupFooter() {
-        tabLayout.addOnTabSelectedListener(this);
+    @SuppressLint("ClickableViewAccessibility")
+    private void disableEmptyLabItem() {
+        ViewGroup container = (ViewGroup) tabLayout.getChildAt(0);
+        if (container == null) {
+            return;
+        }
+        View emptyView = container.getChildCount() >= 2 ? container.getChildAt(2) : null;
+        if (emptyView != null) {
+            emptyView.setOnTouchListener((view, motionEvent) -> true);
+        }
     }
 
+    private void setupFooter() {
+        tabLayout.addOnTabSelectedListener(this);
+        disableEmptyLabItem();
+    }
+
+    /**
+     * This method change color of selected or unselected item.
+     * Set parameter @mustEnable true to set icon and text to "enable" color.
+     * Set parameter @mustEnable false to set icon and text to "disable" color.
+     *
+     * @param position element position that must change color
+     * @param mustEnable true to set icon and text to "enable" color
+     */
     private void changeStateLastTab(int position, boolean mustEnable) {
         TabLayout.Tab tab = tabLayout.getTabAt(position);
         if (tab == null) {

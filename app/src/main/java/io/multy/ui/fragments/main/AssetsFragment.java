@@ -22,8 +22,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.multy.R;
 import io.multy.ui.activities.CreateAssetActivity;
-import io.multy.ui.adapter.PortfoliosAdapter;
-import io.multy.ui.adapter.WalletsAdapter;
+import io.multy.ui.adapters.PortfoliosAdapter;
+import io.multy.ui.adapters.WalletsAdapter;
 import io.multy.ui.fragments.BaseFragment;
 import io.multy.ui.fragments.asset.AssetInfoFragment;
 import io.multy.viewmodels.AssetsViewModel;
@@ -53,7 +53,7 @@ public class AssetsFragment extends BaseFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        walletsAdapter = new WalletsAdapter(getContext());
+        walletsAdapter = new WalletsAdapter();
         portfoliosAdapter = new PortfoliosAdapter();
     }
 

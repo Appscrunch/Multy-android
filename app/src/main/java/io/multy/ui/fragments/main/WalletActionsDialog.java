@@ -40,8 +40,8 @@ public class WalletActionsDialog extends DialogFragment {
                 .inflate(R.layout.view_assets_action, null);
         ButterKnife.bind(this, v);
         return new AlertDialog
-                .Builder(getContext(), R.style.FullScreenTheme)
-//                .Builder(getContext(), R.style.NoTitle)
+//                .Builder(getContext(), R.style.FullScreenTheme)
+                .Builder(getContext(), R.style.NoTitleTheme)
                 .setView(v)
                 .create();
     }

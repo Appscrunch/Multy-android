@@ -47,12 +47,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="left|center_vertical"
                         android:layout_margin="8dp"
-                        android:layout_weight="0"
                         android:foreground="?android:attr/selectableItemBackground"
                         android:padding="10dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
                         app:srcCompat="@drawable/ic_cancel_white" />
 
                     <TextView
@@ -74,10 +70,9 @@
                         android:id="@+id/options"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="right|center_vertical|center_horizontal"
+                        android:layout_gravity="right|center_vertical"
                         android:layout_marginEnd="8dp"
                         android:layout_marginRight="8dp"
-                        android:layout_weight="0"
                         android:foreground="?android:attr/selectableItemBackground"
                         android:padding="10dp"
                         app:srcCompat="@drawable/ic_settings" />
