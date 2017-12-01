@@ -54,6 +54,7 @@
 
     <TextView
         android:id="@+id/text_description"
+        style="@style/TransactionTextBlue"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/montserrat"
@@ -85,15 +86,12 @@
 
     <TextView
         android:id="@+id/text_time"
+        style="@style/TransactionTextBlue"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:fontFamily="@font/montserrat"
-        android:maxLines="1"
         android:text="200.34 USD"
         android:textAlignment="textEnd"
-        android:textColor="#87a1c5"
-        android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="@+id/text_amount"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/text_description"
@@ -101,6 +99,7 @@
 
     <TextView
         android:id="@+id/text_comment"
+        style="@style/TransactionTextBlue"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
