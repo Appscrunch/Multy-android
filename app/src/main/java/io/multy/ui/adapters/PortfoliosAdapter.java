@@ -13,10 +13,12 @@ import io.multy.R;
 
 public class PortfoliosAdapter extends PagerAdapter {
 
+    private static final String PAGE_TITLE = "Portfolio ";
+    private static final int ITEMS_COUNT = 10;
 
     @Override
     public int getCount() {
-        return 10;
+        return ITEMS_COUNT;
     }
 
     @Override
@@ -26,7 +28,6 @@ public class PortfoliosAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-//        return super.instantiateItem(container, position);
         View layout = LayoutInflater.from(container.getContext())
                 .inflate(R.layout.view_portfolios_item, container, false);
         container.addView(layout);
@@ -40,7 +41,6 @@ public class PortfoliosAdapter extends PagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-//        return super.getPageTitle(position);
-        return "Portfolio " + String.valueOf(position);
+        return PAGE_TITLE + String.valueOf(position);
     }
 }

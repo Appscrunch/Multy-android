@@ -19,10 +19,7 @@ import io.multy.ui.activities.AssetActivity;
 
 public class WalletsAdapter extends RecyclerView.Adapter<WalletsAdapter.Holder> {
 
-//    ArrayList<AssetsInfo.Asset> data;
-
     public WalletsAdapter() {
-//        data = AssetsInfo.getInstance().assets;
     }
 
     @Override
@@ -34,9 +31,6 @@ public class WalletsAdapter extends RecyclerView.Adapter<WalletsAdapter.Holder> 
 
     @Override
     public void onBindViewHolder(Holder holder, int position) {
-//        holder.name.setText(data.get(position).name);
-//        holder.amount.setText(String.valueOf(data.get(position).amountCoin));
-//        holder.equals.setText(String.valueOf(data.get(position).costUsd));
         holder.itemView.setOnClickListener(view -> {
             Context ctx = view.getContext();
             ctx.startActivity(new Intent(ctx, AssetActivity.class));
@@ -45,9 +39,6 @@ public class WalletsAdapter extends RecyclerView.Adapter<WalletsAdapter.Holder> 
 
     @Override
     public int getItemCount() {
-//        if (data != null) {
-//            return data.size();
-//        }
         return 10;
     }
 

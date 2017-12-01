@@ -47,7 +47,7 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
         isFirstFragmentCreation = true;
 
         setupFooter();
-        setFragment(R.id.inner_container, AssetsFragment.newInstance());
+        setFragment(R.id.container_frame, AssetsFragment.newInstance());
 
 //        startActivity(new Intent(this, SeedActivity.class));
 //        NativeDataHelper.runTest();
@@ -79,16 +79,16 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
         changeStateLastTab(lastTabPosition, true);
         switch (tab.getPosition()) {
             case Constants.POSITION_ASSETS:
-                setFragment(R.id.inner_container, AssetsFragment.newInstance());
+                setFragment(R.id.container_frame, AssetsFragment.newInstance());
                 break;
             case Constants.POSITION_FEED:
-                setFragment(R.id.inner_container, FeedFragment.newInstance());
+                setFragment(R.id.container_frame, FeedFragment.newInstance());
                 break;
             case Constants.POSITION_CONTACTS:
-                setFragment(R.id.inner_container, ContactsFragment.newInstance());
+                setFragment(R.id.container_frame, ContactsFragment.newInstance());
                 break;
             case Constants.POSITION_SETTINGS:
-                setFragment(R.id.inner_container, SettingsFragment.newInstance());
+                setFragment(R.id.container_frame, SettingsFragment.newInstance());
                 break;
         }
     }

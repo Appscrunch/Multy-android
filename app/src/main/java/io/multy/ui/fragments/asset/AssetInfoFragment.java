@@ -31,7 +31,7 @@ public class AssetInfoFragment extends BaseFragment {
     @BindView(R.id.collapsing_toolbar)
     CollapsingToolbarLayout collapsingToolbarLayout;
     @BindView(R.id.recycler_transactions)
-    RecyclerView recyclerTransactions;
+    RecyclerView recyclerView;
     @BindView(R.id.constraint_empty)
     ConstraintLayout emptyAsset;
 
@@ -58,10 +58,10 @@ public class AssetInfoFragment extends BaseFragment {
     }
 
     private void initialize() {
-        recyclerTransactions.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerTransactions.setAdapter(transactionsAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(transactionsAdapter);
         if (transactionsAdapter.getItemCount() == 0) {
-            recyclerTransactions.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.GONE);
             emptyAsset.setVisibility(View.VISIBLE);
             setToolbarScrollFlag(0);
         }
