@@ -22,7 +22,7 @@
         android:background="#f9faff"
         app:tabGravity="fill"
         app:tabIndicatorHeight="0dp"
-        app:tabMode="fixed">
+        app:tabMode="scrollable">
 
         <android.support.design.widget.TabItem
             android:id="@+id/tab_main"
@@ -37,7 +37,8 @@
             android:layout="@layout/footer_feed" />
 
         <android.support.design.widget.TabItem
-            android:layout_width="wrap_content"
+            android:id="@+id/empty"
+            android:layout_width="10dp"
             android:layout_height="wrap_content"
             android:clickable="false"
             android:visibility="gone" />
