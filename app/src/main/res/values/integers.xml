@@ -4,4 +4,6 @@
     <integer name="one">1</integer>
     <integer name="two">2</integer>
 
+    <integer name="AutoDeeplinkRequestCode">7845</integer>
+
 </resources>
