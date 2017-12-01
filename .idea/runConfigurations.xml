@@ -5,7 +5,7 @@
       <set>
         <option value="org.jetbrains.plugins.gradle.execution.test.runner.AllInPackageGradleConfigurationProducer" />
         <option value="org.jetbrains.plugins.gradle.execution.test.runner.TestClassGradleConfigurationProducer" />
-        <option value="org.jetbrains.plugins.gradle.execution.test.runner.TestMethodGradleConfiguraƒtionProducer" />
+        <option value="org.jetbrains.plugins.gradle.execution.test.runner.TestMethodGradleConfigurationProducer" />
       </set>
     </option>
   </component>
