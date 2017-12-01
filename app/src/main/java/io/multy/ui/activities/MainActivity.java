@@ -138,7 +138,7 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
             return;
         }
         TextView title = view.findViewById(R.id.title);
-        ImageView image = view.findViewById(R.id.image);
+        ImageView image = view.findViewById(R.id.image_logo);
         int filterColor;
         if (mustEnable) {
             filterColor = ContextCompat.getColor(this, R.color.tab_active);
