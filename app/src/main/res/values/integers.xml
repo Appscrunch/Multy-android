@@ -6,4 +6,6 @@
 
     <integer name="AutoDeeplinkRequestCode">7845</integer>
 
+    <item name="donation_default" type="integer" format="float">0.0001</item>
+
 </resources>

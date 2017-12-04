@@ -7,21 +7,19 @@
 package io.multy.api;
 
 
-import android.support.annotation.NonNull;
-
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.samwolfand.oneprefs.Prefs;
 
 import io.multy.model.entities.AuthEntity;
 import io.multy.model.responses.AuthResponse;
+import io.multy.model.responses.ExchangePriceResponse;
 import io.multy.util.Constants;
+import io.reactivex.Observable;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -43,6 +41,7 @@ public enum MultyApi implements MultyApiInterface {
                                     //TODO check auth date and remove Bearer hardcode
                                     .header("Authorization", "Bearer " + Prefs.getString(Constants.PREF_AUTH, ""))
                                     .method(original.method(), original.body())
+
                                     .build();
                             return chain.proceed(request);
                         })
@@ -50,18 +49,9 @@ public enum MultyApi implements MultyApiInterface {
                 .build().create(ApiServiceInterface.class);
 
         @Override
-        public void auth(String userId, String deviceId, String password) {
+        public Call<AuthResponse> auth(String userId, String deviceId, String password) {
             Call<AuthResponse> responseCall = api.auth(new AuthEntity(userId, deviceId, password));
-            responseCall.enqueue(new Callback<AuthResponse>() {
-                @Override
-                public void onResponse(@NonNull Call<AuthResponse> call, @NonNull Response<AuthResponse> response) {
-                    Prefs.putString(Constants.PREF_AUTH, response.body().getToken());
-                }
-
-                @Override
-                public void onFailure(Call<AuthResponse> call, Throwable t) {
-                }
-            });
+            return responseCall;
         }
 
         @Override
@@ -85,8 +75,18 @@ public enum MultyApi implements MultyApiInterface {
         }
 
         @Override
-        public void getExchangePrice(String firstCurrency, String secondCurrency) {
-            Call<ResponseBody> responseCall = api.getExchangePrice(firstCurrency, secondCurrency);
+        public Observable<ExchangePriceResponse> getExchangePrice(String firstCurrency, String secondCurrency) {
+            return api.getExchangePrice(firstCurrency, secondCurrency);
+//            responseCall.enqueue(new Callback<ExchangePriceResponse>() {
+//                @Override
+//                public void onResponse(@NonNull Call<ExchangePriceResponse> call, @NonNull Response<ExchangePriceResponse> response) {
+//                    Prefs.putDouble(Constants.PREF_EXCHANGE_PRICE, response.body().getUSD());
+//                }
+//
+//                @Override
+//                public void onFailure(Call<ExchangePriceResponse> call, Throwable t) {
+//                }
+//            });
         }
 
         @Override

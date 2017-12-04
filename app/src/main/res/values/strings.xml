@@ -93,5 +93,7 @@
     <string name="send_formatted" formatted="false">Send %s</string>
     <string name="transaction_speed">Transaction speed</string>
     <string name="ready_to_send">Ready to send</string>
+    <string name="donation_default">0.0001</string>
+    <string name="donation_format_pattern">##.##</string>
 
 </resources>
