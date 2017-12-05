@@ -77,6 +77,8 @@ dependencies {
     implementation 'com.google.zxing:javase:3.3.0'
 
     implementation 'me.dm7.barcodescanner:zbar:1.9.4'
+
+    implementation 'io.branch.sdk.android:library:2.+'
     implementation 'com.scottyab:rootbeer-lib:0.0.6'
 }
 
