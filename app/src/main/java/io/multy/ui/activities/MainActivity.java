@@ -7,19 +7,26 @@
 package io.multy.ui.activities;
 
 
-import android.content.Intent;
+import android.annotation.SuppressLint;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.text.TextUtils;
-import android.util.Log;
+import android.support.v4.content.ContextCompat;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.scottyab.rootbeer.RootBeer;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.branch.referral.Branch;
+import butterknife.OnClick;
 import io.multy.R;
+import io.multy.ui.fragments.dialogs.SimpleDialogFragment;
 import io.multy.ui.fragments.main.AssetsFragment;
 import io.multy.util.Constants;
 import io.multy.util.NativeDataHelper;
@@ -31,6 +38,7 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
     TabLayout tabLayout;
 
     private boolean isFirstFragmentCreation;
+    private int lastTabPosition = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,14 +46,21 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         isFirstFragmentCreation = true;
-
         setupFooter();
-        setFragment(R.id.inner_container, AssetsFragment.newInstance());
-//        initBranchIO();
+        setFragment(R.id.container_frame, AssetsFragment.newInstance());
 
-//        startActivity(new Intent(this, SeedActivity.class));
+        preventRootIfDetected();
     }
 
+    private void preventRootIfDetected() {
+        RootBeer rootBeer = new RootBeer(this);
+        if (rootBeer.isRootedWithoutBusyBoxCheck()) {
+            SimpleDialogFragment.newInstanceNegative(R.string.root_title, R.string.root_message, view -> finish())
+                    .show(getSupportFragmentManager(), "");
+        }
+    }
+
+    
     @Override
     protected void onResume() {
         super.onResume();
@@ -98,21 +113,21 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
 
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
+        changeStateLastTab(lastTabPosition, false);
+        lastTabPosition = tab.getPosition();
+        changeStateLastTab(lastTabPosition, true);
         switch (tab.getPosition()) {
             case Constants.POSITION_ASSETS:
-//                setFragment(R.id.full_container, AssetsFragment.newInstance());
-                startActivity(new Intent(this, AssetSendActivity.class));
+                setFragment(R.id.container_frame, AssetsFragment.newInstance());
                 break;
             case Constants.POSITION_FEED:
-//                setFragment(R.id.full_container, FeedFragment.newInstance());
-                startActivity(new Intent(this, AssetRequestActivity.class));
+                setFragment(R.id.container_frame, FeedFragment.newInstance());
                 break;
             case Constants.POSITION_CONTACTS:
-//                setFragment(R.id.full_container, ContactsFragment.newInstance());
-                startActivity(new Intent(this, AssetSendActivity.class));
+                setFragment(R.id.container_frame, ContactsFragment.newInstance());
                 break;
             case Constants.POSITION_SETTINGS:
-//                setFragment(R.id.full_container, SettingsFragment.newInstance());
+                setFragment(R.id.container_frame, SettingsFragment.newInstance());
                 break;
         }
     }
@@ -127,19 +142,64 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
 
     }
 
+    @SuppressLint("ClickableViewAccessibility")
+    private void disableEmptyLabItem() {
+        ViewGroup container = (ViewGroup) tabLayout.getChildAt(0);
+        if (container == null) {
+            return;
+        }
+        View emptyView = container.getChildCount() >= 2 ? container.getChildAt(2) : null;
+        if (emptyView != null) {
+            emptyView.setOnTouchListener((view, motionEvent) -> true);
+        }
+    }
+
     private void setupFooter() {
-        tabLayout.addTab(tabLayout.newTab().setCustomView(R.layout.footer_assets));
-        tabLayout.addTab(tabLayout.newTab().setCustomView(R.layout.footer_feed));
-        tabLayout.addTab(tabLayout.newTab().setCustomView(R.layout.footer_main));
-        tabLayout.addTab(tabLayout.newTab().setCustomView(R.layout.footer_contacts));
-        tabLayout.addTab(tabLayout.newTab().setCustomView(R.layout.footer_settings));
         tabLayout.addOnTabSelectedListener(this);
-    };
+        disableEmptyLabItem();
+    }
+
+    /**
+     * This method change color of selected or unselected item.
+     * Set parameter @mustEnable true to set icon and text to "enable" color.
+     * Set parameter @mustEnable false to set icon and text to "disable" color.
+     *
+     * @param position   element position that must change color
+     * @param mustEnable true to set icon and text to "enable" color
+     */
+    private void changeStateLastTab(int position, boolean mustEnable) {
+        try {
+            TabLayout.Tab tab = tabLayout.getTabAt(position);
+            if (tab == null) {
+                return;
+            }
+            View view = tab.getCustomView();
+            if (view == null) {
+                return;
+            }
+            TextView title = view.findViewById(R.id.title);
+            ImageView image = view.findViewById(R.id.image_logo);
+            int filterColor;
+            if (mustEnable) {
+                filterColor = ContextCompat.getColor(this, R.color.tab_active);
+            } else {
+                filterColor = ContextCompat.getColor(this, R.color.tab_inactive);
+            }
+            title.setTextColor(filterColor);
+            image.setColorFilter(filterColor, PorterDuff.Mode.SRC_IN);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     private void unCheckAllTabs() {
         tabLayout.getTabAt(0).getCustomView().setSelected(false);
         tabLayout.getTabAt(1).getCustomView().setSelected(false);
         tabLayout.getTabAt(3).getCustomView().setSelected(false);
         tabLayout.getTabAt(4).getCustomView().setSelected(false);
+    }
+
+    @OnClick(R.id.fast_operations)
+    void onFastOperationsClick() {
     }
 }

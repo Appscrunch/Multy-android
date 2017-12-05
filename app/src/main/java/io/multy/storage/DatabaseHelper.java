@@ -47,9 +47,21 @@ public class DatabaseHelper {
         return new ArrayList<>();
     }
 
-//    public void saveTransactions();
-//    public void saveRootKey();
-//    public void saveTransactions();
+    public void saveRootKey() {
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+            }
+        });
+    }
+
+    public void saveToken() {
+
+    }
+
+    public void getToken() {
+
+    }
 
 
 }

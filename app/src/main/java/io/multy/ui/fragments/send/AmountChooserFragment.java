@@ -280,4 +280,3 @@ public class AmountChooserFragment extends BaseFragment {
     }
 
 }
-
