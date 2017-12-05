@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.DecimalFormat;
 
@@ -35,7 +36,6 @@ import io.multy.ui.adapters.FeeAdapter;
 import io.multy.ui.fragments.BaseFragment;
 import io.multy.util.Constants;
 import io.multy.viewmodels.AssetSendViewModel;
-import timber.log.Timber;
 
 public class TransactionFeeFragment extends BaseFragment implements FeeAdapter.OnFeeClickListener{
 
@@ -78,12 +78,19 @@ public class TransactionFeeFragment extends BaseFragment implements FeeAdapter.O
 
     @OnClick(R.id.button_next)
     void onClickNext(){
-        ((AssetSendActivity) getActivity()).setFragment(R.string.send, R.id.container, AmountChooserFragment.newInstance());
+        if (viewModel.getFee() != null) {
+            ((AssetSendActivity) getActivity()).setFragment(R.string.send, R.id.container, AmountChooserFragment.newInstance());
+        } else {
+            Toast.makeText(getActivity(), R.string.choose_transaction_speed, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
     public void onFeeClick(Wallet fee) {
         viewModel.saveFee(fee);
+        if (switcher.isChecked()){
+            viewModel.setDonationAmount(inputDonation.getText().toString());
+        }
     }
 
     private void setupSwitcher(){
@@ -99,6 +106,15 @@ public class TransactionFeeFragment extends BaseFragment implements FeeAdapter.O
     }
 
     private void setupInput(){
+        if (viewModel.getExchangePrice().getValue() != null){
+            textFeeCurrency.setText(new DecimalFormat(formatPattern)
+                    .format(Double.parseDouble(inputDonation.getText().toString()) * viewModel.getExchangePrice().getValue()));
+            textFeeCurrency.append(Constants.SPACE);
+            textFeeCurrency.append(CurrencyCode.USD.name());
+        } else { // this case shouldn't happen
+            viewModel.getApiExchangePrice();
+        }
+
         inputDonation.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -107,11 +123,9 @@ public class TransactionFeeFragment extends BaseFragment implements FeeAdapter.O
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                Timber.e("onTextChanged %s", charSequence);
                 if (!TextUtils.isEmpty(charSequence)) {
                     viewModel.getExchangePrice()
                             .observe(TransactionFeeFragment.this, exchangePrice -> {
-                                Timber.e("onChanged %s", exchangePrice);
                                 textFeeCurrency.setText(new DecimalFormat(formatPattern)
                                         .format(Double.parseDouble(charSequence.toString()) * exchangePrice));
                                 textFeeCurrency.append(Constants.SPACE);
@@ -119,7 +133,6 @@ public class TransactionFeeFragment extends BaseFragment implements FeeAdapter.O
                             });
                 } else {
                     textFeeCurrency.setText(Constants.SPACE);
-                    textFeeCurrency.append(CurrencyCode.USD.name());
                 }
             }
 

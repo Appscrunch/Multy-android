@@ -69,7 +69,7 @@
             android:name=".ui.activities.AssetSendActivity"
             android:label="@string/send"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"/>
+            android:theme="@style/Send"/>
         <activity
             android:name=".ui.activities.ExchangingActivity"
             android:label="@string/exchange"

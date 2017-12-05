@@ -22,6 +22,7 @@ import io.branch.referral.Branch;
 import io.multy.R;
 import io.multy.ui.fragments.main.AssetsFragment;
 import io.multy.util.Constants;
+import io.multy.util.NativeDataHelper;
 
 
 public class MainActivity extends BaseActivity implements TabLayout.OnTabSelectedListener {

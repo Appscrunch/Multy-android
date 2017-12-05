@@ -28,8 +28,10 @@ public class AssetSendViewModel extends BaseViewModel {
     private Wallet wallet;
     private Wallet fee;
     private double amount;
+    private boolean isPayForCommission;
     private MutableLiveData<String> receiverAddress = new MutableLiveData<>();
     private MutableLiveData<Double> exchangePrice = new MutableLiveData<>();
+    private String donationAmount;
 
     public AssetSendViewModel() {
     }
@@ -92,5 +94,21 @@ public class AssetSendViewModel extends BaseViewModel {
 
     public void setExchangePrice(MutableLiveData<Double> exchangePrice) {
         this.exchangePrice = exchangePrice;
+    }
+
+    public String getDonationAmount() {
+        return donationAmount;
+    }
+
+    public void setDonationAmount(String donationAmount) {
+        this.donationAmount = donationAmount;
+    }
+
+    public boolean isPayForCommission() {
+        return isPayForCommission;
+    }
+
+    public void setPayForCommission(boolean payForCommission) {
+        isPayForCommission = payForCommission;
     }
 }

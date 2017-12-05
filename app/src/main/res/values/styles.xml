@@ -123,4 +123,9 @@
         <item name="android:textColor">@color/text_grey</item>
     </style>
 
+    <style name="Send" parent="AppTheme">
+        <item name="colorAccent">@color/colorPrimaryDark</item>
+    </style>
+
+
 </resources>
