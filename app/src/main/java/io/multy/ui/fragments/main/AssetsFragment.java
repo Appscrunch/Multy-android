@@ -23,6 +23,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.multy.R;
+import io.multy.ui.activities.AssetSendActivity;
 import io.multy.ui.activities.CreateAssetActivity;
 import io.multy.ui.adapters.PortfoliosAdapter;
 import io.multy.ui.adapters.WalletsAdapter;
@@ -150,6 +151,7 @@ public class AssetsFragment extends BaseFragment {
     @OnClick(R.id.button_add)
     void onPlusClick() {
         showAddWalletActions();
+//        startActivity(new Intent(getActivity(), AssetSendActivity.class));
     }
 
     @OnClick(R.id.title)

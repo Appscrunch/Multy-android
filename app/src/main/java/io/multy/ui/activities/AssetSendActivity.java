@@ -109,6 +109,8 @@ public class AssetSendActivity extends BaseActivity {
 
         isFirstFragmentCreation = false;
         transaction.commit();
+
+        hideKeyboard(this);
     }
 
     @OnClick(R.id.button_cancel)
