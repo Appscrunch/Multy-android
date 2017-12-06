@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.multy.model.entities.ByteSeed;
+import io.multy.model.entities.Mnemonic;
 import io.multy.model.entities.RootKey;
 import io.multy.model.entities.Token;
 import io.multy.model.entities.UserId;
@@ -90,6 +91,14 @@ public class DatabaseHelper {
 
     public ByteSeed getSeed() {
         return realm.where(ByteSeed.class).findFirst();
+    }
+
+    public void setMnemonic(Mnemonic mnemonic) {
+        realm.executeTransaction(realm -> realm.insertOrUpdate(mnemonic));
+    }
+
+    public Mnemonic getMnemonic() {
+        return realm.where(Mnemonic.class).findFirst();
     }
 
 
