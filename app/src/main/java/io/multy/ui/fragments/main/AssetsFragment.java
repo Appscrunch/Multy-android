@@ -60,6 +60,7 @@ public class AssetsFragment extends BaseFragment {
             wallets.add(wallet);
         }
         walletsAdapter = new WalletsAdapter(wallets);
+        walletsAdapter = new WalletsAdapter(new ArrayList<>());
         portfoliosAdapter = new PortfoliosAdapter();
     }
 
