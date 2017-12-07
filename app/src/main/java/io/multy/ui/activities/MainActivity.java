@@ -35,7 +35,6 @@ import io.multy.ui.fragments.main.ContactsFragment;
 import io.multy.ui.fragments.main.FeedFragment;
 import io.multy.ui.fragments.main.SettingsFragment;
 import io.multy.util.Constants;
-import io.multy.util.NativeDataHelper;
 
 
 public class MainActivity extends BaseActivity implements TabLayout.OnTabSelectedListener {
@@ -66,14 +65,13 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
         }
     }
 
-    
     @Override
     protected void onResume() {
         super.onResume();
         initBranchIO();
     }
 
-    private void initBranchIO(){
+    private void initBranchIO() {
         Branch branch = Branch.getInstance(getApplicationContext());
 
         branch.initSession((referringParams, error) -> {
@@ -187,9 +185,9 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
             ImageView image = view.findViewById(R.id.image_logo);
             int filterColor;
             if (mustEnable) {
-                filterColor = ContextCompat.getColor(this, R.color.tab_active);
+                filterColor = ContextCompat.getColor(this, R.color.blue);
             } else {
-                filterColor = ContextCompat.getColor(this, R.color.tab_inactive);
+                filterColor = ContextCompat.getColor(this, R.color.blue_light);
             }
             title.setTextColor(filterColor);
             image.setColorFilter(filterColor, PorterDuff.Mode.SRC_IN);
@@ -207,5 +205,21 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
 
     @OnClick(R.id.fast_operations)
     void onFastOperationsClick() {
+//        MultyApi.INSTANCE.getSpendableOutputs();
+//        MultyApi.INSTANCE.getUserAssets();
+//        MultyApi.INSTANCE.getTransactionSpeed();
+//        try {
+////            Log.i("wise", "to " + (NativeDataHelper.makeAccountAddress(, 0, 0)));
+//
+//            byte[] seed = new DataManager(this).getSeed().getSeed();
+//            final String txHash = "6e26d2fb53983051172a2714838fab9c3241d5dcdb022926b834e254e7ae2034";
+//            final String pubKey = "76a9149543b205596749495eae1d6305434c2c8084b25a88ac";
+//            final String address = "mu8C5CGtmSn3eUhMFEmU2CvRse7rLKgYUN";
+//            byte[] hexTx = NativeDataHelper.makeTransaction(seed, txHash, pubKey, 0, "200000000","150000000", "1000000", "mzqiDnETWkunRDZxjUQ34JzN1LDevh5DpU", address);
+//            String hex = byteArrayToHex(hexTx);
+//            Log.i("multy", "raw transaction generated successfully " + hex);
+//        } catch (JniException e) {
+//            e.printStackTrace();
+//        }
     }
 }

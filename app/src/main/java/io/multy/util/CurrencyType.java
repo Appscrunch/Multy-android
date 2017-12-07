@@ -4,10 +4,8 @@
  * See LICENSE for details
  */
 
-package io.multy.model.entities;
+package io.multy.util;
 
-public enum CurrencyCode {
-
-    BTC, ETH, USD, EUR, RUB
-
+public enum CurrencyType {
+    CHAIN, FIAT
 }

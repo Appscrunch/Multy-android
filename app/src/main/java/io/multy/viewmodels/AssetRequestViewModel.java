@@ -17,7 +17,8 @@ import com.google.zxing.common.BitMatrix;
 import java.util.List;
 
 import io.multy.model.DataManager;
-import io.multy.model.entities.Wallet;
+import io.multy.model.entities.wallet.Wallet;
+import io.multy.model.entities.wallet.WalletRealmObject;
 
 /**
  * Created by Ihar Paliashchuk on 14.11.2017.
@@ -37,7 +38,7 @@ public class AssetRequestViewModel extends BaseViewModel {
         dataManager = new DataManager(context);
     }
 
-    public List<Wallet> getWallets(){
+    public List<WalletRealmObject> getWallets(){
         return dataManager.getWallets();
     }
 
@@ -62,7 +63,7 @@ public class AssetRequestViewModel extends BaseViewModel {
         BitMatrix bitMatrix;
         try {
             bitMatrix = new MultiFormatWriter().encode(
-//                    wallet.getAddress(),
+//                    wallet.getCreationAddress(),
                     "bitcoin:" + "1GLY7sDe7a6xsewDdUNA6F8CEoAxQsHV37"  + (amount == 0 ? "" : "?amount=" + amount),
                     BarcodeFormat.QR_CODE,
                     200, 200, null
