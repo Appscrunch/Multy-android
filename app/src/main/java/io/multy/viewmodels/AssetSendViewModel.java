@@ -10,11 +10,14 @@ import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 
 import java.util.List;
+import java.util.Observable;
 
 import io.multy.model.DataManager;
 import io.multy.model.entities.Fee;
 import io.multy.model.entities.wallet.CurrencyCode;
 import io.multy.model.entities.wallet.Wallet;
+import io.multy.model.responses.UserAssetsResponse;
+import io.multy.model.entities.wallet.WalletRealmObject;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -52,9 +55,9 @@ public class AssetSendViewModel extends BaseViewModel {
                 .subscribe(response -> exchangePrice.setValue(response.getUSD()), Throwable::printStackTrace);
     }
 
-    public List<Wallet> getWallets(){
-        return dataManager.getWallets();
-    }
+//    public List<WalletRealmObject> getWalletsFlowable(){
+//        return dataManager.getWalletsFlowable();
+//    }
 
     public void saveWallet(Wallet wallet){
         this.wallet = wallet;
@@ -79,6 +82,10 @@ public class AssetSendViewModel extends BaseViewModel {
 
     public double getAmount(){
         return amount;
+    }
+
+    public void getUserAssetsApi(){
+        dataManager.getUserAssets();
     }
 
     public MutableLiveData<String> getReceiverAddress() {

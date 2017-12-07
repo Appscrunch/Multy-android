@@ -107,7 +107,10 @@ public class AmountChooserFragment extends BaseFragment {
                 && isParsable(inputOriginal.getText().toString())
                 && Double.valueOf(inputOriginal.getText().toString()) != zero) {
             if (!TextUtils.isEmpty(inputOriginal.getText()) &&
-                    (Double.parseDouble(inputOriginal.getText().toString()) > viewModel.getWallet().getBalance())) {
+                    (Double.parseDouble(inputOriginal.getText().toString())
+                            + viewModel.getFee().getAmount()
+                            + (viewModel.getDonationAmount() == null ? zero : Double.parseDouble(viewModel.getDonationAmount()))
+                            > viewModel.getWallet().getBalance())) {
                 Toast.makeText(getActivity(), R.string.error_balance, Toast.LENGTH_LONG).show();
             } else {
                 viewModel.setAmount(Double.valueOf(inputOriginal.getText().toString()));
@@ -247,7 +250,7 @@ public class AmountChooserFragment extends BaseFragment {
         switcher.setOnCheckedChangeListener((compoundButton, isChecked) -> {
 //            viewModel.setPayForCommission(isChecked);
             if (isChecked) {
-//                if (viewModel.getWallet().getBalance() > Double.parseDouble(inputOriginal.getText().toString())) {
+//                if (viewModel.getWalletLive().getBalance() > Double.parseDouble(inputOriginal.getText().toString())) {
 //
 //                }
             } else {

@@ -13,17 +13,25 @@ import android.util.Log;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.samwolfand.oneprefs.Prefs;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 
 import javax.annotation.Nullable;
 
+import io.multy.Multy;
 import io.multy.model.DataManager;
 import io.multy.model.entities.AuthEntity;
+import io.multy.model.entities.wallet.WalletAddress;
 import io.multy.model.entities.wallet.WalletRealmObject;
 import io.multy.model.responses.AuthResponse;
 import io.multy.model.responses.ExchangePriceResponse;
+import io.multy.model.responses.UserAssetsResponse;
 import io.multy.util.Constants;
 import io.reactivex.Observable;
+import io.realm.RealmList;
 import okhttp3.Authenticator;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -62,7 +70,10 @@ public enum MultyApi implements MultyApiInterface {
                             @Nullable
                             @Override
                             public Request authenticate(Route route, okhttp3.Response response) throws IOException {
-                                Call<AuthResponse> responseCall = api.auth(new AuthEntity("userId", "androidId", "admin"));
+                                DataManager dataManager = new DataManager(Multy.getContext());
+                                final String userId = dataManager.getUserId().getUserId();
+                                final String deviceId = dataManager.getDeviceId().getDeviceId();
+                                Call<AuthResponse> responseCall = api.auth(new AuthEntity(userId, deviceId, "admin"));
                                 AuthResponse body = responseCall.execute().body();
                                 Prefs.putString(Constants.PREF_AUTH, body.getToken());
 
@@ -161,23 +172,42 @@ public enum MultyApi implements MultyApiInterface {
 
         @Override
         public void getSpendableOutputs() {
+            RealmList<WalletAddress> addresses = new DataManager(Multy.getContext()).getWallet().getAddresses();
+            if (addresses != null && addresses.size() > 0) {
+                Call<ResponseBody> outputs = api.getSpendableOutputs(addresses.get(0).getAddress());
+                outputs.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        Log.i("wise", "onResponse ");
+                    }
 
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        t.printStackTrace();
+                    }
+                });
+            }
         }
 
         @Override
-        public void getUserAssets() {
-            Call<ResponseBody> responseBodyCall = api.getUserAssets();
-            responseBodyCall.enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    Log.i("wise", "response ");
-                }
+        public Observable<UserAssetsResponse> getUserAssets() {
+            return api.getUserAssets();
+//            responseBodyCall.enqueue(new Callback<ResponseBody>() {
+//                @Override
+//                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//                    Log.i("wise", "response ");
+//                }
+//
+//                @Override
+//                public void onFailure(Call<ResponseBody> call, Throwable t) {
+//                    t.printStackTrace();
+//                }
+//            });
+        }
 
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    t.printStackTrace();
-                }
-            });
+        @Override
+        public Observable<UserAssetsResponse> getWalletAddresses(int walletId) {
+            return api.getWalletAddresses(walletId);
         }
     }
 }

@@ -10,7 +10,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -23,7 +22,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.multy.R;
-import io.multy.ui.activities.AssetSendActivity;
+import io.multy.model.DataManager;
+import io.multy.model.entities.wallet.WalletRealmObject;
 import io.multy.ui.activities.CreateAssetActivity;
 import io.multy.ui.adapters.PortfoliosAdapter;
 import io.multy.ui.adapters.WalletsAdapter;
@@ -40,8 +40,6 @@ public class AssetsFragment extends BaseFragment {
 
     public static final String TAG = AssetsFragment.class.getSimpleName();
 
-    @BindView(R.id.pager_portfolios)
-    ViewPager pagerPortfolios;
     @BindView(R.id.recycler_wallets)
     RecyclerView recyclerWallets;
 
@@ -49,13 +47,19 @@ public class AssetsFragment extends BaseFragment {
     private WalletsAdapter walletsAdapter;
     private PortfoliosAdapter portfoliosAdapter;
 
-    public static AssetsFragment newInstance(){
+    public static AssetsFragment newInstance() {
         return new AssetsFragment();
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ArrayList<WalletRealmObject> wallets = new ArrayList<>();
+        WalletRealmObject wallet = new DataManager(getActivity()).getWallet();
+        if (wallet != null) {
+            wallets.add(wallet);
+        }
+        walletsAdapter = new WalletsAdapter(wallets);
         walletsAdapter = new WalletsAdapter(new ArrayList<>());
         portfoliosAdapter = new PortfoliosAdapter();
     }
@@ -67,7 +71,17 @@ public class AssetsFragment extends BaseFragment {
         subscribeViewModel();
         ButterKnife.bind(this, view);
         initialize();
+        viewModel = ViewModelProviders.of(getActivity()).get(AssetsViewModel.class);
+        viewModel.setContext(getActivity());
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        walletsAdapter.setData(viewModel.getWalletsFromDB());
+//        viewModel.getWalletsFlowable();
+//        viewModel.getWallets().observe(this, walletRealmObjects -> walletsAdapter.setData(walletRealmObjects));
     }
 
     @Override
@@ -98,8 +112,8 @@ public class AssetsFragment extends BaseFragment {
     }
 
     private void setupViewPager() {
-        pagerPortfolios.setAdapter(portfoliosAdapter);
-        pagerPortfolios.setPageMargin(40);
+//        pagerPortfolios.setAdapter(portfoliosAdapter);
+//        pagerPortfolios.setPageMargin(40);
         setVisibilityToPortfolios(false);
     }
 
@@ -145,17 +159,16 @@ public class AssetsFragment extends BaseFragment {
 
     private void setVisibilityToPortfolios(boolean isVisible) {
         int visibility = isVisible ? View.VISIBLE : View.GONE;
-        pagerPortfolios.setVisibility(visibility);
+//        pagerPortfolios.setVisibility(visibility);
     }
 
     @OnClick(R.id.button_add)
     void onPlusClick() {
         showAddWalletActions();
-//        startActivity(new Intent(getActivity(), AssetSendActivity.class));
     }
 
     @OnClick(R.id.title)
-    void onTitleCLick(){
+    void onTitleCLick() {
         getActivity().getSupportFragmentManager()
                 .beginTransaction()
                 .addToBackStack(null)

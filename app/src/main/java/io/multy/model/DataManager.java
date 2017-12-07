@@ -15,17 +15,20 @@ import java.util.List;
 
 import io.multy.api.MultyApi;
 import io.multy.model.entities.ByteSeed;
+import io.multy.model.entities.DeviceId;
 import io.multy.model.entities.Mnemonic;
 import io.multy.model.entities.RootKey;
 import io.multy.model.entities.Token;
 import io.multy.model.entities.UserId;
-import io.multy.model.entities.wallet.Wallet;
 import io.multy.model.entities.wallet.WalletRealmObject;
 import io.multy.model.responses.AuthResponse;
 import io.multy.model.responses.ExchangePriceResponse;
+import io.multy.model.responses.UserAssetsResponse;
 import io.multy.storage.DatabaseHelper;
 import io.multy.util.Constants;
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
+import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -43,29 +46,30 @@ public class DataManager {
         this.database = new DatabaseHelper(context);
     }
 
-    public List<Wallet> getWallets(){
-       return database.getWallets();
-    }
-
-    public void saveRequestWallet(Wallet wallet){
-//        database.saveWallets();
-    }
-
-    public void auth(String userId, String deviceId, String password){
+    public void auth(String userId, String deviceId, String password) {
         MultyApi.INSTANCE.auth(userId, deviceId, password).enqueue(new Callback<AuthResponse>() {
             @Override
             public void onResponse(@NonNull Call<AuthResponse> call, @NonNull Response<AuthResponse> response) {
-                Prefs.putString(Constants.PREF_AUTH, response.body().getToken());
+                database.saveToken(new Token(response.body()));
             }
 
             @Override
             public void onFailure(Call<AuthResponse> call, Throwable t) {
             }
-        });;
+        });
+        ;
     }
 
-    public Observable<ExchangePriceResponse> getExchangePrice(String originalCurrency, String currency){
+    public Observable<ExchangePriceResponse> getExchangePrice(String originalCurrency, String currency) {
         return MultyApi.INSTANCE.getExchangePrice(originalCurrency, currency);
+    }
+
+    public Observable<UserAssetsResponse> getUserAssets(){
+        return MultyApi.INSTANCE.getUserAssets();
+    }
+
+    public Observable<UserAssetsResponse> getWalletAddresses(int walletId){
+        return MultyApi.INSTANCE.getWalletAddresses(walletId);
     }
 
     public void saveRootKey(RootKey key) {
@@ -108,12 +112,36 @@ public class DataManager {
         return database.getWallet();
     }
 
+    public Flowable<RealmResults<WalletRealmObject>> getWalletsFlowable() {
+        return database.getWallets().asFlowable();
+    }
+
+    public RealmResults<WalletRealmObject> getWallets() {
+        return database.getWallets();
+    }
+
+    public WalletRealmObject getWalletById(int walletId) {
+        return database.getWallet();
+    }
+
+    public WalletRealmObject getWallet(int id) {
+        return database.getWalletById(id);
+    }
+
     public void setMnemonic(Mnemonic mnemonic) {
         database.setMnemonic(mnemonic);
     }
 
     public Mnemonic getMnemonic() {
         return database.getMnemonic();
+    }
+
+    public DeviceId getDeviceId() {
+        return database.getDeviceId();
+    }
+
+    public void setDeviceId(DeviceId deviceId) {
+        database.setDeviceId(deviceId);
     }
 
 }
