@@ -35,7 +35,6 @@ import io.multy.ui.fragments.main.ContactsFragment;
 import io.multy.ui.fragments.main.FeedFragment;
 import io.multy.ui.fragments.main.SettingsFragment;
 import io.multy.util.Constants;
-import io.multy.util.NativeDataHelper;
 
 
 public class MainActivity extends BaseActivity implements TabLayout.OnTabSelectedListener {

@@ -64,7 +64,7 @@
         </android.support.v7.widget.Toolbar>
 
         <View
-            android:id="@+id/devider1"
+            android:id="@+id/devider3"
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:background="#e0e3ea"
@@ -83,7 +83,7 @@
             android:paddingRight="16dp"
             android:paddingStart="16dp"
             android:textColorHint="#87a1c5"
-            app:layout_constraintTop_toBottomOf="@+id/devider1">
+            app:layout_constraintTop_toBottomOf="@+id/devider3">
 
             <android.support.design.widget.TextInputEditText
                 android:id="@+id/edit_name"
@@ -101,7 +101,7 @@
         </android.support.design.widget.TextInputLayout>
 
         <View
-            android:id="@+id/devider2"
+            android:id="@+id/devider4"
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:layout_marginStart="16dp"
@@ -121,7 +121,7 @@
             android:paddingRight="16dp"
             android:paddingStart="16dp"
             android:textColorHint="#87a1c5"
-            app:layout_constraintTop_toBottomOf="@+id/devider2">
+            app:layout_constraintTop_toBottomOf="@+id/devider4">
 
             <android.support.design.widget.TextInputEditText
                 android:id="@+id/edit_chain"
@@ -140,7 +140,7 @@
         </android.support.design.widget.TextInputLayout>
 
         <View
-            android:id="@+id/devider3"
+            android:id="@+id/devider1"
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:layout_marginStart="16dp"
@@ -161,7 +161,7 @@
             android:paddingStart="16dp"
             android:textColorHint="#87a1c5"
             android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@+id/devider3">
+            app:layout_constraintTop_toBottomOf="@+id/devider1">
 
             <android.support.design.widget.TextInputEditText
                 android:id="@+id/edit_option"
@@ -180,7 +180,7 @@
         </android.support.design.widget.TextInputLayout>
 
         <View
-            android:id="@+id/devider4"
+            android:id="@+id/devider1"
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:layout_marginStart="16dp"
@@ -201,7 +201,7 @@
             android:paddingRight="16dp"
             android:paddingStart="16dp"
             android:textColorHint="#87a1c5"
-            app:layout_constraintTop_toBottomOf="@+id/devider4">
+            app:layout_constraintTop_toBottomOf="@+id/devider1">
 
             <android.support.design.widget.TextInputEditText
                 android:id="@+id/edit_currency"
@@ -220,7 +220,7 @@
         </android.support.design.widget.TextInputLayout>
 
         <View
-            android:id="@+id/devider5"
+            android:id="@+id/devider2"
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:layout_marginStart="16dp"

@@ -8,7 +8,6 @@ package io.multy.api;
 
 
 import android.provider.Settings;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
