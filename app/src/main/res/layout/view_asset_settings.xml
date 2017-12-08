@@ -42,17 +42,18 @@
                     android:id="@+id/button_cancel"
                     android:layout_width="56dp"
                     android:layout_height="56dp"
-                    android:layout_gravity="start"
+                    android:layout_gravity="center"
                     android:background="?attr/selectableItemBackground"
                     android:clickable="true"
+                    android:focusable="true"
                     android:foreground="?attr/selectableItemBackground"
                     android:paddingEnd="20dp"
                     android:paddingLeft="20dp"
                     android:paddingRight="20dp"
                     android:paddingStart="20dp"
+                    android:scaleType="center"
                     android:tint="#516874"
-                    app:srcCompat="@drawable/ic_cancel_blue"
-                    android:focusable="true" />
+                    app:srcCompat="@drawable/ic_cancel_blue" />
 
                 <TextView
                     android:id="@+id/text_title"
@@ -89,7 +90,7 @@
     </android.support.design.widget.AppBarLayout>
 
     <View
-        android:id="@+id/devider1"
+        android:id="@+id/divider_toolbar"
         app:layout_constraintTop_toBottomOf="@+id/appbar"
         style="@style/Devider" />
 
@@ -100,7 +101,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/devider1">
+        app:layout_constraintTop_toBottomOf="@+id/divider_toolbar">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -116,7 +117,7 @@
                 style="@style/SettingSubtite" />
 
             <View
-                android:id="@+id/devider2"
+                android:id="@+id/divider_general"
                 style="@style/Devider"
                 android:layout_marginTop="17dp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -130,7 +131,7 @@
                 app:hintTextAppearance="@style/HintInputAppearance"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/devider2">
+                app:layout_constraintTop_toBottomOf="@+id/divider_general">
 
                 <android.support.design.widget.TextInputEditText
                     android:id="@+id/edit_name"
@@ -141,7 +142,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <View
-                android:id="@+id/devider3"
+                android:id="@+id/divider_name"
                 style="@style/Devider"
                 android:layout_marginStart="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -149,16 +150,16 @@
                 app:layout_constraintTop_toBottomOf="@+id/text_name" />
 
             <View
-                android:id="@+id/currency_background"
+                android:id="@+id/button_currency"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:background="@color/white"
                 android:clickable="true"
                 android:foreground="?attr/selectableItemBackground"
-                app:layout_constraintBottom_toTopOf="@id/devider4"
+                app:layout_constraintBottom_toTopOf="@id/divider_currency"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/devider3"
+                app:layout_constraintTop_toBottomOf="@id/divider_name"
                 android:focusable="true" />
 
             <TextView
@@ -175,7 +176,7 @@
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/devider3" />
+                app:layout_constraintTop_toBottomOf="@id/divider_name" />
 
             <TextView
                 android:id="@+id/text_currency"
@@ -198,13 +199,13 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginTop="8dp"
-                app:layout_constraintBottom_toTopOf="@+id/devider4"
+                app:layout_constraintBottom_toTopOf="@+id/divider_currency"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/devider3"
+                app:layout_constraintTop_toBottomOf="@+id/divider_name"
                 app:srcCompat="@drawable/ic_arrow_right_grey" />
 
             <View
-                android:id="@+id/devider4"
+                android:id="@+id/divider_currency"
                 style="@style/Devider"
                 android:layout_marginTop="12dp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -218,10 +219,10 @@
                 android:text="@string/security"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/devider4" />
+                app:layout_constraintTop_toBottomOf="@+id/divider_currency" />
 
             <View
-                android:id="@+id/devider5"
+                android:id="@+id/divider_security"
                 style="@style/Devider"
                 android:layout_marginTop="17dp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -246,31 +247,31 @@
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/devider5"
+                app:layout_constraintTop_toBottomOf="@+id/divider_security"
                 android:focusable="true" />
 
             <View
-                android:id="@+id/devider6"
+                android:id="@+id/divider_key"
                 style="@style/Devider"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/button_key" />
 
             <TextView
-                android:id="@+id/text_notice1"
+                android:id="@+id/notice_key"
                 style="@style/NotificationSettings"
                 android:text="@string/about_private_key"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/devider6" />
+                app:layout_constraintTop_toBottomOf="@+id/divider_key" />
 
             <View
-                android:id="@+id/devider7"
+                android:id="@+id/divider_notice"
                 style="@style/Devider"
                 android:layout_marginTop="20dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/text_notice1" />
+                app:layout_constraintTop_toBottomOf="@+id/notice_key" />
 
             <TextView
                 android:id="@+id/button_delete"
@@ -286,24 +287,24 @@
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/devider7"
+                app:layout_constraintTop_toBottomOf="@+id/divider_notice"
                 android:focusable="true" />
 
             <View
-                android:id="@+id/devider8"
+                android:id="@+id/divider_delete"
                 style="@style/Devider"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/button_delete" />
 
             <TextView
-                android:id="@+id/text_notice2"
+                android:id="@+id/notice_delete"
                 style="@style/NotificationSettings"
                 android:text="@string/about_delete_wallet"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/devider8" />
+                app:layout_constraintTop_toBottomOf="@+id/divider_delete" />
 
         </android.support.constraint.ConstraintLayout>
     </ScrollView>

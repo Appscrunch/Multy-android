@@ -32,6 +32,7 @@ import io.multy.R;
 import io.multy.ui.fragments.dialogs.SimpleDialogFragment;
 import io.multy.ui.fragments.main.AssetsFragment;
 import io.multy.ui.fragments.main.ContactsFragment;
+import io.multy.ui.fragments.main.FastOperationsFragment;
 import io.multy.ui.fragments.main.FeedFragment;
 import io.multy.ui.fragments.main.SettingsFragment;
 import io.multy.util.Constants;
@@ -206,5 +207,14 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
 
     @OnClick(R.id.fast_operations)
     void onFastOperationsClick() {
+        Fragment fastOperationsFragment = getSupportFragmentManager()
+                .findFragmentByTag(FastOperationsFragment.TAG);
+        if (fastOperationsFragment == null) {
+            fastOperationsFragment = FastOperationsFragment.newInstance();
+        }
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.full_container, fastOperationsFragment, FastOperationsFragment.TAG)
+                .addToBackStack(FastOperationsFragment.TAG)
+                .commit();
     }
 }

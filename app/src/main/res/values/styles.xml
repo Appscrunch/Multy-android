@@ -222,4 +222,29 @@
         <item name="android:textSize">12sp</item>
     </style>
 
+    <style name="FastButton">
+        <item name="android:layout_width">86dp</item>
+        <item name="android:layout_height">86dp</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+
+    <style name="FastImage">
+        <item name="android:layout_width">99dp</item>
+        <item name="android:layout_height">99dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">false</item>
+        <item name="android:cropToPadding">false</item>
+    </style>
+
+    <style name="FastTitle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">6dp</item>
+        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
 </resources>

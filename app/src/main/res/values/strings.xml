@@ -111,8 +111,9 @@
     <string name="currency_to_convert">Currency to convert</string>
     <string name="security">Security</string>
     <string name="my_private_key">My Private Key</string>
-    <string name="delete_wallet">Delete Wallet
-    </string>    <string name="save">Save</string>
+    <string name="delete_wallet">Delete Wallet</string>
+    <string name="delete_confirm">Are you shure wont to delete this wallet?</string>
+    <string name="save">Save</string>
 
     <string name="about_private_key">
         Private key – A donation is a gift given by physical or legal persons, typically for
@@ -125,4 +126,7 @@
         cash offering, services
     </string>
     <string name="us_dollars_usd">US Dollars ∙ USD</string>
+    <string name="fast_operations">Fast Operations</string>
+    <string name="nfc">NFC</string>
+    <string name="scan">Scan</string>
 </resources>
