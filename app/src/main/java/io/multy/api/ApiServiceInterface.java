@@ -11,6 +11,7 @@ import io.multy.model.entities.AuthEntity;
 import io.multy.model.entities.wallet.WalletRealmObject;
 import io.multy.model.responses.AuthResponse;
 import io.multy.model.responses.ExchangePriceResponse;
+import io.multy.model.responses.UserAssetsResponse;
 import io.reactivex.Observable;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -47,10 +48,13 @@ public interface ApiServiceInterface {
     @GET("api/v1/gettxspeed")
     Call<ResponseBody> getTransactionSpeed();
 
-    @GET("api/v1/getspendableoutputs/{address}")
-    Call<ResponseBody> getSpendableOutputs(@Path("address") String address);
+    @GET("api/v1/getspendableoutputs/{walletIndex}")
+    Call<ResponseBody> getSpendableOutputs(@Path("address") int walletIndex);
 
     @GET("api/v1/getalluserassets")
-    Call<ResponseBody> getUserAssets();
+    Observable<UserAssetsResponse> getUserAssets();
+
+    @GET("api/v1/getwalletaddresses/{walletId}")
+    Observable<UserAssetsResponse> getWalletAddresses(@Path("walletId") int walletId);
 
 }

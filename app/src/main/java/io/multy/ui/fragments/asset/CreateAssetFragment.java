@@ -6,8 +6,8 @@
 
 package io.multy.ui.fragments.asset;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -20,6 +20,7 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -30,7 +31,11 @@ import io.multy.R;
 import io.multy.api.MultyApi;
 import io.multy.model.DataManager;
 import io.multy.model.entities.wallet.WalletRealmObject;
+import io.multy.ui.activities.AssetActivity;
 import io.multy.ui.fragments.BaseFragment;
+import io.multy.ui.fragments.dialogs.ListDialogFragment;
+import io.multy.util.Constants;
+import io.multy.util.CurrencyType;
 import io.multy.util.JniException;
 import io.multy.util.NativeDataHelper;
 import io.multy.viewmodels.WalletViewModel;
@@ -74,17 +79,13 @@ public class CreateAssetFragment extends BaseFragment {
 
     private void subscribeToCurrencyUpdate() {
         walletViewModel = ViewModelProviders.of(getActivity()).get(WalletViewModel.class);
-        walletViewModel.fiatCurrency.observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                //TODO update wallet fiat currency
-            }
+        walletViewModel.fiatCurrency.observe(this, s -> {
+            //TODO update wallet fiat currency
+            textViewFiatCurrency.setText(s);
         });
-        walletViewModel.chainCurrency.observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                //TODO update wallet chain currency
-            }
+        walletViewModel.chainCurrency.observe(this, s -> {
+            //TODO update wallet chain currency
+            textViewChainCurrency.setText(s);
         });
     }
 
@@ -119,27 +120,36 @@ public class CreateAssetFragment extends BaseFragment {
 
     @OnClick(R.id.button_chain)
     public void onClickChain() {
-
+        ArrayList<String> chains = new ArrayList<>(2);
+        chains.add(Constants.BTC);
+        chains.add(Constants.ETH);
+        ListDialogFragment.newInstance(chains, CurrencyType.CHAIN).show(getFragmentManager(), "");
     }
 
     @OnClick(R.id.button_fiat)
     public void onClickFiat() {
-
+        ArrayList<String> chains = new ArrayList<>(3);
+        chains.add(Constants.USD);
+        chains.add(Constants.EUR);
+        ListDialogFragment.newInstance(chains, CurrencyType.FIAT).show(getFragmentManager(), "");
     }
 
     @OnClick(R.id.text_create)
     public void onClickCreate() {
-//        startActivity(new Intent(getContext(), AssetActivity.class));
-        getActivity().finish();
-
+        WalletRealmObject walletRealmObject = null;
         try {
             List<WalletRealmObject> wallets = new DataManager(Multy.getContext()).getWallets();
             final int index = wallets != null && wallets.size() > 0 ? wallets.size() : 0;
-            final int currency = NativeDataHelper.Currency.BITCOIN.getValue(); //TODO implement choosing crypto currency using enum NativeDataHelper.CURRENCY
+            final int currency = NativeDataHelper.Currency.BTC.getValue(); //TODO implement choosing crypto currency using enum NativeDataHelper.CURRENCY
             String creationAddress = NativeDataHelper.makeAccountAddress(new DataManager(getActivity()).getSeed().getSeed(), index, currency);
-            WalletRealmObject walletRealmObject = new WalletRealmObject();
+            walletRealmObject = new WalletRealmObject();
             walletRealmObject.setName(editTextWalletName.getText().toString());
-            walletRealmObject.setCurrency(0);
+
+            if (textViewChainCurrency.getText().toString().equals(Constants.BTC)) {
+                walletRealmObject.setCurrencyId(0);
+            } else {
+                walletRealmObject.setCurrencyId(1);
+            }
             walletRealmObject.setAddressIndex(0);
             walletRealmObject.setCreationAddress(creationAddress);
             walletRealmObject.setWalletIndex(index);
@@ -147,6 +157,14 @@ public class CreateAssetFragment extends BaseFragment {
         } catch (JniException e) {
             e.printStackTrace();
         }
+
+        Intent intent = new Intent(getContext(), AssetActivity.class);
+        if (walletRealmObject != null) {
+            intent.putExtra(Constants.EXTRA_WALLET_ID, walletRealmObject.getWalletIndex());
+        }
+
+        startActivity(intent);
+        getActivity().finish();
     }
 
     @OnClick(R.id.text_cancel)
