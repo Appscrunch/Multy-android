@@ -80,7 +80,9 @@ public class WalletAdapter extends RecyclerView.Adapter<WalletAdapter.WalletHold
         void bind(final WalletRealmObject wallet) {
             textName.setText(wallet.getName());
             textBalanceOriginal.setText(wallet.getBalanceWithCode(CurrencyCode.BTC));
-            textBalanceUsd.setText(wallet.getBalanceFiatWithCode(exchangePrice, CurrencyCode.USD));
+            if (exchangePrice != null) {
+                textBalanceUsd.setText(wallet.getBalanceFiatWithCode(exchangePrice, CurrencyCode.USD));
+            }
             root.setOnClickListener(view -> listener.onWalletClick(wallet));
         }
     }
