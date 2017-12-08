@@ -124,8 +124,6 @@
 
     <string name="wallet_settings">Wallet Settings</string>
     <string name="general">General</string>
-    <string name="wallet_name">Wallet Name</string>
-    <string name="currency_to_convert">Currency to convert</string>
     <string name="security">Security</string>
     <string name="my_private_key">My Private Key</string>
     <string name="delete_wallet">Delete Wallet</string>
