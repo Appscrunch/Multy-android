@@ -111,5 +111,6 @@
     <string name="currency_to_convert">Currency to convert</string>
     <string name="create_wallet">Create Wallet</string>
     <string name="chain">Chain</string>
+    <string name="text_copied">Text was copied to clipboard</string>
 
 </resources>

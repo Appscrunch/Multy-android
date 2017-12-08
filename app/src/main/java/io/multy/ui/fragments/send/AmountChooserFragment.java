@@ -92,8 +92,7 @@ public class AmountChooserFragment extends BaseFragment {
         ButterKnife.bind(this, view);
         viewModel = ViewModelProviders.of(getActivity()).get(AssetSendViewModel.class);
         isAmountSwapped = false;
-        textSpendable.append(Constants.SPACE);
-        textSpendable.append(viewModel.getWallet().getBalanceWithCode());
+        textSpendable.append(viewModel.getWallet().getBalanceWithCode(CurrencyCode.BTC));
         setupSwitcher();
         setupInputOriginal();
         setupInputCurrency();
@@ -270,7 +269,7 @@ public class AmountChooserFragment extends BaseFragment {
             textTotal.append(Constants.SPACE);
             textTotal.append(CurrencyCode.USD.name());
         } else {
-            textTotal.setText(viewModel.getWallet().getBalanceWithCode());
+            textTotal.setText(viewModel.getWallet().getBalanceWithCode(CurrencyCode.BTC));
         }
     }
 
