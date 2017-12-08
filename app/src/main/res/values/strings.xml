@@ -104,6 +104,23 @@
     <string name="ok">Okay</string>
     <string name="main">Main</string>
     <string name="my_wallets">My Wallets</string>
+    <string name="all_addresses">All addresses</string>
+    <string name="btc_adddresses">BTC Addresses</string>
+    <string name="eth">ETH</string>
+    <string name="create">Create</string>
+    <string name="currency_to_convert">Currency to convert</string>
+    <string name="create_wallet">Create Wallet</string>
+    <string name="chain">Chain</string>
+    <string name="select_chain">Select chain</string>
+    <string name="select_currency">Select currencyId</string>
+    <string name="wallet_name">Wallet Name</string>
+    <string name="no_contacts">No contacts yet</string>
+    <string name="no_contacts_message">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
+    <string name="no_activity">No activity yet</string>
+    <string name="no_activity_message">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
+    <string name="multy_name_long">Multi cryptocurrency and\nassets open-source wallet</string>
+
+	<string name="text_copied">Text was copied to clipboard</string>
 
     <string name="wallet_settings">Wallet Settings</string>
     <string name="general">General</string>

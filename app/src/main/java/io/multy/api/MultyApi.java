@@ -7,19 +7,24 @@
 package io.multy.api;
 
 
-import android.provider.Settings;
+import android.content.Context;
 import android.util.Log;
 
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.samwolfand.oneprefs.Prefs;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
 
+import io.multy.Multy;
+import io.multy.model.DataManager;
 import io.multy.model.entities.AuthEntity;
+import io.multy.model.entities.wallet.WalletRealmObject;
 import io.multy.model.responses.AuthResponse;
 import io.multy.model.responses.ExchangePriceResponse;
+import io.multy.model.responses.UserAssetsResponse;
 import io.multy.util.Constants;
 import io.reactivex.Observable;
 import okhttp3.Authenticator;
@@ -45,6 +50,9 @@ public enum MultyApi implements MultyApiInterface {
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl(BASE_URL)
                 .client(new OkHttpClient.Builder()
+                        .connectTimeout(30, TimeUnit.SECONDS)
+                        .writeTimeout(30, TimeUnit.SECONDS)
+                        .readTimeout(30, TimeUnit.SECONDS)
                         .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
                         .addInterceptor(chain -> {
                             Request original = chain.request();
@@ -60,7 +68,10 @@ public enum MultyApi implements MultyApiInterface {
                             @Nullable
                             @Override
                             public Request authenticate(Route route, okhttp3.Response response) throws IOException {
-                                Call<AuthResponse> responseCall = api.auth(new AuthEntity("userId", Settings.Secure.ANDROID_ID, "admin"));
+                                DataManager dataManager = new DataManager(Multy.getContext());
+                                final String userId = dataManager.getUserId().getUserId();
+                                final String deviceId = dataManager.getDeviceId().getDeviceId();
+                                Call<AuthResponse> responseCall = api.auth(new AuthEntity(userId, deviceId, "somePushToken", 0));
                                 AuthResponse body = responseCall.execute().body();
                                 Prefs.putString(Constants.PREF_AUTH, body.getToken());
 
@@ -73,9 +84,11 @@ public enum MultyApi implements MultyApiInterface {
                 .build().create(ApiServiceInterface.class);
 
         @Override
-        public Call<AuthResponse> auth(String userId, String deviceId, String password) {
-            Call<AuthResponse> responseCall = api.auth(new AuthEntity(userId, deviceId, password));
-            return responseCall;
+        public Call<AuthResponse> auth(String userIdString, String deviceIdString, String password) {
+            DataManager dataManager = new DataManager(Multy.getContext());
+            final String userId = dataManager.getUserId().getUserId();
+            final String deviceId = dataManager.getDeviceId().getDeviceId();
+            return api.auth(new AuthEntity(userId, deviceId, "somePushToken", 0));
         }
 
         @Override
@@ -105,8 +118,21 @@ public enum MultyApi implements MultyApiInterface {
         }
 
         @Override
-        public void addWallet(String wallet) {
+        public void addWallet(Context context, WalletRealmObject wallet) {
             Call<ResponseBody> responseCall = api.addWallet(wallet);
+            responseCall.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()) {
+                        new DataManager(context).saveWallet(wallet);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    t.printStackTrace();
+                }
+            });
         }
 
         @Override
@@ -127,6 +153,59 @@ public enum MultyApi implements MultyApiInterface {
         @Override
         public void getTransactionInfo(String transactionId) {
             Call<ResponseBody> responseCall = api.getTransactionInfo(transactionId);
+        }
+
+        @Override
+        public void getTransactionSpeed() {
+            Call<ResponseBody> speed = api.getTransactionSpeed();
+            speed.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    Log.i("wise", "onResponse");
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.i("wise", "onFailure");
+                }
+            });
+        }
+
+        @Override
+        public void getSpendableOutputs(int walletIndex) {
+            Call<ResponseBody> outputs = api.getSpendableOutputs(walletIndex);
+            outputs.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    Log.i("wise", "onResponse ");
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    t.printStackTrace();
+                }
+            });
+        }
+
+        @Override
+        public Observable<UserAssetsResponse> getUserAssets() {
+            return api.getUserAssets();
+//            responseBodyCall.enqueue(new Callback<ResponseBody>() {
+//                @Override
+//                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//                    Log.i("wise", "response ");
+//                }
+//
+//                @Override
+//                public void onFailure(Call<ResponseBody> call, Throwable t) {
+//                    t.printStackTrace();
+//                }
+//            });
+        }
+
+        @Override
+        public Observable<UserAssetsResponse> getWalletAddresses(int walletId) {
+            return api.getWalletAddresses(walletId);
         }
     }
 }

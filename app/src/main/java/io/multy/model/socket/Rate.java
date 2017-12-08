@@ -4,10 +4,7 @@
  * See LICENSE for details
  */
 
-package io.multy.model.entities;
+package io.multy.model.socket;
 
-public enum CurrencyCode {
-
-    BTC, ETH, USD, EUR, RUB
-
+public class Rate {
 }

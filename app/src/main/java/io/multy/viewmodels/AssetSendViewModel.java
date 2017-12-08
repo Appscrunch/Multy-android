@@ -10,10 +10,14 @@ import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 
 import java.util.List;
+import java.util.Observable;
 
 import io.multy.model.DataManager;
-import io.multy.model.entities.CurrencyCode;
-import io.multy.model.entities.Wallet;
+import io.multy.model.entities.Fee;
+import io.multy.model.entities.wallet.CurrencyCode;
+import io.multy.model.entities.wallet.Wallet;
+import io.multy.model.responses.UserAssetsResponse;
+import io.multy.model.entities.wallet.WalletRealmObject;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -25,8 +29,8 @@ import io.reactivex.schedulers.Schedulers;
 public class AssetSendViewModel extends BaseViewModel {
 
     private DataManager dataManager;
-    private Wallet wallet;
-    private Wallet fee;
+    private WalletRealmObject wallet;
+    private Fee fee;
     private double amount;
     private boolean isPayForCommission;
     private MutableLiveData<String> receiverAddress = new MutableLiveData<>();
@@ -51,24 +55,23 @@ public class AssetSendViewModel extends BaseViewModel {
                 .subscribe(response -> exchangePrice.setValue(response.getUSD()), Throwable::printStackTrace);
     }
 
-    public List<Wallet> getWallets(){
-        return dataManager.getWallets();
-    }
+//    public List<WalletRealmObject> getWalletsFlowable(){
+//        return dataManager.getWalletsFlowable();
+//    }
 
-    public void saveWallet(Wallet wallet){
+    public void setWallet(WalletRealmObject wallet){
         this.wallet = wallet;
-//        dataManager.saveRequestWallet(wallet);
     }
 
-    public Wallet getWallet(){
+    public WalletRealmObject getWallet(){
         return wallet;
     }
 
-    public void saveFee(Wallet fee){
+    public void saveFee(Fee fee){
         this.fee = fee;
     }
 
-    public Wallet getFee(){
+    public Fee getFee(){
         return fee;
     }
 
@@ -78,6 +81,10 @@ public class AssetSendViewModel extends BaseViewModel {
 
     public double getAmount(){
         return amount;
+    }
+
+    public void getUserAssetsApi(){
+        dataManager.getUserAssets();
     }
 
     public MutableLiveData<String> getReceiverAddress() {
@@ -110,5 +117,9 @@ public class AssetSendViewModel extends BaseViewModel {
 
     public void setPayForCommission(boolean payForCommission) {
         isPayForCommission = payForCommission;
+    }
+
+    public List<WalletRealmObject> getWalletsDB(){
+        return dataManager.getWallets();
     }
 }

@@ -29,8 +29,12 @@ public class Constants {
 
     public static final int CAMERA_REQUEST_CODE = 328;
     public static final String EXTRA_QR_CONTENTS = "EXTRA_QR_CONTENTS";
+    public static final String EXTRA_WALLET_ID = "EXTRA_WALLET_ID";
 
     public static final String DEEP_LINK_QR_CODE = "QR_CODE";
 
-
+    public final static String BTC = "BTC";
+    public final static String ETH = "ETH";
+    public final static String USD = "USD";
+    public final static String EUR = "EUR";
 }

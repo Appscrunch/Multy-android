@@ -29,6 +29,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.branch.referral.Branch;
 import io.multy.R;
+import io.multy.api.MultyApi;
 import io.multy.ui.fragments.dialogs.SimpleDialogFragment;
 import io.multy.ui.fragments.main.AssetsFragment;
 import io.multy.ui.fragments.main.ContactsFragment;
@@ -55,7 +56,7 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
         setupFooter();
         setFragment(R.id.container_frame, AssetsFragment.newInstance());
 
-//        preventRootIfDetected();
+        preventRootIfDetected();
     }
 
     private void preventRootIfDetected() {
@@ -66,14 +67,13 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
         }
     }
 
-    
     @Override
     protected void onResume() {
         super.onResume();
         initBranchIO();
     }
 
-    private void initBranchIO(){
+    private void initBranchIO() {
         Branch branch = Branch.getInstance(getApplicationContext());
 
         branch.initSession((referringParams, error) -> {
@@ -187,9 +187,9 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
             ImageView image = view.findViewById(R.id.image_logo);
             int filterColor;
             if (mustEnable) {
-                filterColor = ContextCompat.getColor(this, R.color.tab_active);
+                filterColor = ContextCompat.getColor(this, R.color.blue);
             } else {
-                filterColor = ContextCompat.getColor(this, R.color.tab_inactive);
+                filterColor = ContextCompat.getColor(this, R.color.blue_light);
             }
             title.setTextColor(filterColor);
             image.setColorFilter(filterColor, PorterDuff.Mode.SRC_IN);

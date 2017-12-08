@@ -6,6 +6,7 @@
 
 package io.multy.viewmodels;
 
+import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.graphics.Bitmap;
 
@@ -17,7 +18,11 @@ import com.google.zxing.common.BitMatrix;
 import java.util.List;
 
 import io.multy.model.DataManager;
-import io.multy.model.entities.Wallet;
+import io.multy.model.entities.wallet.CurrencyCode;
+import io.multy.model.entities.wallet.Wallet;
+import io.multy.model.entities.wallet.WalletRealmObject;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by Ihar Paliashchuk on 14.11.2017.
@@ -27,8 +32,10 @@ import io.multy.model.entities.Wallet;
 public class AssetRequestViewModel extends BaseViewModel {
 
     private DataManager dataManager;
-    private Wallet wallet;
+    private WalletRealmObject wallet;
     private double amount;
+//    private MutableLiveData<List<WalletRealmObject>> wallets = new MutableLiveData<>();
+    private MutableLiveData<Double> exchangePrice = new MutableLiveData<>();
 
     public AssetRequestViewModel() {
     }
@@ -37,16 +44,26 @@ public class AssetRequestViewModel extends BaseViewModel {
         dataManager = new DataManager(context);
     }
 
-    public List<Wallet> getWallets(){
+    public void getApiExchangePrice(){
+        dataManager.getExchangePrice(CurrencyCode.BTC.name(), CurrencyCode.USD.name())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(response -> exchangePrice.setValue(response.getUSD()), Throwable::printStackTrace);
+    }
+
+    public List<WalletRealmObject> getWallets(){
         return dataManager.getWallets();
     }
 
-    public void saveWallet(Wallet wallet){
-        this.wallet = wallet;
-//        dataManager.saveRequestWallet(wallet);
+    public MutableLiveData<Double> getExchangePrice() {
+        return exchangePrice;
     }
 
-    public Wallet getWallet(){
+    public void setWallet(WalletRealmObject wallet){
+        this.wallet = wallet;
+    }
+
+    public WalletRealmObject getWallet(){
         return wallet;
     }
 
@@ -62,7 +79,7 @@ public class AssetRequestViewModel extends BaseViewModel {
         BitMatrix bitMatrix;
         try {
             bitMatrix = new MultiFormatWriter().encode(
-//                    wallet.getAddress(),
+//                    wallet.getCreationAddress(),
                     "bitcoin:" + "1GLY7sDe7a6xsewDdUNA6F8CEoAxQsHV37"  + (amount == 0 ? "" : "?amount=" + amount),
                     BarcodeFormat.QR_CODE,
                     200, 200, null
@@ -91,6 +108,10 @@ public class AssetRequestViewModel extends BaseViewModel {
 
     public String getQr(){
         return "bitcoin:" + "1GLY7sDe7a6xsewDdUNA6F8CEoAxQsHV37"  + (amount == 0 ? "" : "?amount=" + amount);
+    }
+
+    public List<WalletRealmObject> getWalletsDB(){
+        return dataManager.getWallets();
     }
 
 }

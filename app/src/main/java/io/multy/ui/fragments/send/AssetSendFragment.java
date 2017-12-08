@@ -46,8 +46,9 @@ public class AssetSendFragment extends BaseFragment {
         ButterKnife.bind(this, view);
         viewModel = ViewModelProviders.of(getActivity()).get(AssetSendViewModel.class);
         viewModel.setContext(getActivity());
-        viewModel.auth();
+        viewModel.getApiExchangePrice();
         viewModel.getReceiverAddress().observe(this, s -> inputAddress.setText(s));
+        viewModel.getUserAssetsApi();
         setupInputAddress();
         return view;
     }
