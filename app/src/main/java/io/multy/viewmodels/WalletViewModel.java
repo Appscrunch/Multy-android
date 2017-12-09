@@ -7,11 +7,12 @@
 package io.multy.viewmodels;
 
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
 import android.content.Context;
 
 import java.util.List;
 
+import io.multy.Multy;
+import io.multy.Multy;
 import io.multy.model.DataManager;
 import io.multy.model.entities.wallet.CurrencyCode;
 import io.multy.model.entities.wallet.WalletAddress;
@@ -20,8 +21,9 @@ import io.multy.model.responses.UserAssetsResponse;
 import io.multy.model.responses.WalletInfo;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
+import io.realm.RealmResults;
+import io.realm.RealmResults;
 import timber.log.Timber;
 
 public class WalletViewModel extends BaseViewModel {
@@ -78,7 +80,7 @@ public class WalletViewModel extends BaseViewModel {
         return exchangePrice;
     }
 
-    public void addWallet(){
+    public void addWallet() {
 
     }
 
@@ -86,8 +88,13 @@ public class WalletViewModel extends BaseViewModel {
         return addresses;
     }
 
-    public WalletRealmObject getWallet(int walletId) {
-        WalletRealmObject wallet = dataManager.getWallet();
+    public WalletRealmObject getWallet() {
+        dataManager = new DataManager(Multy.getContext());
+        RealmResults<WalletRealmObject> wallets = dataManager.getWallets();
+        WalletRealmObject wallet = new WalletRealmObject();
+        if (wallets.size() > 0) {
+            wallet = wallets.get(wallets.size() - 1);
+        }
         this.wallet.setValue(wallet);
         return wallet;
     }

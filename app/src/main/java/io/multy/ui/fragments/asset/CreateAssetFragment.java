@@ -35,10 +35,19 @@ import io.multy.ui.activities.AssetActivity;
 import io.multy.ui.fragments.BaseFragment;
 import io.multy.ui.fragments.dialogs.ListDialogFragment;
 import io.multy.util.Constants;
+import io.multy.util.Constants;
 import io.multy.util.CurrencyType;
 import io.multy.util.JniException;
 import io.multy.util.NativeDataHelper;
 import io.multy.viewmodels.WalletViewModel;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by anschutz1927@gmail.com on 23.11.17.
@@ -121,17 +130,16 @@ public class CreateAssetFragment extends BaseFragment {
     @OnClick(R.id.button_chain)
     public void onClickChain() {
         ArrayList<String> chains = new ArrayList<>(2);
-        chains.add("Bitcoin");
-        chains.add("Ethereum");
+        chains.add(Constants.BTC);
+        chains.add(Constants.ETH);
         ListDialogFragment.newInstance(chains, CurrencyType.CHAIN).show(getFragmentManager(), "");
     }
 
     @OnClick(R.id.button_fiat)
     public void onClickFiat() {
         ArrayList<String> chains = new ArrayList<>(3);
-        chains.add("USD");
-        chains.add("EUR");
-        chains.add("BYN");
+        chains.add(Constants.USD);
+        chains.add(Constants.EUR);
         ListDialogFragment.newInstance(chains, CurrencyType.FIAT).show(getFragmentManager(), "");
     }
 
@@ -141,26 +149,48 @@ public class CreateAssetFragment extends BaseFragment {
         try {
             List<WalletRealmObject> wallets = new DataManager(Multy.getContext()).getWallets();
             final int index = wallets != null && wallets.size() > 0 ? wallets.size() : 0;
-            final int currency = NativeDataHelper.Currency.BITCOIN.getValue(); //TODO implement choosing crypto currency using enum NativeDataHelper.CURRENCY
+            final int currency = NativeDataHelper.Currency.BTC.getValue(); //TODO implement choosing crypto currency using enum NativeDataHelper.CURRENCY
             String creationAddress = NativeDataHelper.makeAccountAddress(new DataManager(getActivity()).getSeed().getSeed(), index, currency);
             walletRealmObject = new WalletRealmObject();
             walletRealmObject.setName(editTextWalletName.getText().toString());
-            walletRealmObject.setCurrency(0);
+
+//            if (textViewChainCurrency.getText().toString().equals(Constants.BTC)) {
+                walletRealmObject.setCurrency(0);
+//            } else {
+//                walletRealmObject.setCurrency(1);
+//            }
             walletRealmObject.setAddressIndex(0);
             walletRealmObject.setCreationAddress(creationAddress);
             walletRealmObject.setWalletIndex(index);
-            MultyApi.INSTANCE.addWallet(getActivity(), walletRealmObject);
+            saveWallet(walletRealmObject);
         } catch (JniException e) {
             e.printStackTrace();
         }
+    }
 
-        Intent intent = new Intent(getContext(), AssetActivity.class);
-        if (walletRealmObject != null) {
-            intent.putExtra(Constants.EXTRA_WALLET_ID, walletRealmObject.getWalletIndex());
-        }
+    private void saveWallet(WalletRealmObject walletRealmObject) {
+        Call<ResponseBody> responseBodyCall = MultyApi.INSTANCE.addWallet(getActivity(), walletRealmObject);
+        responseBodyCall.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    new DataManager(getActivity()).saveWallet(walletRealmObject);
 
-        startActivity(intent);
-        getActivity().finish();
+                    Intent intent = new Intent(getContext(), AssetActivity.class);
+                    if (walletRealmObject != null) {
+                        intent.putExtra(Constants.EXTRA_WALLET_ID, walletRealmObject.getWalletIndex());
+                    }
+
+                    startActivity(intent);
+                    getActivity().finish();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
     }
 
     @OnClick(R.id.text_cancel)

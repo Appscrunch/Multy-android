@@ -6,7 +6,6 @@
 
 package io.multy.ui.fragments.asset;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -17,8 +16,10 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,12 +79,18 @@ public class AssetInfoFragment extends BaseFragment {
 
         viewModel = ViewModelProviders.of(getActivity()).get(WalletViewModel.class);
         viewModel.setContext(getActivity());
-        WalletRealmObject wallet = viewModel.getWallet(getActivity().getIntent().getIntExtra(Constants.EXTRA_WALLET_ID, 0));
+//        WalletRealmObject wallet = viewModel.getWallet(getActivity().getIntent().getIntExtra(Constants.EXTRA_WALLET_ID, 0));
+        WalletRealmObject wallet = viewModel.getWallet();
         if (wallet != null) {
             setupWalletInfo(wallet);
         } else {
             viewModel.getWalletLive().observe(this, this::setupWalletInfo);
         }
+
+        textAddress.setText(viewModel.getWallet().getCreationAddress());
+        Log.i("wise", "address " + textAddress.getText().toString());
+        textBalanceOriginal.setText(String.valueOf(viewModel.getWallet().getBalance()));
+        textBalanceFiat.setText(String.valueOf(viewModel.getWallet().getFiatCurrency()));
 
         initialize();
         return view;
@@ -147,7 +154,22 @@ public class AssetInfoFragment extends BaseFragment {
     }
 
     @OnClick(R.id.close)
-    void onClickClose() {
+    void onCloseClick() {
         getActivity().finish();
+    }
+
+    @OnClick(R.id.options)
+    void onOptionsClick() {
+        Fragment fragment = getFragmentManager().findFragmentByTag(AssetSettingsFragment.TAG);
+        if (fragment == null) {
+            fragment = AssetSettingsFragment.newInstance();
+        }
+        View parentView = getActivity().findViewById(R.id.frame_container);
+        if (parentView != null) {
+            getFragmentManager().beginTransaction()
+                    .replace(parentView.getId(), fragment)
+                    .addToBackStack(AssetSettingsFragment.TAG)
+                    .commit();
+        }
     }
 }

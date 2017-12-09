@@ -35,7 +35,7 @@ public interface ApiServiceInterface {
     @GET("api/v1/getaddressbalance/{address}")
     Call<ResponseBody> getBalance(@Path("address") String address);
 
-    @POST("api/v1/addwallet")
+    @POST("api/v1/wallet")
     Call<ResponseBody> addWallet(@Body WalletRealmObject wallet);
 
     @GET("api/v1/getexchangeprice/{firstCurrency}/{secondCurrency}")
@@ -48,8 +48,8 @@ public interface ApiServiceInterface {
     @GET("api/v1/gettxspeed")
     Call<ResponseBody> getTransactionSpeed();
 
-    @GET("api/v1/getspendableoutputs/{address}")
-    Call<ResponseBody> getSpendableOutputs(@Path("address") String address);
+    @GET("api/v1/getspendableoutputs/{walletIndex}")
+    Call<ResponseBody> getSpendableOutputs(@Path("walletIndex") int walletIndex);
 
     @GET("api/v1/getalluserassets")
     Observable<UserAssetsResponse> getUserAssets();
