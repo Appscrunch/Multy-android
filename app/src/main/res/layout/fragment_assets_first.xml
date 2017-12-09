@@ -101,5 +101,4 @@
         app:layout_constraintEnd_toEndOf="@+id/button_restore"
         app:layout_constraintStart_toStartOf="@+id/button_restore"
         app:layout_constraintTop_toTopOf="@+id/button_restore" />
-
 </android.support.constraint.ConstraintLayout>
