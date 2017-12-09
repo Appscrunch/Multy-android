@@ -36,6 +36,7 @@ import io.multy.ui.fragments.main.FastOperationsFragment;
 import io.multy.ui.fragments.main.FeedFragment;
 import io.multy.ui.fragments.main.SettingsFragment;
 import io.multy.util.Constants;
+import io.multy.util.NativeDataHelper;
 
 
 public class MainActivity extends BaseActivity implements TabLayout.OnTabSelectedListener {
@@ -54,7 +55,7 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
         isFirstFragmentCreation = true;
         setupFooter();
         setFragment(R.id.container_frame, AssetsFragment.newInstance());
-
+        
 //        preventRootIfDetected();
 
 //        MultyApi.INSTANCE.getWalletAddresses(0)

@@ -22,6 +22,7 @@ import io.multy.R;
 import io.multy.api.MultyApi;
 import io.multy.model.DataManager;
 import io.multy.model.entities.wallet.CurrencyCode;
+import io.multy.model.entities.wallet.CurrencyCode;
 import io.multy.ui.fragments.BaseFragment;
 import io.multy.util.JniException;
 import io.multy.util.NativeDataHelper;

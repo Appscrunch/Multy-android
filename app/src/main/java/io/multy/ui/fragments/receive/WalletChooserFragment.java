@@ -6,6 +6,7 @@
 
 package io.multy.ui.fragments.receive;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -17,6 +18,8 @@ import android.view.ViewGroup;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.multy.R;
+import io.multy.model.entities.wallet.WalletRealmObject;
+import io.multy.model.entities.wallet.Wallet;
 import io.multy.model.entities.wallet.WalletRealmObject;
 import io.multy.ui.activities.AssetRequestActivity;
 import io.multy.ui.adapters.WalletAdapter;

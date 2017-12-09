@@ -12,6 +12,7 @@ import android.content.Context;
 import java.util.List;
 
 import io.multy.Multy;
+import io.multy.Multy;
 import io.multy.model.DataManager;
 import io.multy.model.entities.wallet.CurrencyCode;
 import io.multy.model.entities.wallet.WalletAddress;
@@ -21,6 +22,7 @@ import io.multy.model.responses.WalletInfo;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import io.realm.RealmResults;
 import io.realm.RealmResults;
 import timber.log.Timber;
 
@@ -63,7 +65,7 @@ public class WalletViewModel extends BaseViewModel {
                 }, Throwable::printStackTrace);
     }
 
-    public void getApiExchangePrice() {
+    public void getApiExchangePrice(){
         dataManager.getExchangePrice(CurrencyCode.BTC.name(), CurrencyCode.USD.name())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
@@ -100,6 +102,8 @@ public class WalletViewModel extends BaseViewModel {
     public MutableLiveData<WalletRealmObject> getWalletLive() {
         return wallet;
     }
+
+
 
 
 }

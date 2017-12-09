@@ -14,12 +14,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.multy.R;
+import io.multy.model.entities.wallet.BitcoinWallet;
 import io.multy.model.entities.wallet.CurrencyCode;
+import io.multy.model.entities.wallet.Wallet;
 import io.multy.model.entities.wallet.WalletRealmObject;
 
 

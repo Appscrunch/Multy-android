@@ -1,5 +1,6 @@
 package io.multy.ui.adapters;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import io.multy.R;
 import io.multy.model.entities.wallet.WalletRealmObject;
 import io.multy.ui.activities.AssetActivity;
 import io.multy.util.Constants;
+import io.multy.util.NativeDataHelper;
 
 /**
  * Created by appscrunch on 16.11.17.
