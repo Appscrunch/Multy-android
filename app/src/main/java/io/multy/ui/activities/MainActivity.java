@@ -29,10 +29,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.branch.referral.Branch;
 import io.multy.R;
-import io.multy.api.MultyApi;
 import io.multy.ui.fragments.dialogs.SimpleDialogFragment;
 import io.multy.ui.fragments.main.AssetsFragment;
 import io.multy.ui.fragments.main.ContactsFragment;
+import io.multy.ui.fragments.main.FastOperationsFragment;
 import io.multy.ui.fragments.main.FeedFragment;
 import io.multy.ui.fragments.main.SettingsFragment;
 import io.multy.util.Constants;
@@ -56,6 +56,29 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
         setFragment(R.id.container_frame, AssetsFragment.newInstance());
 
 //        preventRootIfDetected();
+
+//        MultyApi.INSTANCE.getWalletAddresses(0)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new Consumer<UserAssetsResponse>() {
+//                    @Override
+//                    public void accept(UserAssetsResponse userAssetsResponse) throws Exception {
+//                        Log.i("wise", "accept");
+//                    }
+//                });
+
+//        Call<ResponseBody> responseBodyCall = MultyApi.INSTANCE.getSpendableOutputs(0);
+//        responseBodyCall.enqueue(new Callback<ResponseBody>() {
+//            @Override
+//            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//                Log.i("wise", "onResponse ");
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ResponseBody> call, Throwable t) {
+//                t.printStackTrace();
+//            }
+//        });
     }
 
     private void preventRootIfDetected() {
@@ -206,7 +229,16 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
 
     @OnClick(R.id.fast_operations)
     void onFastOperationsClick() {
-        MultyApi.INSTANCE.getSpendableOutputs();
+        Fragment fastOperationsFragment = getSupportFragmentManager()
+                .findFragmentByTag(FastOperationsFragment.TAG);
+        if (fastOperationsFragment == null) {
+            fastOperationsFragment = FastOperationsFragment.newInstance();
+        }
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.full_container, fastOperationsFragment, FastOperationsFragment.TAG)
+                .addToBackStack(FastOperationsFragment.TAG)
+                .commit();
+//        MultyApi.INSTANCE.getSpendableOutputs();
 //        MultyApi.INSTANCE.getUserAssets()
 //                .subscribeOn(Schedulers.io())
 //                .observeOn(AndroidSchedulers.mainThread())

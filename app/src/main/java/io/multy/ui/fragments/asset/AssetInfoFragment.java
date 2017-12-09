@@ -12,8 +12,10 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,6 +77,7 @@ public class AssetInfoFragment extends BaseFragment {
 //        });
 
         textAddress.setText(viewModel.getWallet().getCreationAddress());
+        Log.i("wise", "address " + textAddress.getText().toString());
         textBalanceOriginal.setText(String.valueOf(viewModel.getWallet().getBalance()));
         textBalanceFiat.setText(String.valueOf(viewModel.getWallet().getFiatCurrency()));
 
@@ -122,5 +125,20 @@ public class AssetInfoFragment extends BaseFragment {
     @OnClick(R.id.close)
     void onCloseClick() {
         getActivity().finish();
+    }
+
+    @OnClick(R.id.options)
+    void onOptionsClick() {
+        Fragment fragment = getFragmentManager().findFragmentByTag(AssetSettingsFragment.TAG);
+        if (fragment == null) {
+            fragment = AssetSettingsFragment.newInstance();
+        }
+        View parentView = getActivity().findViewById(R.id.frame_container);
+        if (parentView != null) {
+            getFragmentManager().beginTransaction()
+                    .replace(parentView.getId(), fragment)
+                    .addToBackStack(AssetSettingsFragment.TAG)
+                    .commit();
+        }
     }
 }
