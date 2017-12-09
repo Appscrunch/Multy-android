@@ -144,4 +144,6 @@
     <string name="fast_operations">Fast Operations</string>
     <string name="nfc">NFC</string>
     <string name="scan">Scan</string>
+    <string name="create_first_wallet">Create First Wallet</string>
+    <string name="restore_multy">Restore Multy</string>
 </resources>
