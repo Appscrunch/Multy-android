@@ -37,5 +37,6 @@
     <color name="grey_light">#e5e5e5</color>
 
     <color name="blue_transparent">#b3007aff</color>
+    <color name="divider_blue">#7887a1c5</color>
 
 </resources>
