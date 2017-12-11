@@ -6,22 +6,20 @@
 
 package io.multy.ui.fragments;
 
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.view.View;
+
+import io.multy.viewmodels.BaseViewModel;
 
 public class BaseFragment extends Fragment {
 
-    public void showLocalError() {
-    }
+    private BaseViewModel baseViewModel;
 
-    public void showPinDialog() {
-    }
-
-    public boolean isDeviceRooted() {
-        return false;
-    }
-
-    public boolean isDeviceEmulator() {
-        return false;
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
     }
 
 }
