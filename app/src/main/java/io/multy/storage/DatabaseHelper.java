@@ -50,6 +50,9 @@ public class DatabaseHelper {
     public void saveAmount(WalletRealmObject wallet, double amount) {
         realm.executeTransaction(realm -> {
             wallet.setBalance(amount);
+            realm.insertOrUpdate(wallet);
+        });
+    }
 
     public void saveAddress(WalletRealmObject wallet, WalletAddress address) {
         realm.executeTransaction(realm -> {
