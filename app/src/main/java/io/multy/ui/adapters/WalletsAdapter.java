@@ -17,6 +17,7 @@ import io.multy.R;
 import io.multy.model.entities.wallet.WalletRealmObject;
 import io.multy.ui.activities.AssetActivity;
 import io.multy.util.Constants;
+import io.multy.util.NativeDataHelper;
 
 /**
  * Created by appscrunch on 16.11.17.
@@ -37,11 +38,15 @@ public class WalletsAdapter extends RecyclerView.Adapter<WalletsAdapter.Holder> 
 
     @Override
     public void onBindViewHolder(Holder holder, int position) {
-//        NativeDataHelper.Currency chain = NativeDataHelper.Currency.values()[data.get(position).getChain()];
+        NativeDataHelper.Currency chain = NativeDataHelper.Currency.values()[data.get(position).getCurrency()];
         holder.name.setText(data.get(position).getName());
-        holder.amount.setText(String.valueOf(data.get(position).getBalance()));
-//        holder.currency.setText(String.valueOf(NativeDataHelper.Currency.values()[data.get(position).getChain()]));
-//        holder.imageChain.setImageResource(chain == NativeDataHelper.Currency.BTC ? R.drawable.ic_btc_huge : R.drawable.ic_eth_medium_icon);
+        double balance = data.get(position).getBalance();
+        if (balance != 0) {
+            balance = balance / Math.pow(10, 8);
+        }
+        holder.amount.setText(String.valueOf(balance));
+        holder.currency.setText(String.valueOf(NativeDataHelper.Currency.values()[data.get(position).getCurrency()]));
+        holder.imageChain.setImageResource(chain == NativeDataHelper.Currency.BTC ? R.drawable.ic_btc_huge : R.drawable.ic_eth_medium_icon);
         holder.itemView.setOnClickListener(view -> {
             Intent intent = new Intent(view.getContext(), AssetActivity.class);
             intent.putExtra(Constants.EXTRA_WALLET_ID, data.get(position).getWalletIndex());
@@ -57,6 +62,19 @@ public class WalletsAdapter extends RecyclerView.Adapter<WalletsAdapter.Holder> 
     public void setData(List<WalletRealmObject> data) {
         this.data = data;
         notifyDataSetChanged();
+    }
+
+    public void setAmount(int position, double amount) {
+        data.get(position).setBalance(amount);
+        notifyItemChanged(position);
+    }
+
+    public List<WalletRealmObject> getData() {
+        return data;
+    }
+
+    public WalletRealmObject getItem(int position) {
+        return data.get(position);
     }
 
     class Holder extends RecyclerView.ViewHolder {

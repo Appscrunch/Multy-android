@@ -4,8 +4,10 @@ package io.multy.api;
 import android.content.Context;
 
 import io.multy.model.entities.wallet.WalletRealmObject;
+import io.multy.model.responses.AddressBalanceResponse;
 import io.multy.model.responses.AuthResponse;
 import io.multy.model.responses.ExchangePriceResponse;
+import io.multy.model.responses.OutputsResponse;
 import io.multy.model.responses.UserAssetsResponse;
 import io.reactivex.Observable;
 import okhttp3.ResponseBody;
@@ -19,7 +21,7 @@ public interface MultyApiInterface {
 
     void getAssetsInfo();
 
-    void getBalance(String address);
+    Call<AddressBalanceResponse>  getBalanceByAddress(int currencyId, String address);
 
     Call<ResponseBody> addWallet(Context context, WalletRealmObject wallet);
 
@@ -29,11 +31,11 @@ public interface MultyApiInterface {
 
     void getTransactionSpeed();
 
-    Call<ResponseBody> getSpendableOutputs(int walletIndex);
+    Call<OutputsResponse> getSpendableOutputs(int net, String address);
 
     Observable<UserAssetsResponse> getUserAssets();
 
     Observable<UserAssetsResponse> getWalletAddresses(int walletId);
 
-    Call<ResponseBody> sendRawTransaction(String transactionHex);
+    Call<ResponseBody> sendRawTransaction(String transactionHex, int currencyId);
 }
