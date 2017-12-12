@@ -10,10 +10,12 @@ import android.content.Context;
 
 import io.multy.model.entities.ByteSeed;
 import io.multy.model.entities.DeviceId;
+import io.multy.model.entities.ExchangePrice;
 import io.multy.model.entities.Mnemonic;
 import io.multy.model.entities.RootKey;
 import io.multy.model.entities.Token;
 import io.multy.model.entities.UserId;
+import io.multy.model.entities.wallet.WalletAddress;
 import io.multy.model.entities.wallet.WalletRealmObject;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -48,6 +50,10 @@ public class DatabaseHelper {
     public void saveAmount(WalletRealmObject wallet, double amount) {
         realm.executeTransaction(realm -> {
             wallet.setBalance(amount);
+
+    public void saveAddress(WalletRealmObject wallet, WalletAddress address) {
+        realm.executeTransaction(realm -> {
+            wallet.getAddresses().add(address);
             realm.insertOrUpdate(wallet);
         });
     }
@@ -106,5 +112,13 @@ public class DatabaseHelper {
 
     public DeviceId getDeviceId() {
         return realm.where(DeviceId.class).findFirst();
+    }
+
+    public void saveExchangePrice(final ExchangePrice exchangePrice) {
+        realm.executeTransaction(realm -> realm.insertOrUpdate(exchangePrice));
+    }
+
+    public ExchangePrice getExchangePrice() {
+        return realm.where(ExchangePrice.class).findFirst();
     }
 }

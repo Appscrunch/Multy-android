@@ -11,6 +11,7 @@ import io.multy.model.entities.AuthEntity;
 import io.multy.model.entities.TransactionRequestEntity;
 import io.multy.model.entities.wallet.WalletRealmObject;
 import io.multy.model.responses.AddressBalanceResponse;
+import io.multy.model.requests.AddWalletAddressRequest;
 import io.multy.model.responses.AuthResponse;
 import io.multy.model.responses.ExchangePriceResponse;
 import io.multy.model.responses.OutputsResponse;
@@ -22,6 +23,7 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface ApiServiceInterface {
 
@@ -50,7 +52,8 @@ public interface ApiServiceInterface {
 
     @GET("api/v1/outputs/spendable/{net}/{address}")
     Call<OutputsResponse> getSpendableOutputs(@Path("net") int net, @Path("address") String address);
-    @GET("api/v1/getspendableoutputs/{walletIndex}")
+  
+    @GET("api/v1/outputs/spendable/{walletIndex}")
     Call<ResponseBody> getSpendableOutputs(@Path("walletIndex") int walletIndex);
 
     @GET("api/v1/getalluserassets")
@@ -64,4 +67,8 @@ public interface ApiServiceInterface {
 
     @GET("/api/v1/address/ballance/{currencyId}/{address}")
     Call<AddressBalanceResponse> getBalanceByAddress(@Path("currencyId") int currencyId, @Path("address") String address);
+
+    @POST("api/v1/address")
+    Observable<Object> addWalletAddress(@Body AddWalletAddressRequest addWalletAddressRequest);
+
 }

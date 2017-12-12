@@ -29,14 +29,18 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.branch.referral.Branch;
 import io.multy.R;
+import io.multy.api.MultyApi;
 import io.multy.ui.fragments.dialogs.SimpleDialogFragment;
 import io.multy.ui.fragments.main.AssetsFragment;
 import io.multy.ui.fragments.main.ContactsFragment;
-import io.multy.ui.fragments.main.FastOperationsFragment;
 import io.multy.ui.fragments.main.FeedFragment;
 import io.multy.ui.fragments.main.SettingsFragment;
 import io.multy.util.Constants;
 import io.multy.util.SocketHelper;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class MainActivity extends BaseActivity implements TabLayout.OnTabSelectedListener {
@@ -220,10 +224,12 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
                 .replace(R.id.full_container, fastOperationsFragment, FastOperationsFragment.TAG)
                 .addToBackStack(FastOperationsFragment.TAG)
                 .commit();
+    }
 
-//                });
-
-//        MultyApi.INSTANCE.getTransactionSpeed();
+    @Override
+    protected void onDestroy() {
+        socketHelper.disconnect();
+        super.onDestroy();
     }
 
     @Override

@@ -12,11 +12,14 @@ import android.support.annotation.NonNull;
 import io.multy.api.MultyApi;
 import io.multy.model.entities.ByteSeed;
 import io.multy.model.entities.DeviceId;
+import io.multy.model.entities.ExchangePrice;
 import io.multy.model.entities.Mnemonic;
 import io.multy.model.entities.RootKey;
 import io.multy.model.entities.Token;
 import io.multy.model.entities.UserId;
+import io.multy.model.entities.wallet.WalletAddress;
 import io.multy.model.entities.wallet.WalletRealmObject;
+import io.multy.model.requests.AddWalletAddressRequest;
 import io.multy.model.responses.AuthResponse;
 import io.multy.model.responses.ExchangePriceResponse;
 import io.multy.model.responses.UserAssetsResponse;
@@ -107,6 +110,14 @@ public class DataManager {
         database.saveWallet(wallet);
     }
 
+    public Observable<Object> addWalletAddress(AddWalletAddressRequest addWalletAddressRequest){
+        return MultyApi.INSTANCE.addWalletAddress(addWalletAddressRequest);
+    }
+
+    public void saveAddress(WalletRealmObject wallet, WalletAddress address) {
+        database.saveAddress(wallet, address);
+    }
+
     public WalletRealmObject getWallet() {
         return database.getWallet();
     }
@@ -143,4 +154,11 @@ public class DataManager {
         database.setDeviceId(deviceId);
     }
 
+    public void saveExchangePrice(Double exchangePrice){
+        database.saveExchangePrice(new ExchangePrice(exchangePrice));
+    }
+
+    public Double getExchangePriceDB() {
+        return database.getExchangePrice().getExchangePrice();
+    }
 }

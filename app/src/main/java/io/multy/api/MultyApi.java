@@ -24,6 +24,7 @@ import io.multy.model.entities.AuthEntity;
 import io.multy.model.entities.TransactionRequestEntity;
 import io.multy.model.entities.wallet.WalletRealmObject;
 import io.multy.model.responses.AddressBalanceResponse;
+import io.multy.model.requests.AddWalletAddressRequest;
 import io.multy.model.responses.AuthResponse;
 import io.multy.model.responses.ExchangePriceResponse;
 import io.multy.model.responses.OutputsResponse;
@@ -46,7 +47,7 @@ public enum MultyApi implements MultyApiInterface {
 
     INSTANCE {
 
-        static final String BASE_URL = "http://192.168.0.121:8080/";
+        static final String BASE_URL = "http://192.168.0.121:7778/";
 
         private ApiServiceInterface api = new Retrofit.Builder()
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
@@ -191,6 +192,11 @@ public enum MultyApi implements MultyApiInterface {
         @Override
         public Call<ResponseBody> sendRawTransaction(String transactionHex, int currencyId) {
             return api.sendRawTransaction(new TransactionRequestEntity(transactionHex, false), 1);
+        }
+
+        @Override
+        public Observable<Object> addWalletAddress(AddWalletAddressRequest addWalletAddressRequest) {
+            return api.addWalletAddress(addWalletAddressRequest);
         }
     }
 }

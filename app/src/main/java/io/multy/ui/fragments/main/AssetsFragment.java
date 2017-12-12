@@ -32,7 +32,6 @@ import io.multy.ui.activities.CreateAssetActivity;
 import io.multy.ui.adapters.PortfoliosAdapter;
 import io.multy.ui.adapters.WalletsAdapter;
 import io.multy.ui.fragments.BaseFragment;
-import io.multy.ui.fragments.asset.AssetInfoFragment;
 import io.multy.viewmodels.AssetsViewModel;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -194,12 +193,12 @@ public class AssetsFragment extends BaseFragment {
         showAddWalletActions();
     }
 
-    @OnClick(R.id.title)
-    void onTitleCLick() {
-        getActivity().getSupportFragmentManager()
-                .beginTransaction()
-                .addToBackStack(null)
-                .replace(R.id.full_container, AssetInfoFragment.newInstance())
-                .commit();
-    }
+//    @OnClick(R.id.title)
+//    void onTitleCLick() {
+//        getActivity().getSupportFragmentManager()
+//                .beginTransaction()
+//                .addToBackStack(null)
+//                .replace(R.id.full_container, AssetInfoFragment.newInstance())
+//                .commit();
+//    }
 }

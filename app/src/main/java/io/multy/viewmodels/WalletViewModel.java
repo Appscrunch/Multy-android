@@ -21,7 +21,6 @@ import io.multy.model.responses.WalletInfo;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-import io.realm.RealmResults;
 import timber.log.Timber;
 
 public class WalletViewModel extends BaseViewModel {
@@ -40,19 +39,19 @@ public class WalletViewModel extends BaseViewModel {
         dataManager = new DataManager(context);
     }
 
-    public void getUserAssets() {
-        Disposable disposable = dataManager.getUserAssets()
-                .map(UserAssetsResponse::getWalletInfo)
-                .flatMapIterable(walletsInfo -> walletsInfo)
-                .map(WalletInfo::getAddress)
-                .flatMapIterable(addresses -> addresses)
-                .toList()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(response -> addresses.setValue(response), Throwable::printStackTrace);
-
-        addDisposable(disposable);
-    }
+//    public void getUserAssets() {
+//        Disposable disposable = dataManager.getUserAssets()
+//                .map(UserAssetsResponse::getWalletInfo)
+//                .flatMapIterable(walletsInfo -> walletsInfo)
+//                .map(WalletInfo::getAddress)
+//                .flatMapIterable(addresses -> addresses)
+//                .toList()
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribeOn(Schedulers.io())
+//                .subscribe(response -> addresses.setValue(response), Throwable::printStackTrace);
+//
+//        addDisposable(disposable);
+//    }
 
     public void getWalletAddresses(int walletId) {
         dataManager.getWalletAddresses(walletId)
@@ -86,13 +85,9 @@ public class WalletViewModel extends BaseViewModel {
         return addresses;
     }
 
-    public WalletRealmObject getWallet() {
+    public WalletRealmObject getWallet(int index) {
         dataManager = new DataManager(Multy.getContext());
-        RealmResults<WalletRealmObject> wallets = dataManager.getWallets();
-        WalletRealmObject wallet = new WalletRealmObject();
-        if (wallets.size() > 0) {
-            wallet = wallets.get(wallets.size() - 1);
-        }
+        WalletRealmObject wallet = dataManager.getWallet(index);
         this.wallet.setValue(wallet);
         return wallet;
     }

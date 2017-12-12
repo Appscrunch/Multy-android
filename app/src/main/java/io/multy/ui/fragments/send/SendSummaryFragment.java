@@ -109,7 +109,6 @@ public class SendSummaryFragment extends BaseFragment {
 
                         }
                     });
-                    //TODO send hex
                 } catch (JniException e) {
                     e.printStackTrace();
                 }
