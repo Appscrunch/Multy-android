@@ -74,6 +74,10 @@ public class AmountChooserFragment extends BaseFragment {
     int sizeHuge;
     @BindDimen(R.dimen.amount_size_medium)
     int sizeMedium;
+    @BindInt(R.integer.one)
+    int one;
+    @BindString(R.string.point)
+    String point;
     @BindString(R.string.donation_format_pattern)
     String formatPattern;
     @BindString(R.string.donation_format_pattern_bitcoin)
@@ -197,7 +201,12 @@ public class AmountChooserFragment extends BaseFragment {
 
             @Override
             public void afterTextChanged(Editable editable) {
-
+                if (!TextUtils.isEmpty(editable)
+                        && editable.toString().length() == one
+                        && editable.toString().contains(point)) {
+                    String result = editable.toString().replaceAll(point, "");
+                    inputOriginal.setText(result);
+                }
             }
         });
     }
@@ -238,7 +247,12 @@ public class AmountChooserFragment extends BaseFragment {
 
             @Override
             public void afterTextChanged(Editable editable) {
-
+                if (!TextUtils.isEmpty(editable)
+                        && editable.toString().length() == one
+                        && editable.toString().contains(point)) {
+                    String result = editable.toString().replaceAll(point, "");
+                    inputOriginal.setText(result);
+                }
             }
         });
     }
