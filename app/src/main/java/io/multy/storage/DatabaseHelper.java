@@ -30,7 +30,7 @@ public class DatabaseHelper {
     private Realm realm;
 
     public DatabaseHelper(Context context) {
-        realm = Realm.getInstance(getRealmConfiguration(context));
+        realm = Realm.getDefaultInstance();
     }
 
     private RealmConfiguration getRealmConfiguration(Context context) {
