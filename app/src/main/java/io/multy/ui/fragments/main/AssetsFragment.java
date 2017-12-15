@@ -9,12 +9,19 @@ package io.multy.ui.fragments.main;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
+import android.support.constraint.Group;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.samwolfand.oneprefs.Prefs;
 
 import java.util.ArrayList;
 
@@ -25,16 +32,26 @@ import io.multy.Multy;
 import io.multy.R;
 import io.multy.api.MultyApi;
 import io.multy.model.DataManager;
+import io.multy.model.entities.ByteSeed;
+import io.multy.model.entities.DeviceId;
+import io.multy.model.entities.UserId;
 import io.multy.model.entities.wallet.WalletRealmObject;
 import io.multy.model.responses.AddressBalanceResponse;
 import io.multy.ui.activities.CreateAssetActivity;
+import io.multy.ui.activities.SeedActivity;
 import io.multy.ui.adapters.PortfoliosAdapter;
 import io.multy.ui.adapters.WalletsAdapter;
 import io.multy.ui.fragments.BaseFragment;
+import io.multy.util.Constants;
+import io.multy.util.JniException;
+import io.multy.util.NativeDataHelper;
 import io.multy.viewmodels.AssetsViewModel;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import timber.log.Timber;
 
 /**
  * Created by Ihar Paliashchuk on 02.11.2017.
@@ -47,6 +64,14 @@ public class AssetsFragment extends BaseFragment {
 
     @BindView(R.id.recycler_wallets)
     RecyclerView recyclerWallets;
+    @BindView(R.id.group_wallets_list)
+    Group groupWalletsList;
+    @BindView(R.id.group_create_description)
+    Group groupCreateDescription;
+    @BindView(R.id.button_add)
+    FloatingActionButton buttonAdd;
+    @BindView(R.id.container_create_restore)
+    ConstraintLayout containerCreateRestore;
 
     private AssetsViewModel viewModel;
     private WalletsAdapter walletsAdapter;
@@ -67,6 +92,7 @@ public class AssetsFragment extends BaseFragment {
         walletsAdapter = new WalletsAdapter(wallets);
         walletsAdapter = new WalletsAdapter(new ArrayList<>());
         portfoliosAdapter = new PortfoliosAdapter();
+
     }
 
     @Nullable
@@ -84,6 +110,15 @@ public class AssetsFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        if (viewModel.isFirstStart()) {
+            groupWalletsList.setVisibility(View.GONE);
+            containerCreateRestore.setVisibility(View.VISIBLE);
+        } else {
+            groupWalletsList.setVisibility(View.VISIBLE);
+            containerCreateRestore.setVisibility(View.GONE);
+            groupCreateDescription.setVisibility(View.GONE);
+        }
+
         walletsAdapter.setData(viewModel.getWalletsFromDB());
 //        viewModel.getWalletsFlowable();
 //        viewModel.getWallets().observe(this, walletRealmObjects -> walletsAdapter.setData(walletRealmObjects));
@@ -192,6 +227,22 @@ public class AssetsFragment extends BaseFragment {
     @OnClick(R.id.button_add)
     void onPlusClick() {
         showAddWalletActions();
+    }
+
+    @OnClick(R.id.button_create)
+    void onCLickCreateWallet() {
+        groupCreateDescription.setVisibility(View.VISIBLE);
+        groupWalletsList.setVisibility(View.VISIBLE);
+        containerCreateRestore.setVisibility(View.GONE);
+        Prefs.putBoolean(Constants.PREF_IS_FIRST_START, false);
+    }
+
+    @OnClick(R.id.button_restore)
+    void onCLickRestoreSeed() {
+        groupCreateDescription.setVisibility(View.GONE);
+        groupWalletsList.setVisibility(View.VISIBLE);
+        startActivity(new Intent(getActivity(), SeedActivity.class).addCategory(Constants.EXTRA_RESTORE));
+        Prefs.putBoolean(Constants.PREF_IS_FIRST_START, false);
     }
 
 //    @OnClick(R.id.title)

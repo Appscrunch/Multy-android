@@ -136,4 +136,8 @@ public class AssetSendViewModel extends BaseViewModel {
     public void setAmountScanned(boolean amountScanned) {
         isAmountScanned = amountScanned;
     }
+
+    public void getWalletFromDB(int index) {
+        this.wallet = dataManager.getWallet(index);
+    }
 }

@@ -9,6 +9,8 @@ package io.multy.model;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import java.util.List;
+
 import io.multy.api.MultyApi;
 import io.multy.model.entities.ByteSeed;
 import io.multy.model.entities.DeviceId;
@@ -34,6 +36,7 @@ import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import timber.log.Timber;
 
 /**
  * Created by Ihar Paliashchuk on 10.11.2017.
@@ -75,6 +78,14 @@ public class DataManager {
 
     public Observable<UserAssetsResponse> getWalletAddresses(int walletId){
         return MultyApi.INSTANCE.getWalletAddresses(walletId);
+    }
+
+    public Observable<List<WalletRealmObject>> restore(){
+        return MultyApi.INSTANCE.restore()
+                .doOnNext(walletRealmObjects -> {
+                    Timber.i("wallets %s", walletRealmObjects.toString());
+                    database.saveWallets(walletRealmObjects);
+                });
     }
 
     public void saveWalletAmount(WalletRealmObject walletRealmObject, double amount){
@@ -175,5 +186,9 @@ public class DataManager {
 
     public void updateWallet(int index, RealmList<WalletAddress> addresses, double balance) {
         database.updateWallet(index, addresses, balance);
+    }
+
+    public void deleteDatabase(){
+        database.clear();
     }
 }

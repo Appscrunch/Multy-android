@@ -7,13 +7,26 @@
 package io.multy.viewmodels;
 
 import android.arch.lifecycle.MutableLiveData;
+import android.content.Context;
+import android.provider.Settings;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import io.multy.Multy;
 import io.multy.model.DataManager;
+import io.multy.model.entities.ByteSeed;
+import io.multy.model.entities.DeviceId;
+import io.multy.model.entities.Mnemonic;
+import io.multy.model.entities.UserId;
+import io.multy.util.Constants;
+import io.multy.util.JniException;
+import io.multy.util.NativeDataHelper;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -44,6 +57,38 @@ public class SeedViewModel extends BaseViewModel {
         binarySeed.setValue(seed);
         failed.setValue(false);
         this.phrase.setValue(phraseToShow);
+    }
+
+    public void restore(String phrase, Context context, Runnable callback){
+        try {
+            Timber.e("phrase %s", phrase);
+            byte[] seed = NativeDataHelper.makeSeed(phrase);
+            String userId = NativeDataHelper.makeAccountId(seed);
+            final String deviceId = Settings.Secure.ANDROID_ID;
+            DataManager dataManager = new DataManager(context);
+            dataManager.deleteDatabase();
+            dataManager.saveSeed(new ByteSeed(seed));
+            dataManager.saveUserId(new UserId(userId));
+            dataManager.setDeviceId(new DeviceId(deviceId));
+
+            new DataManager(context).restore()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(walletList -> {
+                        failed.setValue(false);
+                        callback.run();
+                    }, throwable -> {
+                        failed.setValue(true);
+                        Toast.makeText(context, throwable.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                        throwable.printStackTrace();
+                        callback.run();
+                    });
+
+        } catch (JniException e) {
+            failed.setValue(true);
+            callback.run();
+            Toast.makeText(context, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 
 }
