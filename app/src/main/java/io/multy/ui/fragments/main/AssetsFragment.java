@@ -10,6 +10,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.Group;
@@ -28,7 +29,6 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.multy.Multy;
 import io.multy.R;
 import io.multy.api.MultyApi;
 import io.multy.model.DataManager;
@@ -36,7 +36,7 @@ import io.multy.model.entities.ByteSeed;
 import io.multy.model.entities.DeviceId;
 import io.multy.model.entities.UserId;
 import io.multy.model.entities.wallet.WalletRealmObject;
-import io.multy.model.responses.AddressBalanceResponse;
+import io.multy.model.responses.WalletsResponse;
 import io.multy.ui.activities.CreateAssetActivity;
 import io.multy.ui.activities.SeedActivity;
 import io.multy.ui.adapters.PortfoliosAdapter;
@@ -120,13 +120,7 @@ public class AssetsFragment extends BaseFragment {
         }
 
         walletsAdapter.setData(viewModel.getWalletsFromDB());
-//        viewModel.getWalletsFlowable();
-//        viewModel.getWallets().observe(this, walletRealmObjects -> walletsAdapter.setData(walletRealmObjects));
-
-//        List<WalletRealmObject> objects = walletsAdapter.getData();
-//        for (int i = 0; i < walletsAdapter.getItemCount(); i++) {
-//            updateBalance(i, objects.get(i).getCreationAddress());
-//        }
+        updateWallets();
     }
 
     private void updateBalance(final int position, final String creationAddress) {
@@ -144,6 +138,32 @@ public class AssetsFragment extends BaseFragment {
                 t.printStackTrace();
             }
         });
+    }
+  
+    private void updateWallets() {
+        DataManager dataManager = new DataManager(getActivity());
+        MultyApi.INSTANCE.getWalletsVerbose().enqueue(new Callback<WalletsResponse>() {
+
+            @Override
+            public void onResponse(@NonNull Call<WalletsResponse> call, @NonNull Response<WalletsResponse> response) {
+                if (response.body() != null && response.body().getWallets() != null) {
+                    for (WalletRealmObject wallet : response.body().getWallets()) {
+                        dataManager.updateWallet(wallet.getWalletIndex(), wallet.getAddresses(), wallet.calculateBalance(), wallet.calculatePendingBalance());
+                    }
+                    walletsAdapter.setData(viewModel.getWalletsFromDB());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<WalletsResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     @Override
