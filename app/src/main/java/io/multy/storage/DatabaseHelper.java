@@ -162,7 +162,7 @@ public class DatabaseHelper {
         return realm.where(ExchangePrice.class).findFirst();
     }
 
-    public void updateWallet(int index, RealmList<WalletAddress> addresses, double balance) {
+    public void updateWallet(int index, RealmList<WalletAddress> addresses, double balance, double pendingBalance) {
         realm.executeTransaction(realm -> {
             WalletRealmObject savedWallet = getWalletById(index);
             if (savedWallet != null) {
@@ -193,6 +193,7 @@ public class DatabaseHelper {
                     savedWallet.setAddresses(managedAddresses);
                 }
                 savedWallet.setBalance(balance);
+                savedWallet.setPendingBalance(pendingBalance);
                 realm.insertOrUpdate(savedWallet);
             }
         });
