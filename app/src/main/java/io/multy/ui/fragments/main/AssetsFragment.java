@@ -9,7 +9,6 @@ package io.multy.ui.fragments.main;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.Group;
@@ -19,7 +18,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.samwolfand.oneprefs.Prefs;
 
@@ -32,9 +30,6 @@ import io.multy.Multy;
 import io.multy.R;
 import io.multy.api.MultyApi;
 import io.multy.model.DataManager;
-import io.multy.model.entities.ByteSeed;
-import io.multy.model.entities.DeviceId;
-import io.multy.model.entities.UserId;
 import io.multy.model.entities.wallet.WalletRealmObject;
 import io.multy.model.responses.AddressBalanceResponse;
 import io.multy.ui.activities.CreateAssetActivity;
@@ -43,15 +38,12 @@ import io.multy.ui.adapters.PortfoliosAdapter;
 import io.multy.ui.adapters.WalletsAdapter;
 import io.multy.ui.fragments.BaseFragment;
 import io.multy.util.Constants;
+import io.multy.util.FirstLaunchHelper;
 import io.multy.util.JniException;
-import io.multy.util.NativeDataHelper;
 import io.multy.viewmodels.AssetsViewModel;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import timber.log.Timber;
 
 /**
  * Created by Ihar Paliashchuk on 02.11.2017.
@@ -235,6 +227,12 @@ public class AssetsFragment extends BaseFragment {
         groupWalletsList.setVisibility(View.VISIBLE);
         containerCreateRestore.setVisibility(View.GONE);
         Prefs.putBoolean(Constants.PREF_IS_FIRST_START, false);
+
+        try {
+            FirstLaunchHelper.setCredentials(null, getActivity());
+        } catch (JniException e) {
+            e.printStackTrace();
+        }
     }
 
     @OnClick(R.id.button_restore)
