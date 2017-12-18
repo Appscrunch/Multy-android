@@ -22,6 +22,8 @@ import android.view.ViewGroup;
 
 import com.samwolfand.oneprefs.Prefs;
 
+import com.hrules.charter.CharterLine;
+
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -40,6 +42,7 @@ import io.multy.ui.fragments.BaseFragment;
 import io.multy.util.Constants;
 import io.multy.util.FirstLaunchHelper;
 import io.multy.util.JniException;
+import io.multy.util.SocketHelper;
 import io.multy.viewmodels.AssetsViewModel;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -65,9 +68,13 @@ public class AssetsFragment extends BaseFragment {
     @BindView(R.id.container_create_restore)
     ConstraintLayout containerCreateRestore;
 
+    @BindView(R.id.chart)
+    CharterLine charterLine;
+
     private AssetsViewModel viewModel;
     private WalletsAdapter walletsAdapter;
     private PortfoliosAdapter portfoliosAdapter;
+    private SocketHelper socketHelper;
 
     public static AssetsFragment newInstance() {
         return new AssetsFragment();
@@ -84,7 +91,6 @@ public class AssetsFragment extends BaseFragment {
         walletsAdapter = new WalletsAdapter(wallets);
         walletsAdapter = new WalletsAdapter(new ArrayList<>());
         portfoliosAdapter = new PortfoliosAdapter();
-
     }
 
     @Nullable
@@ -96,42 +102,10 @@ public class AssetsFragment extends BaseFragment {
         initialize();
         viewModel = ViewModelProviders.of(getActivity()).get(AssetsViewModel.class);
         viewModel.setContext(getActivity());
+//        socketHelper = new SocketHelper();
         return view;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (viewModel.isFirstStart()) {
-            groupWalletsList.setVisibility(View.GONE);
-            containerCreateRestore.setVisibility(View.VISIBLE);
-        } else {
-            groupWalletsList.setVisibility(View.VISIBLE);
-            containerCreateRestore.setVisibility(View.GONE);
-            groupCreateDescription.setVisibility(View.GONE);
-        }
-
-        walletsAdapter.setData(viewModel.getWalletsFromDB());
-        updateWallets();
-    }
-
-    private void updateBalance(final int position, final String creationAddress) {
-        MultyApi.INSTANCE.getBalanceByAddress(1, creationAddress).enqueue(new Callback<AddressBalanceResponse>() {
-            @Override
-            public void onResponse(Call<AddressBalanceResponse> call, Response<AddressBalanceResponse> response) {
-                if (response.body() != null) {
-                    new DataManager(Multy.getContext()).saveWalletAmount(walletsAdapter.getItem(position), Double.parseDouble(response.body().getBalance()));
-                    walletsAdapter.setData(viewModel.getWalletsFromDB());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<AddressBalanceResponse> call, Throwable t) {
-                t.printStackTrace();
-            }
-        });
-    }
-  
     private void updateWallets() {
         DataManager dataManager = new DataManager(getActivity());
         MultyApi.INSTANCE.getWalletsVerbose().enqueue(new Callback<WalletsResponse>() {
@@ -155,7 +129,7 @@ public class AssetsFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        updateWallets();
+//        updateWallets();
     }
 
     @Override
@@ -234,6 +208,12 @@ public class AssetsFragment extends BaseFragment {
     private void setVisibilityToPortfolios(boolean isVisible) {
         int visibility = isVisible ? View.VISIBLE : View.GONE;
 //        pagerPortfolios.setVisibility(visibility);
+    }
+
+    @Override
+    public void onDestroy() {
+        socketHelper.disconnect();
+        super.onDestroy();
     }
 
     @OnClick(R.id.button_add)
