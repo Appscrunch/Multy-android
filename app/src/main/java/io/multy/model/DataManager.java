@@ -24,6 +24,7 @@ import io.multy.model.entities.wallet.WalletRealmObject;
 import io.multy.model.requests.AddWalletAddressRequest;
 import io.multy.model.responses.AuthResponse;
 import io.multy.model.responses.ExchangePriceResponse;
+import io.multy.model.responses.RestoreResponse;
 import io.multy.model.responses.UserAssetsResponse;
 import io.multy.storage.DatabaseHelper;
 import io.reactivex.Flowable;
@@ -79,11 +80,12 @@ public class DataManager {
         return MultyApi.INSTANCE.getWalletAddresses(walletId);
     }
 
-    public Observable<List<WalletRealmObject>> restore(){
+    public Observable<RestoreResponse> restore() {
         return MultyApi.INSTANCE.restore()
-                .doOnNext(walletRealmObjects -> {
-                    Timber.i("wallets %s", walletRealmObjects.toString());
-                    database.saveWallets(walletRealmObjects);
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .doOnNext(response -> {
+                    database.saveWallets(response.getWallets());
                 });
     }
 
@@ -112,7 +114,11 @@ public class DataManager {
     }
 
     public UserId getUserId() {
-        return database.getUserId();
+        if (database.getUserId() != null) {
+            return database.getUserId();
+        } else {
+            return new UserId("poadn");
+        }
     }
 
     public void saveSeed(ByteSeed seed) {
@@ -164,7 +170,11 @@ public class DataManager {
     }
 
     public DeviceId getDeviceId() {
-        return database.getDeviceId();
+        if (database.getUserId() != null) {
+            return database.getDeviceId();
+        } else {
+            return new DeviceId("poadn");
+        }
     }
 
     public void setDeviceId(DeviceId deviceId) {

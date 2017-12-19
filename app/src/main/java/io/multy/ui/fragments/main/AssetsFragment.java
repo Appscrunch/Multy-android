@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
 import android.support.constraint.Group;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,10 +28,12 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.multy.Multy;
 import io.multy.R;
 import io.multy.api.MultyApi;
 import io.multy.model.DataManager;
 import io.multy.model.entities.wallet.WalletRealmObject;
+import io.multy.model.responses.AddressBalanceResponse;
 import io.multy.model.responses.WalletsResponse;
 import io.multy.ui.activities.CreateAssetActivity;
 import io.multy.ui.activities.SeedActivity;
@@ -112,7 +115,9 @@ public class AssetsFragment extends BaseFragment {
         }
 
         walletsAdapter.setData(viewModel.getWalletsFromDB());
-        updateWallets();
+        if (Prefs.contains(Constants.PREF_IS_FIRST_START)) {
+            updateWallets();
+        }
     }
 
     private void updateBalance(final int position, final String creationAddress) {
@@ -150,12 +155,6 @@ public class AssetsFragment extends BaseFragment {
 
             }
         });
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        updateWallets();
     }
 
     @Override

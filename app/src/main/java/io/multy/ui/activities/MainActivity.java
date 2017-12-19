@@ -74,7 +74,7 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
         setupFooter();
         setFragment(R.id.container_frame, AssetsFragment.newInstance());
 
-        socketHelper = new SocketHelper();
+//        socketHelper = new SocketHelper();
 
 //        startActivity(new Intent(this, SeedActivity.class));
 
@@ -246,11 +246,11 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
                 .commit();
     }
 
-    @Override
-    protected void onDestroy() {
-        socketHelper.disconnect();
-        super.onDestroy();
-    }
+//    @Override
+//    protected void onDestroy() {
+//        socketHelper.disconnect();
+//        super.onDestroy();
+//    }
 
     public void showScanScreen() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
