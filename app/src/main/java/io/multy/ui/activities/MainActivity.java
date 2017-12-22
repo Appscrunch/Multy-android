@@ -50,6 +50,7 @@ import io.multy.ui.fragments.main.FastOperationsFragment;
 import io.multy.ui.fragments.main.FeedFragment;
 import io.multy.ui.fragments.main.SettingsFragment;
 import io.multy.util.Constants;
+import io.multy.util.FirstLaunchHelper;
 import io.multy.util.JniException;
 import io.multy.util.NativeDataHelper;
 import io.multy.util.SocketHelper;
@@ -233,7 +234,7 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
 
     @OnClick(R.id.fast_operations)
     void onFastOperationsClick() {
-        socketHelper.requestRates();
+//        socketHelper.requestRates();
         FirebaseMessaging.getInstance().subscribeToTopic("someTopic");
         Fragment fastOperationsFragment = getSupportFragmentManager()
                 .findFragmentByTag(FastOperationsFragment.TAG);

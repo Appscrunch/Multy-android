@@ -42,22 +42,11 @@
                 android:id="@+id/dummy"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="48dp"
+                android:layout_marginTop="11dp"
                 android:src="@drawable/logo_blue"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/text_main" />
-            
-            <ImageView
-                android:id="@+id/image_logo"
-                android:layout_width="130dp"
-                android:layout_height="75dp"
-                android:src="@drawable/logo_blue"
-                app:layout_constraintTop_toTopOf="@+id/dummy"
-                app:layout_constraintStart_toStartOf="@+id/dummy"
-                app:layout_constraintEnd_toEndOf="@+id/dummy"
-                app:layout_constraintBottom_toBottomOf="@+id/dummy"
-                />
 
             <TextView
                 android:id="@+id/logo_text"

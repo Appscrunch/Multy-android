@@ -32,6 +32,7 @@ import io.multy.Multy;
 import io.multy.R;
 import io.multy.api.MultyApi;
 import io.multy.model.DataManager;
+import io.multy.model.entities.wallet.WalletAddress;
 import io.multy.model.entities.wallet.WalletRealmObject;
 import io.multy.model.responses.AddressBalanceResponse;
 import io.multy.model.responses.WalletsResponse;
@@ -47,6 +48,7 @@ import io.multy.viewmodels.AssetsViewModel;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import timber.log.Timber;
 
 /**
  * Created by Ihar Paliashchuk on 02.11.2017.

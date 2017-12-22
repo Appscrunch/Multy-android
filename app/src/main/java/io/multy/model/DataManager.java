@@ -114,11 +114,7 @@ public class DataManager {
     }
 
     public UserId getUserId() {
-        if (database.getUserId() != null) {
-            return database.getUserId();
-        } else {
-            return new UserId("poadn");
-        }
+        return database.getUserId();
     }
 
     public void saveSeed(ByteSeed seed) {
@@ -131,6 +127,10 @@ public class DataManager {
 
     public void saveWallet(WalletRealmObject wallet) {
         database.saveWallet(wallet);
+    }
+
+    public void saveWallets(List<WalletRealmObject> wallet) {
+        database.saveWallets(wallet);
     }
 
     public Observable<Object> addWalletAddress(AddWalletAddressRequest addWalletAddressRequest){
@@ -170,11 +170,7 @@ public class DataManager {
     }
 
     public DeviceId getDeviceId() {
-        if (database.getUserId() != null) {
-            return database.getDeviceId();
-        } else {
-            return new DeviceId("poadn");
-        }
+        return database.getDeviceId();
     }
 
     public void setDeviceId(DeviceId deviceId) {
