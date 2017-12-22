@@ -13,10 +13,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.PorterDuff;
+import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -32,23 +33,19 @@ import android.widget.TextView;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.scottyab.rootbeer.RootBeer;
 
-import org.spongycastle.jcajce.provider.symmetric.SEED;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.branch.referral.Branch;
 import io.multy.R;
 import io.multy.model.DataManager;
-import io.multy.model.entities.ByteSeed;
-import io.multy.model.entities.DeviceId;
-import io.multy.model.entities.UserId;
 import io.multy.ui.fragments.dialogs.SimpleDialogFragment;
 import io.multy.ui.fragments.main.AssetsFragment;
 import io.multy.ui.fragments.main.ContactsFragment;
 import io.multy.ui.fragments.main.FastOperationsFragment;
 import io.multy.ui.fragments.main.FeedFragment;
 import io.multy.ui.fragments.main.SettingsFragment;
+import io.multy.util.AnimationUtils;
 import io.multy.util.Constants;
 import io.multy.util.FirstLaunchHelper;
 import io.multy.util.JniException;
@@ -62,10 +59,13 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
     @BindView(R.id.tabLayout)
     TabLayout tabLayout;
 
+    @BindView(R.id.fast_operations)
+    View buttonOperations;
+
     private boolean isFirstFragmentCreation;
     private int lastTabPosition = 0;
-    private SocketHelper socketHelper;
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,11 +75,22 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
         setupFooter();
         setFragment(R.id.container_frame, AssetsFragment.newInstance());
 
+
 //        socketHelper = new SocketHelper();
 
-//        startActivity(new Intent(this, SeedActivity.class));
+
+        String userId = new DataManager(this).getUserId().getUserId();
+        Log.i("wise", "subscribing to topic " + userId);
+        FirebaseMessaging.getInstance().subscribeToTopic("btcTransactionUpdate-" + userId);
 
 //        preventRootIfDetected();
+    }
+
+    public static String byteArrayToHex(byte[] a) {
+        StringBuilder sb = new StringBuilder(a.length * 2);
+        for (byte b : a)
+            sb.append(String.format("%02x", b));
+        return sb.toString();
     }
 
     private void getRealmedAddresses() {
@@ -233,19 +244,25 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
     }
 
     @OnClick(R.id.fast_operations)
-    void onFastOperationsClick() {
+    void onFastOperationsClick(final View v) {
 //        socketHelper.requestRates();
         FirebaseMessaging.getInstance().subscribeToTopic("someTopic");
+
+        v.setEnabled(false);
+        v.postDelayed(() -> v.setEnabled(true), AnimationUtils.DURATION_MEDIUM * 2);
         Fragment fastOperationsFragment = getSupportFragmentManager()
                 .findFragmentByTag(FastOperationsFragment.TAG);
         if (fastOperationsFragment == null) {
-            fastOperationsFragment = FastOperationsFragment.newInstance();
+            fastOperationsFragment = FastOperationsFragment.newInstance(
+                    (int) buttonOperations.getX() + buttonOperations.getWidth() / 2,
+                    (int) buttonOperations.getY() + buttonOperations.getHeight() / 2);
         }
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.full_container, fastOperationsFragment, FastOperationsFragment.TAG)
                 .addToBackStack(FastOperationsFragment.TAG)
                 .commit();
     }
+
 
 //    @Override
 //    protected void onDestroy() {

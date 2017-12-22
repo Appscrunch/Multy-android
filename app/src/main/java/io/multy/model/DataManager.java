@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import java.util.List;
 
 import io.multy.api.MultyApi;
+import io.multy.api.socket.CurrenciesRate;
 import io.multy.model.entities.ByteSeed;
 import io.multy.model.entities.DeviceId;
 import io.multy.model.entities.ExchangePrice;
@@ -72,11 +73,11 @@ public class DataManager {
                 .doOnNext(exchangePriceResponse -> database.saveExchangePrice(new ExchangePrice(exchangePriceResponse.getUSD())));
     }
 
-    public Observable<UserAssetsResponse> getUserAssets(){
+    public Observable<UserAssetsResponse> getUserAssets() {
         return MultyApi.INSTANCE.getUserAssets();
     }
 
-    public Observable<UserAssetsResponse> getWalletAddresses(int walletId){
+    public Observable<UserAssetsResponse> getWalletAddresses(int walletId) {
         return MultyApi.INSTANCE.getWalletAddresses(walletId);
     }
 
@@ -89,7 +90,7 @@ public class DataManager {
                 });
     }
 
-    public void saveWalletAmount(WalletRealmObject walletRealmObject, double amount){
+    public void saveWalletAmount(WalletRealmObject walletRealmObject, double amount) {
         database.saveAmount(walletRealmObject, amount);
     }
 
@@ -133,7 +134,7 @@ public class DataManager {
         database.saveWallets(wallet);
     }
 
-    public Observable<Object> addWalletAddress(AddWalletAddressRequest addWalletAddressRequest){
+    public Observable<Object> addWalletAddress(AddWalletAddressRequest addWalletAddressRequest) {
         return MultyApi.INSTANCE.addWalletAddress(addWalletAddressRequest);
     }
 
@@ -177,7 +178,7 @@ public class DataManager {
         database.setDeviceId(deviceId);
     }
 
-    public void saveExchangePrice(Double exchangePrice){
+    public void saveExchangePrice(Double exchangePrice) {
         database.saveExchangePrice(new ExchangePrice(exchangePrice));
     }
 
@@ -193,7 +194,19 @@ public class DataManager {
         database.updateWallet(index, addresses, balance, pendingBalance);
     }
 
-    public void deleteDatabase(){
+    public void deleteDatabase() {
         database.clear();
+    }
+
+    public void saveCurenciesRate(CurrenciesRate currenciesRate) {
+        database.saveCurrenciesRate(currenciesRate);
+    }
+
+    public CurrenciesRate getCurrenciesRate() {
+        return database.getCurrenciesRate();
+    }
+
+    public WalletAddress getWalletAddress(int id) {
+        return  database.getWalletAddress(id);
     }
 }

@@ -27,6 +27,7 @@ android {
                 cppFlags "-std=c++11"
                 arguments "-DWITH_TESTS=1"
                 arguments "-DPATH_TO_JNI_WRAPPER=/Users/appscrunch/AndroidStudioProjects/Multy-android/app/src/main/cpp/scratch.cpp"
+//                arguments "-DPATH_TO_JNI_WRAPPER=C:\\workspace\\Multy-android\\app\\src\\main\\cpp\\scratch.cpp"
             }
         }
         ndk {
@@ -53,8 +54,8 @@ android {
         }
         externalNativeBuild {
             cmake {
-                path "/Users/appscrunch/AndroidStudioProjects/Multy-Core/CMakeLists.txt"
-//                path "C:\\workspace\\Multy-Core\\CMakeLists.txt"
+//                path "/Users/appscrunch/AndroidStudioProjects/Multy-Core/CMakeLists.txt"
+                path "C:\\workspace\\KLUBIKMulty-Core\\CMakeLists.txt"
             }
         }
     }
@@ -98,7 +99,6 @@ dependencies {
     testImplementation "android.arch.core:core-testing:1.0.0"
     implementation "android.arch.lifecycle:reactivestreams:1.0.0"
     implementation 'com.samwolfand.oneprefs:one-prefs:1.0'
-    implementation 'uk.co.chrisjenx:calligraphy:2.3.0'
     implementation 'com.google.zxing:core:3.3.0'
     implementation 'com.google.zxing:javase:3.3.0'
 
@@ -110,6 +110,7 @@ dependencies {
         exclude group: 'org.json', module: 'json'
     }
     implementation 'com.madgag.spongycastle:prov:1.58.0.0'
+    implementation 'com.hrules:charter:1.5.1'
 }
 
 apply plugin: 'com.google.gms.google-services'

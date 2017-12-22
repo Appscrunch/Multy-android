@@ -47,6 +47,7 @@ public class Constants {
     public static final String ERROR_LOAD_EXCHANGE_PRICE = "Can't load exchange price. Will be used the last one";
     public static final String ERROR_ADDING_ADDRESS = "An error occurred while adding new address";
 
+
     public static final String IS_LOCK_MODE_ENABLED = "IS_LOCK_MODE_ENABLED";
     public static final String IS_FINGERPRINT_ENABLED = "IS_FINGERPRINT_ENABLED";
     public static final String FINGERPRINT_COUNTER = "FINGERPRINT_COUNTER";
@@ -55,4 +56,7 @@ public class Constants {
 
     public static final int ZERO = 0;
     public static final int ONE = 1;
+
+    public static final String NOTIFICATION_CHANNEL = "Multy wallet";
+
 }

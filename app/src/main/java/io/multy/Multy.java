@@ -20,7 +20,6 @@ import io.multy.util.JniException;
 import io.multy.util.NativeDataHelper;
 import io.realm.Realm;
 import timber.log.Timber;
-import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 public class Multy extends Application {
 

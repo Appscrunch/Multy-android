@@ -22,12 +22,15 @@ import javax.annotation.Nullable;
 import io.multy.Multy;
 import io.multy.model.DataManager;
 import io.multy.model.entities.AuthEntity;
+import io.multy.model.entities.DeviceId;
 import io.multy.model.entities.TransactionRequestEntity;
+import io.multy.model.entities.UserId;
 import io.multy.model.entities.wallet.WalletRealmObject;
 import io.multy.model.requests.AddWalletAddressRequest;
 import io.multy.model.responses.AddressBalanceResponse;
 import io.multy.model.responses.AuthResponse;
 import io.multy.model.responses.ExchangePriceResponse;
+import io.multy.model.responses.FeeRatesResponse;
 import io.multy.model.responses.OutputsResponse;
 import io.multy.model.responses.RestoreResponse;
 import io.multy.model.responses.UserAssetsResponse;
@@ -50,8 +53,10 @@ public enum MultyApi implements MultyApiInterface {
 
     INSTANCE {
 
+
         static final String BASE_URL = "http://192.168.0.121:7778/";  // local
 //        static final String BASE_URL = "http://88.198.47.112:7780/";  // remote
+
 
         private ApiServiceInterface api = new Retrofit.Builder()
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
@@ -77,8 +82,10 @@ public enum MultyApi implements MultyApiInterface {
                             @Override
                             public Request authenticate(Route route, okhttp3.Response response) throws IOException {
                                 DataManager dataManager = new DataManager(Multy.getContext());
-                                final String userId = dataManager.getUserId().getUserId();
-                                final String deviceId = dataManager.getDeviceId().getDeviceId();
+                                final UserId userIdEntity = dataManager.getUserId();
+                                final DeviceId deviceIdEntity = dataManager.getDeviceId();
+                                final String userId = userIdEntity == null ? "" : userIdEntity.getUserId();
+                                final String deviceId = deviceIdEntity == null ? "" : deviceIdEntity.getDeviceId();
                                 Call<AuthResponse> responseCall = api.auth(new AuthEntity(userId, deviceId, "somePushToken", 2));
                                 AuthResponse body = responseCall.execute().body();
                                 Prefs.putString(Constants.PREF_AUTH, body.getToken());
@@ -152,19 +159,8 @@ public enum MultyApi implements MultyApiInterface {
         }
 
         @Override
-        public void getTransactionSpeed() {
-            Call<ResponseBody> speed = api.getTransactionSpeed();
-            speed.enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    Log.i("wise", "onResponse");
-                }
-
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    Log.i("wise", "onFailure");
-                }
-            });
+        public Call<FeeRatesResponse> getFeeRates() {
+            return api.getFeeRates();
         }
 
         @Override

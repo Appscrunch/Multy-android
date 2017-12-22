@@ -6,6 +6,7 @@
 
 package io.multy.ui.fragments.main;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,10 +18,12 @@ import android.support.constraint.Group;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.hrules.charter.CharterLine;
 import com.samwolfand.oneprefs.Prefs;
 
 import java.util.ArrayList;
@@ -31,7 +34,10 @@ import butterknife.OnClick;
 import io.multy.Multy;
 import io.multy.R;
 import io.multy.api.MultyApi;
+import io.multy.api.socket.CurrenciesRate;
+import io.multy.api.socket.SocketManager;
 import io.multy.model.DataManager;
+import io.multy.model.entities.Output;
 import io.multy.model.entities.wallet.WalletAddress;
 import io.multy.model.entities.wallet.WalletRealmObject;
 import io.multy.model.responses.AddressBalanceResponse;
@@ -45,6 +51,7 @@ import io.multy.util.Constants;
 import io.multy.util.FirstLaunchHelper;
 import io.multy.util.JniException;
 import io.multy.viewmodels.AssetsViewModel;
+import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -70,9 +77,13 @@ public class AssetsFragment extends BaseFragment {
     @BindView(R.id.container_create_restore)
     ConstraintLayout containerCreateRestore;
 
+    @BindView(R.id.chart)
+    CharterLine charterLine;
+
     private AssetsViewModel viewModel;
     private WalletsAdapter walletsAdapter;
     private PortfoliosAdapter portfoliosAdapter;
+    private SocketManager socketManager;
 
     public static AssetsFragment newInstance() {
         return new AssetsFragment();
@@ -89,7 +100,6 @@ public class AssetsFragment extends BaseFragment {
         walletsAdapter = new WalletsAdapter(wallets);
         walletsAdapter = new WalletsAdapter(new ArrayList<>());
         portfoliosAdapter = new PortfoliosAdapter();
-
     }
 
     @Nullable
@@ -101,6 +111,7 @@ public class AssetsFragment extends BaseFragment {
         initialize();
         viewModel = ViewModelProviders.of(getActivity()).get(AssetsViewModel.class);
         viewModel.setContext(getActivity());
+
         return view;
     }
 
@@ -124,21 +135,16 @@ public class AssetsFragment extends BaseFragment {
 
     private void updateBalance(final int position, final String creationAddress) {
         MultyApi.INSTANCE.getBalanceByAddress(1, creationAddress).enqueue(new Callback<AddressBalanceResponse>() {
+        viewModel.rates.observe(this, new Observer<CurrenciesRate>() {
             @Override
-            public void onResponse(Call<AddressBalanceResponse> call, Response<AddressBalanceResponse> response) {
-                if (response.body() != null) {
-                    new DataManager(Multy.getContext()).saveWalletAmount(walletsAdapter.getItem(position), Double.parseDouble(response.body().getBalance()));
-                    walletsAdapter.setData(viewModel.getWalletsFromDB());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<AddressBalanceResponse> call, Throwable t) {
-                t.printStackTrace();
+            public void onChanged(@Nullable CurrenciesRate currenciesRate) {
+                walletsAdapter.updateRates(currenciesRate);
             }
         });
+        viewModel.init(getLifecycle());
+        return view;
     }
-  
+
     private void updateWallets() {
         DataManager dataManager = new DataManager(getActivity());
         MultyApi.INSTANCE.getWalletsVerbose().enqueue(new Callback<WalletsResponse>() {
@@ -149,6 +155,27 @@ public class AssetsFragment extends BaseFragment {
                         dataManager.updateWallet(wallet.getWalletIndex(), wallet.getAddresses(), wallet.calculateBalance(), wallet.calculatePendingBalance());
                     }
                     walletsAdapter.setData(viewModel.getWalletsFromDB());
+
+                    RealmResults<WalletRealmObject> wallets = dataManager.getWallets();
+                    Log.i(TAG, "wallets " + wallets.size());
+                    WalletRealmObject walletRealmObject = wallets.get(0);
+                    if (walletRealmObject.getAddresses() == null) {
+                        Log.i(TAG, "addresses EMPTY");
+                    } else {
+                        Log.i(TAG, "addresses " + walletRealmObject.getAddresses().size());
+                        for (WalletAddress addr : walletRealmObject.getAddresses()) {
+                            Log.i(TAG, "addr " + addr);
+
+                            if (addr.getOutputs() != null) {
+                                Log.i(TAG, "outs " + addr.getOutputs().size());
+                                for (Output output : addr.getOutputs()) {
+                                    Log.v(TAG, output.toString());
+                                }
+                            } else {
+                                Log.i(TAG, "outs == null");
+                            }
+                        }
+                    }
                 }
             }
 
@@ -235,6 +262,12 @@ public class AssetsFragment extends BaseFragment {
     private void setVisibilityToPortfolios(boolean isVisible) {
         int visibility = isVisible ? View.VISIBLE : View.GONE;
 //        pagerPortfolios.setVisibility(visibility);
+    }
+
+    @Override
+    public void onDestroy() {
+//        socketManager.disconnect();
+        super.onDestroy();
     }
 
     @OnClick(R.id.button_add)

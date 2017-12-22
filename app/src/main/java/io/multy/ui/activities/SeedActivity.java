@@ -6,7 +6,6 @@
 
 package io.multy.ui.activities;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -18,9 +17,11 @@ import io.multy.ui.fragments.BaseSeedFragment;
 import io.multy.ui.fragments.seed.HelloSeedFragment;
 import io.multy.ui.fragments.seed.SeedValidationFragment;
 import io.multy.util.Constants;
+
 import io.multy.util.FirstLaunchHelper;
 import io.multy.util.JniException;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
 
 public class SeedActivity extends AppCompatActivity {
 
@@ -36,11 +37,6 @@ public class SeedActivity extends AppCompatActivity {
         } else {
             setFragment(new HelloSeedFragment());
         }
-    }
-
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
     private void setFragment(BaseSeedFragment fragment){
