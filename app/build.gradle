@@ -26,6 +26,7 @@ android {
             cmake {
                 cppFlags "-std=c++11"
                 arguments "-DWITH_TESTS=1"
+                arguments "-DPATH_TO_JNI_WRAPPER=C:\\workspace\\Multy-android\\app\\src\\main\\cpp\\scratch.cpp"
             }
         }
         ndk {
@@ -53,7 +54,7 @@ android {
         externalNativeBuild {
             cmake {
 //                path "/Users/appscrunch/Downloads/Multy-Core-master/CMakeLists.txt"
-                path "C:\\workspace\\Multy-Core\\CMakeLists.txt"
+                path "C:\\workspace\\KLUBIKMulty-Core\\CMakeLists.txt"
             }
         }
     }

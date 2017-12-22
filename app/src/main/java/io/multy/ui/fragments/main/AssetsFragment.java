@@ -6,6 +6,7 @@
 
 package io.multy.ui.fragments.main;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,13 +17,13 @@ import android.support.constraint.Group;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.samwolfand.oneprefs.Prefs;
-
 import com.hrules.charter.CharterLine;
+import com.samwolfand.oneprefs.Prefs;
 
 import java.util.ArrayList;
 
@@ -31,7 +32,11 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.multy.R;
 import io.multy.api.MultyApi;
+import io.multy.api.socket.CurrenciesRate;
+import io.multy.api.socket.SocketManager;
 import io.multy.model.DataManager;
+import io.multy.model.entities.Output;
+import io.multy.model.entities.wallet.WalletAddress;
 import io.multy.model.entities.wallet.WalletRealmObject;
 import io.multy.model.responses.WalletsResponse;
 import io.multy.ui.activities.CreateAssetActivity;
@@ -42,8 +47,8 @@ import io.multy.ui.fragments.BaseFragment;
 import io.multy.util.Constants;
 import io.multy.util.FirstLaunchHelper;
 import io.multy.util.JniException;
-import io.multy.util.SocketHelper;
 import io.multy.viewmodels.AssetsViewModel;
+import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -74,7 +79,7 @@ public class AssetsFragment extends BaseFragment {
     private AssetsViewModel viewModel;
     private WalletsAdapter walletsAdapter;
     private PortfoliosAdapter portfoliosAdapter;
-    private SocketHelper socketHelper;
+    private SocketManager socketManager;
 
     public static AssetsFragment newInstance() {
         return new AssetsFragment();
@@ -102,7 +107,13 @@ public class AssetsFragment extends BaseFragment {
         initialize();
         viewModel = ViewModelProviders.of(getActivity()).get(AssetsViewModel.class);
         viewModel.setContext(getActivity());
-//        socketHelper = new SocketHelper();
+        viewModel.rates.observe(this, new Observer<CurrenciesRate>() {
+            @Override
+            public void onChanged(@Nullable CurrenciesRate currenciesRate) {
+                walletsAdapter.updateRates(currenciesRate);
+            }
+        });
+        viewModel.init(getLifecycle());
         return view;
     }
 
@@ -116,6 +127,27 @@ public class AssetsFragment extends BaseFragment {
                         dataManager.updateWallet(wallet.getWalletIndex(), wallet.getAddresses(), wallet.calculateBalance(), wallet.calculatePendingBalance());
                     }
                     walletsAdapter.setData(viewModel.getWalletsFromDB());
+
+                    RealmResults<WalletRealmObject> wallets = dataManager.getWallets();
+                    Log.i(TAG, "wallets " + wallets.size());
+                    WalletRealmObject walletRealmObject = wallets.get(0);
+                    if (walletRealmObject.getAddresses() == null) {
+                        Log.i(TAG, "addresses EMPTY");
+                    } else {
+                        Log.i(TAG, "addresses " + walletRealmObject.getAddresses().size());
+                        for (WalletAddress addr : walletRealmObject.getAddresses()) {
+                            Log.i(TAG, "addr " + addr);
+
+                            if (addr.getOutputs() != null) {
+                                Log.i(TAG, "outs " + addr.getOutputs().size());
+                                for (Output output : addr.getOutputs()) {
+                                    Log.v(TAG, output.toString());
+                                }
+                            } else {
+                                Log.i(TAG, "outs == null");
+                            }
+                        }
+                    }
                 }
             }
 
@@ -129,7 +161,7 @@ public class AssetsFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-//        updateWallets();
+        updateWallets();
     }
 
     @Override
@@ -212,7 +244,7 @@ public class AssetsFragment extends BaseFragment {
 
     @Override
     public void onDestroy() {
-        socketHelper.disconnect();
+//        socketManager.disconnect();
         super.onDestroy();
     }
 

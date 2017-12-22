@@ -13,9 +13,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.PorterDuff;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -28,6 +30,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.scottyab.rootbeer.RootBeer;
 
 import butterknife.BindView;
@@ -35,6 +38,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.branch.referral.Branch;
 import io.multy.R;
+import io.multy.model.DataManager;
 import io.multy.ui.fragments.dialogs.SimpleDialogFragment;
 import io.multy.ui.fragments.main.AssetsFragment;
 import io.multy.ui.fragments.main.ContactsFragment;
@@ -57,6 +61,7 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
     private boolean isFirstFragmentCreation;
     private int lastTabPosition = 0;
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,7 +71,19 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
         setupFooter();
         setFragment(R.id.container_frame, AssetsFragment.newInstance());
 
+
+        String userId = new DataManager(this).getUserId().getUserId();
+        Log.i("wise", "subscribing to topic " + userId);
+        FirebaseMessaging.getInstance().subscribeToTopic("btcTransactionUpdate-" + userId);
+
 //        preventRootIfDetected();
+    }
+
+    public static String byteArrayToHex(byte[] a) {
+        StringBuilder sb = new StringBuilder(a.length * 2);
+        for (byte b : a)
+            sb.append(String.format("%02x", b));
+        return sb.toString();
     }
 
     private void getRealmedAddresses() {

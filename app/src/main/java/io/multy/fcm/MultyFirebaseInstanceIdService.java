@@ -4,7 +4,7 @@
  * See LICENSE for details
  */
 
-package io.multy.api;
+package io.multy.fcm;
 
 import android.util.Log;
 
