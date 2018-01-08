@@ -107,7 +107,6 @@ public class AssetsFragment extends BaseFragment {
             viewModel.rates.observe(this, currenciesRate -> walletsAdapter.updateRates(currenciesRate));
             viewModel.init(getLifecycle());
             viewModel.graphPoints.observe(this, graphPoints -> {
-
                 float[] values = new float[graphPoints.size()];
                 String[] stamps = new String[graphPoints.size()];
                 Date date;
@@ -138,7 +137,6 @@ public class AssetsFragment extends BaseFragment {
                 chartView.addData(lineSet);
                 chartView.setAxisBorderValues(getMinValue(values), getMaxValue(values));
                 chartView.show(new Animation().setInterpolator(new BounceInterpolator()).fromAlpha(0));
-
             });
         }
         return view;
