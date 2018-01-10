@@ -33,6 +33,7 @@ public class WalletViewModel extends BaseViewModel {
     public MutableLiveData<String> chainCurrency = new MutableLiveData<>();
     public MutableLiveData<String> fiatCurrency = new MutableLiveData<>();
     private MutableLiveData<List<WalletAddress>> addresses = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isRemoved = new MutableLiveData<>();
 
     public WalletViewModel() {
     }
@@ -78,27 +79,25 @@ public class WalletViewModel extends BaseViewModel {
             }
             DataManager dataManager = DataManager.getInstance();
 
-            int walletCount = 0;
-            if (Prefs.getBoolean(Constants.PREF_APP_INITIALIZED)) {
-                List<WalletRealmObject> wallets = dataManager.getWallets();
-                if (wallets != null) {
-                    walletCount = 0;
-                }
-            }
-
+            final int topIndex = Prefs.getInt(Constants.PREF_TOP_INDEX);
+            final int walletIndex = topIndex == Constants.ZERO ? topIndex : topIndex + Constants.ONE;
             final int currency = NativeDataHelper.Currency.BTC.getValue(); //TODO implement choosing crypto currency using enum NativeDataHelper.CURRENCY
 
-            String creationAddress = NativeDataHelper.makeAccountAddress(dataManager.getSeed().getSeed(), walletCount, 0, currency);
+            if (!Prefs.getBoolean(Constants.PREF_APP_INITIALIZED)) {
+                FirstLaunchHelper.setCredentials("");
+            }
+
+            String creationAddress = NativeDataHelper.makeAccountAddress(dataManager.getSeed().getSeed(), walletIndex, Constants.ZERO, currency);
 
             walletRealmObject = new WalletRealmObject();
             walletRealmObject.setName(walletName);
 
             RealmList<WalletAddress> addresses = new RealmList<>();
-            addresses.add(new WalletAddress(0, creationAddress));
+            addresses.add(new WalletAddress(Constants.ZERO, creationAddress));
 
             walletRealmObject.setAddresses(addresses);
-            walletRealmObject.setCurrency(0);
-            walletRealmObject.setAddressIndex(0);
+            walletRealmObject.setCurrency(Constants.ZERO);
+            walletRealmObject.setAddressIndex(Constants.ZERO);
             walletRealmObject.setCreationAddress(creationAddress);
             walletRealmObject.setWalletIndex(walletCount);
         } catch (JniException e) {
@@ -108,7 +107,50 @@ public class WalletViewModel extends BaseViewModel {
             errorMessage.call();
         }
 
+    }
+
+    private void saveWallet(Activity activity, WalletRealmObject walletRealmObject) {
+        Call<ResponseBody> responseBodyCall = MultyApi.INSTANCE.addWallet(activity, walletRealmObject);
+        responseBodyCall.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                isLoading.setValue(false);
+                if (response.isSuccessful()) {
+                    DataManager.getInstance().saveWallet(walletRealmObject);
+                    Prefs.putBoolean(Constants.PREF_APP_INITIALIZED, true);
+                    Prefs.putInt(Constants.PREF_TOP_INDEX, walletRealmObject.getWalletIndex());
+
+                    Intent intent = new Intent(activity, AssetActivity.class);
+                    if (walletRealmObject != null) {
+                        intent.putExtra(Constants.EXTRA_WALLET_ID, walletRealmObject.getWalletIndex());
+                    }
+
+                    activity.startActivity(intent);
+                    activity.finish();
+                } else {
+                    errorMessage.call();
+                }
+            }
+
         return walletRealmObject;
+    }
+
+    public MutableLiveData<Boolean> removeWallet() {
+        isLoading.setValue(true);
+        DataManager dataManager = DataManager.getInstance();
+        dataManager.removeWallet(wallet.getValue().getWalletIndex())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(response -> {
+                    dataManager.removeWalletFromDB(wallet.getValue().getWalletIndex());
+                    isLoading.setValue(false);
+                    isRemoved.setValue(true);
+                }, throwable -> {
+                    throwable.printStackTrace();
+                    isLoading.setValue(false);
+                    errorMessage.setValue(throwable.getMessage());
+                });
+        return isRemoved;
     }
 
 }

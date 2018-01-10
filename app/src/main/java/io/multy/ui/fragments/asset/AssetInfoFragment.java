@@ -142,7 +142,7 @@ public class AssetInfoFragment extends BaseFragment {
 
     @OnClick(R.id.options)
     void onClickOptions() {
-
+        ((AssetActivity)getActivity()).setFragment(R.id.frame_container, AssetSettingsFragment.newInstance());
     }
 
     @OnClick(R.id.card_addresses)

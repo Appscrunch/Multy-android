@@ -29,6 +29,7 @@ public class Multy extends Application {
         Realm.init(this);
         Branch.getAutoInstance(this);
         Timber.plant(new Timber.DebugTree());
+        Realm.init(this);
 
         new Prefs.Builder()
                 .setContext(this)
@@ -41,6 +42,12 @@ public class Multy extends Application {
                 .build();
 
         context = getApplicationContext();
+
+        Realm.setDefaultConfiguration(new RealmConfiguration.Builder()
+                .encryptionKey(MasterKeyGenerator.generateKey(context))
+                .schemaVersion(1)
+                .migration(new MyRealmMigration())
+                .build());
 
         if (Prefs.getString(Constants.PREF_IV, "").equals("")) {
             try {
@@ -56,6 +63,7 @@ public class Multy extends Application {
         if (counter.equals("")) {
             SecurePreferencesHelper.putString(this, Constants.PIN_COUNTER, String.valueOf(6));
         }
+      
     }
 
     public static Context getContext() {
