@@ -6,20 +6,17 @@
 
 package io.multy.viewmodels;
 
-import android.app.Activity;
 import android.arch.lifecycle.MutableLiveData;
-import android.content.Intent;
 
 import com.samwolfand.oneprefs.Prefs;
 
 import java.util.List;
 
-import io.multy.api.MultyApi;
+import io.multy.Multy;
 import io.multy.model.DataManager;
-import io.multy.model.entities.wallet.CurrencyCode;
 import io.multy.model.entities.wallet.WalletAddress;
 import io.multy.model.entities.wallet.WalletRealmObject;
-import io.multy.ui.activities.AssetActivity;
+import io.multy.storage.RealmManager;
 import io.multy.util.Constants;
 import io.multy.util.FirstLaunchHelper;
 import io.multy.util.JniException;
@@ -27,10 +24,6 @@ import io.multy.util.NativeDataHelper;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.RealmList;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import timber.log.Timber;
 
 public class WalletViewModel extends BaseViewModel {
@@ -45,20 +38,6 @@ public class WalletViewModel extends BaseViewModel {
     public WalletViewModel() {
     }
 
-//    public void getUserAssets() {
-//        Disposable disposable = dataManager.getUserAssets()
-//                .map(UserAssetsResponse::getWalletInfo)
-//                .flatMapIterable(walletsInfo -> walletsInfo)
-//                .map(WalletInfo::getAddress)
-//                .flatMapIterable(addresses -> addresses)
-//                .toList()
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribeOn(Schedulers.io())
-//                .subscribe(response -> addresses.setValue(response), Throwable::printStackTrace);
-//
-//        addDisposable(disposable);
-//    }
-
     public void getWalletAddresses(int walletId) {
         DataManager.getInstance().getWalletAddresses(walletId)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -69,32 +48,11 @@ public class WalletViewModel extends BaseViewModel {
     }
 
     public Double getApiExchangePrice() {
-        DataManager dataManager = DataManager.getInstance();
-        dataManager.getExchangePrice(CurrencyCode.BTC.name(), CurrencyCode.USD.name())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(response -> exchangePrice.setValue(response.getUSD()), Throwable::printStackTrace);
-
-        if (dataManager.getExchangePriceDB() != null) {
-            exchangePrice.setValue(dataManager.getExchangePriceDB());
-            return dataManager.getExchangePriceDB();
-        } else {
-            exchangePrice.setValue(16000.0);
-            return 16000.0;
-        }
-    }
-
-
-    public void getWalletLive(int walletId) {
-
+        return RealmManager.getSettingsDao().getExchangePrice().getExchangePrice();
     }
 
     public MutableLiveData<Double> getExchangePrice() {
         return exchangePrice;
-    }
-
-    public void addWallet() {
-
     }
 
     public MutableLiveData<List<WalletAddress>> getAddresses() {
@@ -111,10 +69,14 @@ public class WalletViewModel extends BaseViewModel {
         return wallet;
     }
 
-    public void createWallet(Activity activity, String walletName) {
+    public WalletRealmObject createWallet(String walletName) {
         isLoading.setValue(true);
         WalletRealmObject walletRealmObject = null;
         try {
+            if (!Prefs.getBoolean(Constants.PREF_APP_INITIALIZED)) {
+                Multy.makeInitialized();
+                FirstLaunchHelper.setCredentials("");
+            }
             DataManager dataManager = DataManager.getInstance();
 
             final int topIndex = Prefs.getInt(Constants.PREF_TOP_INDEX);
@@ -137,15 +99,14 @@ public class WalletViewModel extends BaseViewModel {
             walletRealmObject.setCurrency(Constants.ZERO);
             walletRealmObject.setAddressIndex(Constants.ZERO);
             walletRealmObject.setCreationAddress(creationAddress);
-            walletRealmObject.setWalletIndex(walletIndex);
-
-            saveWallet(activity, walletRealmObject);
+            walletRealmObject.setWalletIndex(walletCount);
         } catch (JniException e) {
             e.printStackTrace();
             isLoading.setValue(false);
             errorMessage.setValue(e.getLocalizedMessage());
             errorMessage.call();
         }
+
     }
 
     private void saveWallet(Activity activity, WalletRealmObject walletRealmObject) {
@@ -171,14 +132,7 @@ public class WalletViewModel extends BaseViewModel {
                 }
             }
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                isLoading.setValue(false);
-                errorMessage.setValue(t.getLocalizedMessage());
-                errorMessage.call();
-                t.printStackTrace();
-            }
-        });
+        return walletRealmObject;
     }
 
     public MutableLiveData<Boolean> removeWallet() {
