@@ -9,6 +9,7 @@ package io.multy.viewmodels;
 import android.app.Activity;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 
 import com.samwolfand.oneprefs.Prefs;
 
@@ -19,6 +20,7 @@ import io.multy.model.DataManager;
 import io.multy.model.entities.wallet.CurrencyCode;
 import io.multy.model.entities.wallet.WalletAddress;
 import io.multy.model.entities.wallet.WalletRealmObject;
+import io.multy.storage.AssetsDao;
 import io.multy.ui.activities.AssetActivity;
 import io.multy.util.Constants;
 import io.multy.util.FirstLaunchHelper;
@@ -117,7 +119,7 @@ public class WalletViewModel extends BaseViewModel {
         try {
             DataManager dataManager = DataManager.getInstance();
 
-            final int topIndex = Prefs.getInt(Constants.PREF_TOP_INDEX);
+            final int topIndex = Prefs.getInt(Constants.PREF_WALLET_TOP_INDEX);
             final int walletIndex = topIndex == Constants.ZERO ? topIndex : topIndex + Constants.ONE;
             final int currency = NativeDataHelper.Currency.BTC.getValue(); //TODO implement choosing crypto currency using enum NativeDataHelper.CURRENCY
 
@@ -157,7 +159,7 @@ public class WalletViewModel extends BaseViewModel {
                 if (response.isSuccessful()) {
                     DataManager.getInstance().saveWallet(walletRealmObject);
                     Prefs.putBoolean(Constants.PREF_APP_INITIALIZED, true);
-                    Prefs.putInt(Constants.PREF_TOP_INDEX, walletRealmObject.getWalletIndex());
+                    Prefs.putInt(Constants.PREF_WALLET_TOP_INDEX, walletRealmObject.getWalletIndex());
 
                     Intent intent = new Intent(activity, AssetActivity.class);
                     if (walletRealmObject != null) {
@@ -183,19 +185,22 @@ public class WalletViewModel extends BaseViewModel {
 
     public MutableLiveData<Boolean> removeWallet() {
         isLoading.setValue(true);
-        DataManager dataManager = DataManager.getInstance();
-        dataManager.removeWallet(wallet.getValue().getWalletIndex())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(response -> {
-                    dataManager.removeWalletFromDB(wallet.getValue().getWalletIndex());
-                    isLoading.setValue(false);
-                    isRemoved.setValue(true);
-                }, throwable -> {
-                    throwable.printStackTrace();
-                    isLoading.setValue(false);
-                    errorMessage.setValue(throwable.getMessage());
-                });
+        MultyApi.INSTANCE.removeWallet(wallet.getValue().getWalletIndex()).enqueue(new Callback<Object>() {
+            @Override
+            public void onResponse(@NonNull Call<Object> call, @NonNull Response<Object> response) {
+                AssetsDao assetsDao = new AssetsDao();
+                assetsDao.removeWallet(wallet.getValue().getWalletIndex());
+                isLoading.setValue(false);
+                isRemoved.setValue(true);
+            }
+
+            @Override
+            public void onFailure(Call<Object> call, Throwable throwable) {
+                throwable.printStackTrace();
+                isLoading.setValue(false);
+                errorMessage.setValue(throwable.getMessage());
+            }
+        });
         return isRemoved;
     }
 

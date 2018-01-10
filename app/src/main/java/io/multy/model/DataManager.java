@@ -204,11 +204,4 @@ public class DataManager {
         return databaseHelper.getWalletAddress(id);
     }
 
-    public Observable<Object> removeWallet(int walletIndex){
-        return MultyApi.INSTANCE.removeWallet(walletIndex);
-    }
-
-    public void removeWalletFromDB(int walletIndex){
-        databaseHelper.removeWallet(walletIndex);
-    }
 }
