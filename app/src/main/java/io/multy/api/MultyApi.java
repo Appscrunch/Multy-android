@@ -143,5 +143,10 @@ public enum MultyApi implements MultyApiInterface {
         public Call<WalletsResponse> restore() {
             return api.getWalletsVerbose();
         }
+
+        @Override
+        public Call<Object> removeWallet(int walletIndex) {
+            return api.removeWallet(walletIndex);
+        }
     }
 }
