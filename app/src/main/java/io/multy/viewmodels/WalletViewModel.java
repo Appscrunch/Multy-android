@@ -40,6 +40,7 @@ public class WalletViewModel extends BaseViewModel {
     public MutableLiveData<String> chainCurrency = new MutableLiveData<>();
     public MutableLiveData<String> fiatCurrency = new MutableLiveData<>();
     private MutableLiveData<List<WalletAddress>> addresses = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isRemoved = new MutableLiveData<>();
 
     public WalletViewModel() {
     }
@@ -116,26 +117,25 @@ public class WalletViewModel extends BaseViewModel {
         try {
             DataManager dataManager = DataManager.getInstance();
 
-            List<WalletRealmObject> wallets = dataManager.getWallets();
-
-            final int walletIndex = wallets == null ? 0 : wallets.size();
+            final int topIndex = Prefs.getInt(Constants.PREF_TOP_INDEX);
+            final int walletIndex = topIndex == Constants.ZERO ? topIndex : topIndex + Constants.ONE;
             final int currency = NativeDataHelper.Currency.BTC.getValue(); //TODO implement choosing crypto currency using enum NativeDataHelper.CURRENCY
 
             if (!Prefs.getBoolean(Constants.PREF_APP_INITIALIZED)) {
                 FirstLaunchHelper.setCredentials("");
             }
 
-            String creationAddress = NativeDataHelper.makeAccountAddress(dataManager.getSeed().getSeed(), walletIndex, 0, currency);
+            String creationAddress = NativeDataHelper.makeAccountAddress(dataManager.getSeed().getSeed(), walletIndex, Constants.ZERO, currency);
 
             walletRealmObject = new WalletRealmObject();
             walletRealmObject.setName(walletName);
 
             RealmList<WalletAddress> addresses = new RealmList<>();
-            addresses.add(new WalletAddress(0, creationAddress));
+            addresses.add(new WalletAddress(Constants.ZERO, creationAddress));
 
             walletRealmObject.setAddresses(addresses);
-            walletRealmObject.setCurrency(0);
-            walletRealmObject.setAddressIndex(0);
+            walletRealmObject.setCurrency(Constants.ZERO);
+            walletRealmObject.setAddressIndex(Constants.ZERO);
             walletRealmObject.setCreationAddress(creationAddress);
             walletRealmObject.setWalletIndex(walletIndex);
 
@@ -157,6 +157,7 @@ public class WalletViewModel extends BaseViewModel {
                 if (response.isSuccessful()) {
                     DataManager.getInstance().saveWallet(walletRealmObject);
                     Prefs.putBoolean(Constants.PREF_APP_INITIALIZED, true);
+                    Prefs.putInt(Constants.PREF_TOP_INDEX, walletRealmObject.getWalletIndex());
 
                     Intent intent = new Intent(activity, AssetActivity.class);
                     if (walletRealmObject != null) {
@@ -180,5 +181,22 @@ public class WalletViewModel extends BaseViewModel {
         });
     }
 
+    public MutableLiveData<Boolean> removeWallet() {
+        isLoading.setValue(true);
+        DataManager dataManager = DataManager.getInstance();
+        dataManager.removeWallet(wallet.getValue().getWalletIndex())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(response -> {
+                    dataManager.removeWalletFromDB(wallet.getValue().getWalletIndex());
+                    isLoading.setValue(false);
+                    isRemoved.setValue(true);
+                }, throwable -> {
+                    throwable.printStackTrace();
+                    isLoading.setValue(false);
+                    errorMessage.setValue(throwable.getMessage());
+                });
+        return isRemoved;
+    }
 
 }

@@ -49,4 +49,6 @@ public interface MultyApiInterface {
     Call<WalletsResponse> getWalletsVerbose();
 
     Call<WalletsResponse> restore();
+
+    Observable<Object> removeWallet(int walletIndex);
 }
