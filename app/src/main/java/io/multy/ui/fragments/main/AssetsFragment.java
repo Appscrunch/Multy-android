@@ -119,7 +119,7 @@ public class AssetsFragment extends BaseFragment {
             @Override
             public void onResponse(@NonNull Call<WalletsResponse> call, @NonNull Response<WalletsResponse> response) {
                 if (response.body() != null) {
-                    Prefs.putInt(Constants.PREF_TOP_INDEX, response.body().getTopIndex());
+                    Prefs.putInt(Constants.PREF_WALLET_TOP_INDEX, response.body().getTopIndex());
                     if (response.body().getWallets() != null && response.body().getWallets().size() != 0) {
                         DataManager dataManager = DataManager.getInstance();
                         for (WalletRealmObject wallet : response.body().getWallets()) {

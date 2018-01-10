@@ -29,10 +29,7 @@ public class Constants {
     public static final String PREF_AUTH = "pref_auth";
     public static final String PREF_EXCHANGE_PRICE = "pref_exchange_price";
     public static final String PREF_LOCK ="pref_lock";
-    /**
-     *  to count length of wallets if any was deleted.
-     */
-    public static final String PREF_TOP_INDEX = "pref_top_index";
+    public static final String PREF_WALLET_TOP_INDEX = "pref_wallet_top_index";
 
     public static final int CAMERA_REQUEST_CODE = 328;
     public static final String EXTRA_QR_CONTENTS = "EXTRA_QR_CONTENTS";

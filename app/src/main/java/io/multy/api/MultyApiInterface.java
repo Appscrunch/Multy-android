@@ -50,5 +50,5 @@ public interface MultyApiInterface {
 
     Call<WalletsResponse> restore();
 
-    Observable<Object> removeWallet(int walletIndex);
+    Call<ResponseBody> removeWallet(int walletIndex);
 }

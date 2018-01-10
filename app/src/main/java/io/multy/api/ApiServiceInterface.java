@@ -80,7 +80,7 @@ public interface ApiServiceInterface {
     Call<ResponseBody> getWalletVerboseByIndex(@Path ("walletIndex") int walletIndex);
 
     @DELETE("api/v1/wallet/{walletIndex}")
-    Observable<Object> removeWallet(@Path ("walletIndex") int walletIndex);
+    Call<ResponseBody> removeWallet(@Path ("walletIndex") int walletIndex);
 
     @GET("api/v1/wallets/verbose")
     Call<WalletsResponse> getWalletsVerbose();

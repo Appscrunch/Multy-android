@@ -35,12 +35,6 @@ public class Multy extends Application {
                 .build();
 
         context = getApplicationContext();
-
-        Realm.setDefaultConfiguration(new RealmConfiguration.Builder()
-                .encryptionKey(MasterKeyGenerator.generateKey(context))
-                .schemaVersion(1)
-                .migration(new MyRealmMigration())
-                .build());
     }
 
     public static Context getContext() {

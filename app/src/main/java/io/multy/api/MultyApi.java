@@ -213,7 +213,7 @@ public enum MultyApi implements MultyApiInterface {
         }
 
         @Override
-        public Observable<Object> removeWallet(int walletIndex) {
+        public Call<ResponseBody> removeWallet(int walletIndex) {
             return api.removeWallet(walletIndex);
         }
     }
