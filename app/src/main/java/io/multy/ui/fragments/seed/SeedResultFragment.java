@@ -66,12 +66,14 @@ public class SeedResultFragment extends BaseSeedFragment {
         } else {
             if (getActivity().getIntent().hasCategory(Constants.EXTRA_RESTORE)) {
                 textViewTitle.setText(R.string.seed_congrats_restore);
+                if (!Prefs.getBoolean(Constants.PREF_BACKUP_SEED)) {
+                    Prefs.putBoolean(Constants.PREF_BACKUP_SEED, true);
+                }
             }
 
             setBrickColor(BRICK_GREEN);
             buttonCancel.setVisibility(View.GONE);
             buttonNext.setText(R.string.great);
-            Prefs.putBoolean(Constants.PREF_APP_INITIALIZED, true);
         }
     }
 

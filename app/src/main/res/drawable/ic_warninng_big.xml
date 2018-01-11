@@ -10,6 +10,7 @@
     android:viewportHeight="22.0"
     android:viewportWidth="22.0">
     <path
+        android:fillType="evenOdd"
         android:fillColor="#FFF"
         android:pathData="M11,11m-11,0a11,11 0,1 1,22 0a11,11 0,1 1,-22 0" />
     <path

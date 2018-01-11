@@ -7,34 +7,41 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.multy.R;
-
-/**
- * Created by appscrunch on 20.11.17.
- */
+import io.multy.model.entities.TransactionHistory;
 
 public class AssetTransactionsAdapter extends RecyclerView.Adapter<AssetTransactionsAdapter.Holder> {
 
-//    private List<Transactions> transactions;
+    private List<TransactionHistory> data;
+
+    public AssetTransactionsAdapter(List<TransactionHistory> data) {
+        this.data = data;
+    }
 
     @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.view_transaction_item, parent, false);
-        return new Holder(v);
+        return new Holder(LayoutInflater.from(parent.getContext()).inflate(R.layout.view_transaction_item, parent, false));
     }
 
     @Override
     public void onBindViewHolder(Holder holder, int position) {
-
+        DecimalFormat fiatFormat = new DecimalFormat("#.##");
+        TransactionHistory transactionHistory = data.get(position);
+        ArrayList<TransactionHistory.StockExchangeRate> stockRates = transactionHistory.getStockExchangeRates();
+        String amountBtc = transactionHistory.getTxOutAmount();
+        double amountFiat = stockRates != null && stockRates.size() > 0 ? stockRates.get(0).getBtcUsd() : 16.000;
+        String amountFiatString = fiatFormat.format(amountFiat) + " USD";
     }
 
     @Override
     public int getItemCount() {
-//        return transactions.size();
-        return 0;
+        return data.size();
     }
 
     class Holder extends RecyclerView.ViewHolder {

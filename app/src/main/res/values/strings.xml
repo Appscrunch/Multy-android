@@ -172,5 +172,12 @@
     <string name="logo_title">Blockchain\nopen source wallet</string>
     <string name="backup_is_not_executed">Backup is not executed</string>
     <string name="wallet_removed">Wallet removed</string>
+    <string name="something_went_wrong">Something went wrong</string>
+    <string name="zero_zero">0.0</string>
+    <string name="show_all_addresses">Show All Addresses</string>
+    <string name="operations_empty">You didn\'t have\noperations</string>
+    <string name="operations_create">You can create\nfirst operation\nhere</string>
+    <string name="please_update">Please update your version</string>
+    <string name="error_config_error">Unable to get config</string>
 
 </resources>
