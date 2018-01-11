@@ -96,16 +96,4 @@ public class AssetsDao {
         WalletRealmObject wallet = getWalletById(id);
         realm.executeTransaction(realm -> wallet.deleteFromRealm());
     }
-
-    public WalletRealmObject getWalletById(int id) {
-        return realm.where(WalletRealmObject.class).equalTo("walletIndex", id).findFirst();
-    }
-
-    public void delete(@NonNull final RealmObject object) {
-        realm.executeTransaction(realm -> object.deleteFromRealm());
-    }
-
-    public void deleteAll() {
-        realm.executeTransaction(realm -> realm.where(WalletRealmObject.class).findAll().deleteAllFromRealm());
-    }
 }
