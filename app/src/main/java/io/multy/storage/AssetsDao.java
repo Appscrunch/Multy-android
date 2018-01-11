@@ -18,6 +18,12 @@ import io.multy.util.MyRealmMigration;
 import io.reactivex.annotations.NonNull;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import java.util.List;
+
+import io.multy.model.entities.wallet.WalletAddress;
+import io.multy.model.entities.wallet.WalletRealmObject;
+import io.reactivex.annotations.NonNull;
+import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
@@ -89,5 +95,17 @@ public class AssetsDao {
     public void removeWallet(int id) {
         WalletRealmObject wallet = getWalletById(id);
         realm.executeTransaction(realm -> wallet.deleteFromRealm());
+    }
+
+    public WalletRealmObject getWalletById(int id) {
+        return realm.where(WalletRealmObject.class).equalTo("walletIndex", id).findFirst();
+    }
+
+    public void delete(@NonNull final RealmObject object) {
+        realm.executeTransaction(realm -> object.deleteFromRealm());
+    }
+
+    public void deleteAll() {
+        realm.executeTransaction(realm -> realm.where(WalletRealmObject.class).findAll().deleteAllFromRealm());
     }
 }

@@ -16,7 +16,6 @@ import io.multy.util.Constants;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
-
 public class RealmManager {
 
     private final static String TAG = RealmManager.class.getSimpleName();
