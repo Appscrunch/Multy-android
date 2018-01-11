@@ -29,6 +29,7 @@ public class Multy extends Application {
         Realm.init(this);
         Branch.getAutoInstance(this);
         Timber.plant(new Timber.DebugTree());
+        Realm.init(this);
 
         new Prefs.Builder()
                 .setContext(this)
