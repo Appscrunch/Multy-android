@@ -6,6 +6,7 @@
 
 package io.multy.viewmodels;
 
+import android.app.Activity;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -15,6 +16,7 @@ import com.samwolfand.oneprefs.Prefs;
 import java.util.List;
 
 import io.multy.Multy;
+import io.multy.api.MultyApi;
 import io.multy.model.DataManager;
 import io.multy.model.entities.wallet.WalletAddress;
 import io.multy.model.entities.wallet.WalletRealmObject;
@@ -30,6 +32,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 import io.realm.RealmList;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import timber.log.Timber;
 
 public class WalletViewModel extends BaseViewModel {
@@ -105,13 +111,14 @@ public class WalletViewModel extends BaseViewModel {
             walletRealmObject.setCurrency(Constants.ZERO);
             walletRealmObject.setAddressIndex(Constants.ZERO);
             walletRealmObject.setCreationAddress(creationAddress);
-            walletRealmObject.setWalletIndex(walletCount);
+            walletRealmObject.setWalletIndex(walletIndex);
         } catch (JniException e) {
             e.printStackTrace();
             isLoading.setValue(false);
             errorMessage.setValue(e.getLocalizedMessage());
             errorMessage.call();
         }
+        return walletRealmObject;
     }
 
     private void saveWallet(Activity activity, WalletRealmObject walletRealmObject) {
@@ -137,7 +144,11 @@ public class WalletViewModel extends BaseViewModel {
                 }
             }
 
-        return walletRealmObject;
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
     }
 
     public MutableLiveData<Boolean> removeWallet() {
