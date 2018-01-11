@@ -69,5 +69,5 @@ public class Constants {
     public static final String BULLETS_FIVE = " • • • ∙ ";
 
     public static final int TRANSACTIONS_EMPTY_SIZE = 0;
-    public static final int ADDRESS_PART = 10;
+    public static final int ADDRESS_PART = 9;
 }
