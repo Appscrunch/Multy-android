@@ -46,10 +46,12 @@
         android:layout_marginTop="27dp"
         android:fontFamily="@font/montserrat"
         android:maxLines="2"
-        tools:text="3DA28W ∙ ∙ ∙ ∙ XJSP9L"
+        tools:text="3DA28W4 ∙ ∙ ∙ ∙ XJSP9L"
         android:textColor="#363636"
         android:textSize="14sp"
+        android:layout_marginEnd="@dimen/transaction_item_address_margin_right"
         app:layout_constraintStart_toEndOf="@+id/image_operation"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_date" />
 
     <TextView
