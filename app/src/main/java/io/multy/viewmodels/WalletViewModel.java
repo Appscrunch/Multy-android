@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 
 import com.samwolfand.oneprefs.Prefs;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.multy.Multy;
@@ -18,8 +19,10 @@ import io.multy.api.MultyApi;
 import io.multy.api.socket.CurrenciesRate;
 import io.multy.api.socket.SocketManager;
 import io.multy.model.DataManager;
+import io.multy.model.entities.TransactionHistory;
 import io.multy.model.entities.wallet.WalletAddress;
 import io.multy.model.entities.wallet.WalletRealmObject;
+import io.multy.model.responses.TransactionHistoryResponse;
 import io.multy.storage.RealmManager;
 import io.multy.util.Constants;
 import io.multy.util.FirstLaunchHelper;
@@ -38,6 +41,7 @@ public class WalletViewModel extends BaseViewModel {
     public MutableLiveData<String> fiatCurrency = new MutableLiveData<>();
     private MutableLiveData<List<WalletAddress>> addresses = new MutableLiveData<>();
     private MutableLiveData<Boolean> isRemoved = new MutableLiveData<>();
+    private MutableLiveData<ArrayList<TransactionHistory>> transactions = new MutableLiveData<>();
     public MutableLiveData<CurrenciesRate> rates = new MutableLiveData<>();
 
     private SocketManager socketManager;
@@ -108,6 +112,23 @@ public class WalletViewModel extends BaseViewModel {
             errorMessage.call();
         }
         return walletRealmObject;
+    }
+
+    public MutableLiveData<ArrayList<TransactionHistory>> getTransactionsHistory() {
+        MultyApi.INSTANCE.getTransactionHistory(wallet.getValue().getWalletIndex()).enqueue(new Callback<TransactionHistoryResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<TransactionHistoryResponse> call, @NonNull Response<TransactionHistoryResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    transactions.setValue(response.body().getHistories());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<TransactionHistoryResponse> call, Throwable throwable) {
+                throwable.printStackTrace();
+            }
+        });
+        return transactions;
     }
 
     public MutableLiveData<Boolean> removeWallet() {
