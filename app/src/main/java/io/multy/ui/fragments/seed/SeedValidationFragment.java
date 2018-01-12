@@ -21,7 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.samwolfand.oneprefs.Prefs;
@@ -44,7 +44,7 @@ public class SeedValidationFragment extends BaseSeedFragment {
     private static final long SEED_WORD_DURATION = 250;
 
     @BindView(R.id.input_word)
-    AutoCompleteTextView inputWord;
+    EditText inputWord;
 
     @BindView(R.id.button_next)
     TextView buttonNext;
@@ -196,6 +196,7 @@ public class SeedValidationFragment extends BaseSeedFragment {
                 inputWord.animate().alpha(0).setDuration(BrickView.ANIMATION_DURATION / 2).start();
             }
             inputWord.setText("");
+            currentSeedWord = null;
             redrawOne(false);
             buttonNext.setEnabled(false);
             if (count == maxCount) {

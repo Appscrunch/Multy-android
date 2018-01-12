@@ -22,6 +22,7 @@ import io.multy.model.DataManager;
 import io.multy.model.entities.TransactionHistory;
 import io.multy.model.entities.wallet.WalletAddress;
 import io.multy.model.entities.wallet.WalletRealmObject;
+import io.multy.model.requests.UpdateWalletNameRequest;
 import io.multy.model.responses.TransactionHistoryResponse;
 import io.multy.storage.RealmManager;
 import io.multy.util.Constants;
@@ -40,6 +41,7 @@ public class WalletViewModel extends BaseViewModel {
     public MutableLiveData<String> chainCurrency = new MutableLiveData<>();
     public MutableLiveData<String> fiatCurrency = new MutableLiveData<>();
     private MutableLiveData<List<WalletAddress>> addresses = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isWalletUpdated = new MutableLiveData<>();
     private MutableLiveData<Boolean> isRemoved = new MutableLiveData<>();
     public MutableLiveData<CurrenciesRate> rates = new MutableLiveData<>();
     private MutableLiveData<ArrayList<TransactionHistory>> transactions = new MutableLiveData<>();
@@ -129,6 +131,37 @@ public class WalletViewModel extends BaseViewModel {
             }
         });
         return transactions;
+    }
+
+    public MutableLiveData<Boolean> updateWalletSetting(String newName) {
+        isLoading.setValue(true);
+        int id = wallet.getValue().getWalletIndex();
+        UpdateWalletNameRequest updateWalletName = new UpdateWalletNameRequest(newName);
+        MultyApi.INSTANCE.updateWalletName(id, updateWalletName).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == 200) {
+                    RealmManager.getAssetsDao().updateWalletName(id, newName);
+                    isLoading.setValue(false);
+                    isWalletUpdated.setValue(true);
+                } else {
+                    isWalletUpdated.setValue(false);
+                    if (response.message() != null) {
+                        errorMessage.setValue(response.message());
+                    }
+                }
+                isLoading.setValue(false);
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                t.printStackTrace();
+                isLoading.setValue(false);
+                isWalletUpdated.setValue(false);
+                errorMessage.setValue(t.getMessage());
+            }
+        });
+        return isWalletUpdated;
     }
 
     public MutableLiveData<Boolean> removeWallet() {
