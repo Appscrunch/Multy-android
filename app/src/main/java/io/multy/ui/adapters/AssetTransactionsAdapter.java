@@ -30,10 +30,10 @@ import timber.log.Timber;
 
 public class AssetTransactionsAdapter extends RecyclerView.Adapter<AssetTransactionsAdapter.Holder> {
 
-    private List<TransactionHistory> transactions;
+    private List<TransactionHistory> transactionHistoryList;
 
     public AssetTransactionsAdapter() {
-        transactions = new ArrayList<>();
+        transactionHistoryList = new ArrayList<>();
     }
 
     @Override
@@ -44,56 +44,53 @@ public class AssetTransactionsAdapter extends RecyclerView.Adapter<AssetTransact
     @Override
     public void onBindViewHolder(Holder holder, int position) {
         DecimalFormat fiatFormat = new DecimalFormat("#.##");
-        TransactionHistory transaction = transactions.get(position);
+        TransactionHistory transactionHistory = transactionHistoryList.get(position);
         boolean isInput = true;
-        switch (transaction.getTxStatus()) {
-            case Constants.TX_STATUS_IN_MEMPOOL_INCOMING:
-                isInput = true;
-                break;
-            case Constants.TX_STATUS_IN_BLOCK_INCOMING:
-                isInput = true;
-                break;
-            case Constants.TX_STATUS_IN_MEMPOOL_OUTCOMING:
-                isInput = false;
-                break;
-            case Constants.TX_STATUS_IN_BLOCK_OUTCOMING:
-                isInput = false;
-                break;
-            case Constants.TX_STATUS_IN_BLOCK_CONFIRMED:
-                isInput = true;
-                break;
-            case Constants.TX_STATUS_REJECTED:
-                isInput = false;
-                break;
+
+        if (transactionHistory.getTxStatus().equals(Constants.TX_STATUS_IN_MEMPOOL_INCOMING) ||
+                transactionHistory.getTxStatus().equals(Constants.TX_STATUS_IN_BLOCK_INCOMING) ||
+                transactionHistory.getTxStatus().equals(Constants.TX_STATUS_IN_BLOCK_CONFIRMED)) {
+            isInput = true;
+        } else {
+            isInput = false;
         }
+
         String addressFirst;
         String addressSecond;
         if (isInput) {
-            if (transaction.getInputs().size() > Constants.ZERO) {
-                addressFirst = transaction.getInputs().get(Constants.ZERO).getAddress();
-                addressFirst = addressFirst.substring(Constants.ZERO, 6).concat(Constants.BULLETS_FIVE).concat(addressFirst.substring(addressFirst.length() - 6, addressFirst.length()));
+            if (transactionHistory.getInputs().size() > Constants.ZERO) {
+                addressFirst = transactionHistory.getInputs().get(Constants.ZERO).getAddress();
+                addressFirst = addressFirst.substring(Constants.ZERO, Constants.ADDRESS_PART)
+                        .concat(Constants.BULLETS_FIVE)
+                        .concat(addressFirst.substring(addressFirst.length() - Constants.ADDRESS_PART, addressFirst.length()));
                 holder.address.setText(addressFirst);
-                if (transaction.getInputs().size() > Constants.ONE) {
-                    addressSecond = transaction.getInputs().get(transaction.getInputs().size() - 1).getAddress();
-                    addressSecond = addressSecond.substring(Constants.ZERO, 6).concat(Constants.BULLETS_FIVE).concat(addressSecond.substring(addressSecond.length() - 6, addressSecond.length()));
+                if (transactionHistory.getInputs().size() > Constants.ONE) {
+                    addressSecond = transactionHistory.getInputs().get(transactionHistory.getInputs().size() - 1).getAddress();
+                    addressSecond = addressSecond.substring(Constants.ZERO, Constants.ADDRESS_PART)
+                            .concat(Constants.BULLETS_FIVE)
+                            .concat(addressSecond.substring(addressSecond.length() - Constants.ADDRESS_PART, addressSecond.length()));
                     holder.address.append("\n");
                     holder.address.append(addressSecond);
                 }
             } else {
-                Timber.e("There are no inputs inside %s transaction", transaction.getTxId());
+                Timber.e("There are no inputs inside %s transaction", transactionHistory.getTxId());
             }
             holder.operationImage.setImageDrawable(holder.operationImage.getContext().getDrawable(R.drawable.ic_recieve));
         } else {
-            if (transaction.getOutputs().size() > Constants.ZERO) {
-                addressFirst = transaction.getOutputs().get(Constants.ZERO).getAddress();
-                if (!addressFirst.equals(transaction.getAddress())) {
-                    addressFirst = addressFirst.substring(Constants.ZERO, 6).concat(Constants.BULLETS_FIVE).concat(addressFirst.substring(addressFirst.length() - 6, addressFirst.length()));
+            if (transactionHistory.getOutputs().size() > Constants.TRANSACTIONS_EMPTY_SIZE) {
+                addressFirst = transactionHistory.getOutputs().get(Constants.ZERO).getAddress();
+                if (!addressFirst.equals(transactionHistory.getAddress())) {
+                    addressFirst = addressFirst.substring(Constants.ZERO, Constants.ADDRESS_PART)
+                            .concat(Constants.BULLETS_FIVE)
+                            .concat(addressFirst.substring(addressFirst.length() - Constants.ADDRESS_PART, addressFirst.length()));
                     holder.address.setText(addressFirst);
                 }
-                if (transaction.getOutputs().size() > Constants.ONE) {
-                    addressSecond = transaction.getOutputs().get(transaction.getOutputs().size() - 1).getAddress();
-                    if (!addressSecond.equals(transaction.getAddress())) {
-                        addressSecond = addressSecond.substring(Constants.ZERO, 6).concat(Constants.BULLETS_FIVE).concat(addressSecond.substring(addressSecond.length() - 6, addressSecond.length()));
+                if (transactionHistory.getOutputs().size() > Constants.ONE) {
+                    addressSecond = transactionHistory.getOutputs().get(transactionHistory.getOutputs().size() - 1).getAddress();
+                    if (!addressSecond.equals(transactionHistory.getAddress())) {
+                        addressSecond = addressSecond.substring(Constants.ZERO, Constants.ADDRESS_PART)
+                                .concat(Constants.BULLETS_FIVE)
+                                .concat(addressSecond.substring(addressSecond.length() - Constants.ADDRESS_PART, addressSecond.length()));
                         if (!TextUtils.isEmpty(holder.address.getText())) {
                             holder.address.append("\n");
                         }
@@ -101,23 +98,21 @@ public class AssetTransactionsAdapter extends RecyclerView.Adapter<AssetTransact
                     }
                 }
             } else {
-                Timber.e("There are no inputs inside %s transaction", transaction.getTxId());
+                Timber.e("There are no outputs inside %s transaction", transactionHistory.getTxId());
             }
             holder.operationImage.setImageDrawable(holder.operationImage.getContext().getDrawable(R.drawable.ic_send));
         }
 
-        double amount = Double.parseDouble(transaction.getTxOutAmount()) / Math.pow(10, 8);
-
+        double amount = Double.parseDouble(transactionHistory.getTxOutAmount()) / Math.pow(10, 8);
         holder.amount.setText(String.valueOf(amount));
-        ArrayList<TransactionHistory.StockExchangeRate> stockRates = transaction.getStockExchangeRates();
+        ArrayList<TransactionHistory.StockExchangeRate> stockRates = transactionHistory.getStockExchangeRates();
         double fiatExchangePrice = stockRates != null && stockRates.size() > 0 ? stockRates.get(0).getBtcUsd() : 16000;
         String amountFiatString = fiatFormat.format(fiatExchangePrice * amount).concat(Constants.SPACE).concat(CurrencyCode.USD.name());
         holder.fiat.setText(amountFiatString);
 //        holder.comment.setText(transaction.);
 
-        Date date = new Date(transaction.getBlockTime());
         SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy HH:mm", Locale.ENGLISH);
-        holder.time.setText(formatter.format(transaction.getBlockTime() * 1000));
+        holder.time.setText(formatter.format(transactionHistory.getBlockTime() * 1000));
 //        formatter = new SimpleDateFormat("dd MMMM yyyy", Locale.ENGLISH);
 //        Timber.e("timestamp %s", transaction.getBlockTime());
 //        Timber.e("date %s", formatter.format(date.getTime() * 1000));
@@ -126,11 +121,11 @@ public class AssetTransactionsAdapter extends RecyclerView.Adapter<AssetTransact
 
     @Override
     public int getItemCount() {
-        return transactions.size();
+        return transactionHistoryList.size();
     }
 
     public void setTransactions(List<TransactionHistory> transactions) {
-        this.transactions = transactions;
+        this.transactionHistoryList = transactions;
         notifyDataSetChanged();
     }
 
