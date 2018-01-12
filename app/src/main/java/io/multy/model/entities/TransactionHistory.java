@@ -128,4 +128,24 @@ public class TransactionHistory {
             return name;
         }
     }
+
+    @Override
+    public String toString() {
+        return "TransactionHistory{" +
+                "txId='" + txId + '\'' +
+                ", txHash='" + txHash + '\'' +
+                ", txOutScript='" + txOutScript + '\'' +
+                ", address='" + address + '\'' +
+                ", txStatus='" + txStatus + '\'' +
+                ", txOutAmount='" + txOutAmount + '\'' +
+                ", txOutId=" + txOutId +
+                ", walletIndex=" + walletIndex +
+                ", blockTime=" + blockTime +
+                ", blockHeight=" + blockHeight +
+                ", txFee=" + txFee +
+                ", stockExchangeRates=" + stockExchangeRates +
+                ", inputs=" + inputs +
+                ", outputs=" + outputs +
+                '}';
+    }
 }
