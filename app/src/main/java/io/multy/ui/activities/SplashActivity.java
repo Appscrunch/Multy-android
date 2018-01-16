@@ -24,6 +24,7 @@ import io.multy.R;
 import io.multy.api.MultyApi;
 import io.multy.model.responses.ServerConfigResponse;
 import io.multy.ui.fragments.dialogs.SimpleDialogFragment;
+import io.multy.util.FirstLaunchHelper;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -42,7 +43,7 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
         ButterKnife.bind(this);
 
-//        FirstLaunchHelper.preventRootIfDetected(this);
+        FirstLaunchHelper.preventRootIfDetected(this);
 
         Animation emergency = AnimationUtils.loadAnimation(this, R.anim.splash_emergency);
         emergency.setDuration(DURATION_EMERGENCY);

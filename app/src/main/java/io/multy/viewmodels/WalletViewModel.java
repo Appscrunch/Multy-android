@@ -37,14 +37,14 @@ import retrofit2.Response;
 
 public class WalletViewModel extends BaseViewModel {
 
-    private MutableLiveData<WalletRealmObject> wallet = new MutableLiveData<>();
+    public MutableLiveData<WalletRealmObject> wallet = new MutableLiveData<>();
     public MutableLiveData<String> chainCurrency = new MutableLiveData<>();
     public MutableLiveData<String> fiatCurrency = new MutableLiveData<>();
-    private MutableLiveData<List<WalletAddress>> addresses = new MutableLiveData<>();
     private MutableLiveData<Boolean> isWalletUpdated = new MutableLiveData<>();
-    private MutableLiveData<Boolean> isRemoved = new MutableLiveData<>();
+    public MutableLiveData<List<WalletAddress>> addresses = new MutableLiveData<>();
+    public MutableLiveData<Boolean> isRemoved = new MutableLiveData<>();
     public MutableLiveData<CurrenciesRate> rates = new MutableLiveData<>();
-    private MutableLiveData<ArrayList<TransactionHistory>> transactions = new MutableLiveData<>();
+    public MutableLiveData<ArrayList<TransactionHistory>> transactions = new MutableLiveData<>();
 
     private SocketManager socketManager;
 
