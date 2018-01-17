@@ -12,10 +12,14 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import io.multy.R;
 import io.multy.api.MultyApi;
 import io.multy.model.responses.ServerConfigResponse;
@@ -26,13 +30,37 @@ import retrofit2.Response;
 
 public class SplashActivity extends AppCompatActivity {
 
+    @BindView(R.id.container)
+    View container;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+        ButterKnife.bind(this);
 
 //        FirstLaunchHelper.preventRootIfDetected(this);
 
+        Animation emergency = AnimationUtils.loadAnimation(this, R.anim.splash_emergency);
+        emergency.setDuration(350);
+        emergency.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                getServerConfig();
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
+        container.startAnimation(emergency);
+    }
+
+    private void getServerConfig() {
         MultyApi.INSTANCE.getServerConfig().enqueue(new Callback<ServerConfigResponse>() {
             @Override
             public void onResponse(Call<ServerConfigResponse> call, Response<ServerConfigResponse> response) {
@@ -68,6 +96,12 @@ public class SplashActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        overridePendingTransition(0, 0);
+    }
+
     private void showError(int message) {
         SimpleDialogFragment.newInstanceNegative(R.string.error, message, view -> {
             finish();
@@ -82,9 +116,20 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void showMainActivity() {
-        new Handler().postDelayed(() -> {
-            startActivity(new Intent(SplashActivity.this, MainActivity.class));
-            finish();
-        }, 500);
+        Thread background = new Thread() {
+            public void run() {
+                try {
+                    sleep(500);
+                    startActivity(new Intent(SplashActivity.this, MainActivity.class)
+                            .addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION));
+                    finish();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Intent i=new Intent(getBaseContext(), MainActivity.class);
+                    startActivity(i);
+                }
+            }
+        };
+        background.start();
     }
 }

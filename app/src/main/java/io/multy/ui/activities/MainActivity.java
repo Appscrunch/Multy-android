@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
@@ -35,8 +36,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.branch.referral.Branch;
 import io.multy.R;
-import io.multy.model.DataManager;
 import io.multy.model.entities.UserId;
+import io.multy.storage.RealmManager;
 import io.multy.ui.fragments.main.AssetsFragment;
 import io.multy.ui.fragments.main.ContactsFragment;
 import io.multy.ui.fragments.main.FastOperationsFragment;
@@ -55,6 +56,9 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
     @BindView(R.id.fast_operations)
     View buttonOperations;
 
+    @BindView(R.id.splash)
+    View splash;
+
     private int lastTabPosition = 0;
 
     @Override
@@ -66,14 +70,14 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
         onTabSelected(tabLayout.getTabAt(0));
 
         if (Prefs.getBoolean(Constants.PREF_APP_INITIALIZED)) {
-            UserId userId = DataManager.getInstance().getUserId();
+            UserId userId = RealmManager.getSettingsDao().getUserId();
             if (userId != null) {
                 Log.i("wise", "subscribing to topic " + userId.getUserId());
                 FirebaseMessaging.getInstance().subscribeToTopic("btcTransactionUpdate-" + userId.getUserId());
             }
         }
 
-        if (Prefs.getBoolean(Constants.PREF_LOCK)){
+        if (Prefs.getBoolean(Constants.PREF_LOCK)) {
             showLock();
         }
     }
@@ -81,6 +85,7 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
     @Override
     protected void onResume() {
         super.onResume();
+        overridePendingTransition(0, 0);
         initBranchIO();
 
         if (Prefs.getBoolean(Constants.PREF_APP_INITIALIZED)) {
@@ -92,6 +97,9 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
             tabLayout.getLayoutParams().height = 0;
             buttonOperations.setVisibility(View.GONE);
         }
+
+        new Handler(getMainLooper()).postDelayed(() -> splash.animate().alpha(0).scaleY(4)
+                .scaleX(4).setDuration(400).start(), 300);
     }
 
     private void initBranchIO() {
@@ -209,13 +217,14 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
     void onFastOperationsClick(final View v) {
         v.setEnabled(false);
         v.postDelayed(() -> v.setEnabled(true), AnimationUtils.DURATION_MEDIUM * 2);
-        Fragment fastOperationsFragment = getSupportFragmentManager()
-                .findFragmentByTag(FastOperationsFragment.TAG);
+        Fragment fastOperationsFragment = getSupportFragmentManager().findFragmentByTag(FastOperationsFragment.TAG);
+
         if (fastOperationsFragment == null) {
             fastOperationsFragment = FastOperationsFragment.newInstance(
                     (int) buttonOperations.getX() + buttonOperations.getWidth() / 2,
                     (int) buttonOperations.getY() + buttonOperations.getHeight() / 2);
         }
+
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.full_container, fastOperationsFragment, FastOperationsFragment.TAG)
                 .addToBackStack(FastOperationsFragment.TAG)
