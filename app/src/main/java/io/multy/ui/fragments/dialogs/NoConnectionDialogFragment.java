@@ -13,14 +13,19 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.TextView;
+
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.multy.R;
 import io.multy.util.NetworkAvailability;
+import timber.log.Timber;
 
 public class NoConnectionDialogFragment extends DialogFragment {
 
@@ -53,6 +58,11 @@ public class NoConnectionDialogFragment extends DialogFragment {
     public void onClickCheckConnection() {
         if (NetworkAvailability.isConnected(getContext())) {
             dismiss();
+        } else {
+            SimpleDialogFragment dialog = SimpleDialogFragment.newInstanceNegative(R.string.check_internet_connection,
+                    R.string.no_connection, null);
+            dialog.show(getFragmentManager(), "");
+            dialog.setTitleSize(18);
         }
     }
 }
