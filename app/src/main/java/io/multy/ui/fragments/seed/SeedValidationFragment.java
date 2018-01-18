@@ -238,7 +238,7 @@ public class SeedValidationFragment extends BaseSeedFragment {
     public void restore(String phrase, Context context, Runnable callback) {
         try {
             seedModel.isLoading.setValue(true);
-            Multy.makeInitialized();
+            Multy.makeInitialized(getActivity());
             FirstLaunchHelper.setCredentials(phrase);
             MultyApi.INSTANCE.restore().enqueue(new Callback<WalletsResponse>() {
                 @Override

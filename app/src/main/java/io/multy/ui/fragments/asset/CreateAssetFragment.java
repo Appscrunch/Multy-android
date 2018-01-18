@@ -142,7 +142,7 @@ public class CreateAssetFragment extends BaseFragment {
 
     @OnClick(R.id.text_create)
     public void onClickCreate() {
-        WalletRealmObject walletRealmObject = walletViewModel.createWallet(editTextWalletName.getText().toString());
+        WalletRealmObject walletRealmObject = walletViewModel.createWallet(getActivity(), editTextWalletName.getText().toString());
         MultyApi.INSTANCE.addWallet(getActivity(), walletRealmObject).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
