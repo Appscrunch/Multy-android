@@ -79,11 +79,8 @@ public class BaseFragment extends Fragment {
     }
 
     public void showKeyboard(Activity activity) {
-        InputMethodManager inputMethodManager =
-                (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputMethodManager.showSoftInputFromInputMethod(
-                activity.getWindow().getDecorView().getWindowToken(),
-                InputMethodManager.SHOW_FORCED);
+        InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.showSoftInputFromInputMethod(activity.getWindow().getDecorView().getWindowToken(), InputMethodManager.SHOW_IMPLICIT);
 //        InputMethodManager inputMethodManager = (InputMethodManager)
 //                getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 //        if (inputMethodManager != null) {
