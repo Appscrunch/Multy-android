@@ -6,6 +6,7 @@
 
 package io.multy.viewmodels;
 
+import android.app.Activity;
 import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
@@ -76,12 +77,12 @@ public class WalletViewModel extends BaseViewModel {
         return wallet;
     }
 
-    public WalletRealmObject createWallet(String walletName) {
+    public WalletRealmObject createWallet(Activity activity, String walletName) {
         isLoading.setValue(true);
         WalletRealmObject walletRealmObject = null;
         try {
             if (!Prefs.getBoolean(Constants.PREF_APP_INITIALIZED)) {
-                Multy.makeInitialized();
+                Multy.makeInitialized(activity);
                 FirstLaunchHelper.setCredentials("");
             }
             DataManager dataManager = DataManager.getInstance();

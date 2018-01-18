@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2017 Idealnaya rabota LLC
+  ~ Licensed under Multy.io license.
+  ~ See LICENSE for details
+  -->
+
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/green_light">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            style="@style/ToolbarTitleTextAppearance"
+            android:layout_height="56dp" />
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/card_background"
+            app:cardCornerRadius="12dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginStart="@dimen/margin_16dp"
+            android:layout_marginEnd="@dimen/margin_16dp"
+            android:layout_marginBottom="@dimen/margin_24dp"
+            android:elevation="@dimen/dp0"
+            app:cardElevation="@dimen/dp0"
+            android:layout_width="0dp"
+            android:layout_height="0dp" />
+
+        <TextView
+            android:id="@+id/text_date"
+            android:layout_width="wrap_content"
+            android:textColor="@color/text_grey_dark"
+            android:layout_marginTop="@dimen/margin_11dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="@+id/card_background"
+            app:layout_constraintStart_toStartOf="@+id/card_background"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar"
+            tools:text="11:30, 19 Novemder 2017" />
+
+        <ImageView
+            android:id="@+id/image_operation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_16dp"
+            app:layout_constraintEnd_toEndOf="@+id/card_background"
+            app:layout_constraintStart_toStartOf="@+id/card_background"
+            app:layout_constraintTop_toBottomOf="@+id/text_date"
+            app:srcCompat="@drawable/ic_receive_big" />
+
+        <TextView
+            android:id="@+id/text_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="@dimen/margin_26dp"
+            android:fontFamily="@font/montserrat"
+            android:text="@string/zero_zero"
+            android:textColor="@color/gray_dark"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/text_coin"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="@+id/card_background"
+            app:layout_constraintTop_toBottomOf="@+id/image_operation" />
+
+        <TextView
+            android:id="@+id/text_coin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/btc"
+            android:textColor="@color/blue_light"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/text_value"
+            app:layout_constraintEnd_toEndOf="@+id/card_background"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/text_value"
+            app:layout_constraintTop_toTopOf="@+id/text_value" />
+
+        <TextView
+            android:id="@+id/text_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:layout_marginTop="@dimen/margin_8dp"
+            android:fontFamily="@font/montserrat"
+            android:minHeight="29dp"
+            android:text="@string/zero_zero"
+            android:textColor="@color/text_grey"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/text_money"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="@+id/card_background"
+            app:layout_constraintTop_toBottomOf="@+id/text_value" />
+
+        <TextView
+            android:id="@+id/text_money"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="4dp"
+            android:fontFamily="@font/montserrat"
+            android:minHeight="29dp"
+            android:gravity="center"
+            android:text="@string/usd"
+            android:textColor="@color/blue_light"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/text_amount"
+            app:layout_constraintEnd_toEndOf="@+id/card_background"
+            app:layout_constraintStart_toEndOf="@+id/text_amount"
+            app:layout_constraintTop_toTopOf="@+id/text_amount" />
+
+        <TextView
+            android:id="@+id/text_comment"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_2dp"
+            android:minHeight="29dp"
+            android:gravity="center"
+            android:textColor="@color/blue_light"
+            app:layout_constraintEnd_toEndOf="@+id/card_background"
+            app:layout_constraintStart_toStartOf="@+id/card_background"
+            app:layout_constraintTop_toBottomOf="@+id/text_amount"
+            tools:text="From SuperHero with the Best wishes!" />
+
+        <TextView
+            android:id="@+id/text_addresses_top"
+            android:layout_width="@dimen/dp0"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/montserrat"
+            android:gravity="center"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:paddingEnd="12dp"
+            android:paddingStart="12dp"
+            android:textColor="@color/text_main_dark"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="@+id/card_background"
+            app:layout_constraintStart_toStartOf="@+id/card_background"
+            app:layout_constraintTop_toBottomOf="@+id/text_comment"
+            app:layout_goneMarginTop="@dimen/margin_9dp"
+            tools:text="83T28WCp4Cu5LQiddJnDJJmKWvmmXJSP9L" />
+
+        <ImageView
+            android:id="@+id/arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_12dp"
+            android:minHeight="70dp"
+            android:minWidth="24dp"
+            android:scaleType="fitXY"
+            app:layout_constraintEnd_toEndOf="@+id/card_background"
+            app:layout_constraintStart_toStartOf="@+id/card_background"
+            app:layout_constraintTop_toBottomOf="@+id/text_addresses_top"
+            app:srcCompat="@drawable/ic_arrow_down_big" />
+
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginBottom="12dp"
+            android:layout_marginTop="@dimen/margin_10dp"
+            android:background="@color/white"
+            android:elevation="1dp"
+            app:layout_constraintBottom_toBottomOf="@id/arrow"
+            app:layout_constraintEnd_toEndOf="@id/card_background"
+            app:layout_constraintStart_toStartOf="@id/card_background"
+            app:layout_constraintTop_toTopOf="@id/arrow"
+            app:srcCompat="@drawable/ic_btc_huge" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:id="@+id/text_wallet_name"
+            app:layout_constraintTop_toBottomOf="@+id/arrow"
+            app:layout_constraintStart_toStartOf="@+id/card_background"
+            app:layout_constraintEnd_toEndOf="@+id/card_background"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/text_addresses_bottom"
+            android:layout_width="@dimen/dp0"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/montserrat_bold"
+            android:foreground="?attr/selectableItemBackground"
+            android:gravity="center"
+            android:padding="@dimen/margin_10dp"
+            android:paddingEnd="34dp"
+            android:paddingStart="34dp"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="@+id/card_background"
+            app:layout_constraintStart_toStartOf="@+id/card_background"
+            app:layout_constraintTop_toBottomOf="@+id/text_wallet_name"
+            tools:text="83T28WCp4Cu5LQiddJnDJJmKWvmmXJSP9L" />
+
+        <TextView
+            android:id="@+id/text_confirmations"
+            app:layout_constraintTop_toBottomOf="@+id/text_addresses_bottom"
+            app:layout_constraintStart_toStartOf="@+id/card_background"
+            app:layout_constraintEnd_toEndOf="@+id/card_background"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_marginTop="@dimen/margin_12dp"
+            app:layout_constraintTop_toBottomOf="@+id/text_confirmations"
+            app:layout_constraintStart_toStartOf="@+id/card_background"
+            app:layout_constraintEnd_toEndOf="@+id/card_background"
+            style="@style/Divider"/>
+
+        <TextView
+            android:id="@+id/view_view"
+            android:layout_marginTop="@dimen/margin_18dp"
+            android:layout_marginBottom="20dp"
+            app:layout_constraintTop_toBottomOf="@+id/divider"
+            app:layout_constraintStart_toStartOf="@+id/card_background"
+            app:layout_constraintEnd_toEndOf="@+id/card_background"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </android.support.constraint.ConstraintLayout>
+    
+</>

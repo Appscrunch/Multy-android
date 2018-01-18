@@ -92,7 +92,7 @@
     <View
         android:id="@+id/divider_toolbar"
         app:layout_constraintTop_toBottomOf="@+id/appbar"
-        style="@style/Devider" />
+        style="@style/Divider" />
 
     <ScrollView
         android:id="@+id/scroll"
@@ -118,7 +118,7 @@
 
             <View
                 android:id="@+id/divider_general"
-                style="@style/Devider"
+                style="@style/Divider"
                 android:layout_marginTop="17dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -144,7 +144,7 @@
 
             <View
                 android:id="@+id/divider_name"
-                style="@style/Devider"
+                style="@style/Divider"
                 android:layout_marginStart="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -207,7 +207,7 @@
 
             <View
                 android:id="@+id/divider_currency"
-                style="@style/Devider"
+                style="@style/Divider"
                 android:layout_marginTop="12dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -224,7 +224,7 @@
 
             <View
                 android:id="@+id/divider_security"
-                style="@style/Devider"
+                style="@style/Divider"
                 android:layout_marginTop="17dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -253,7 +253,7 @@
 
             <View
                 android:id="@+id/divider_key"
-                style="@style/Devider"
+                style="@style/Divider"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/button_key" />
@@ -268,7 +268,7 @@
 
             <View
                 android:id="@+id/divider_notice"
-                style="@style/Devider"
+                style="@style/Divider"
                 android:layout_marginTop="20dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -293,7 +293,7 @@
 
             <View
                 android:id="@+id/divider_delete"
-                style="@style/Devider"
+                style="@style/Divider"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/button_delete" />
