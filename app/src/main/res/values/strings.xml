@@ -205,5 +205,7 @@
     <string name="pin_code">PIN-code</string>
     <string name="fingerprint">Fingerprint</string>
     <string name="entrance_settings">Entrance Settings</string>
+    <string name="repeat_pin">Repeat pin</string>
+    <string name="enter_new_pin">Enter new pin</string>
 
 </resources>
