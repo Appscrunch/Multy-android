@@ -99,7 +99,16 @@ public class AssetTransactionsAdapter extends RecyclerView.Adapter<RecyclerView.
             lockedFiat = CryptoFormatUtils.satoshiToUsd(transactionHistory.getTxOutAmount());
             amount = lockedAmount;
             amountFiat = String.valueOf(CryptoFormatUtils.satoshiToUsd(transactionHistory.getTxOutAmount(), transactionHistory.getBtcToUsd()));
-            address = transactionHistory.getAddress();
+            //TODO this is array
+
+
+            String toSetAddresses = "";
+            for (String addr:transactionHistory.getAddresses()){
+                toSetAddresses += addr + "\n";
+            }
+
+            address = toSetAddresses;
+//            address = transactionHistory.getAddresses();
         } else {
             RealmList<WalletAddress> addresses = RealmManager.getAssetsDao().getWalletById(walletIndex).getAddresses();
 //            List<WalletAddress> inputs = transactionHistory.getInputs();
@@ -165,7 +174,13 @@ public class AssetTransactionsAdapter extends RecyclerView.Adapter<RecyclerView.
         if (isIncoming) {
             setAddresses(transactionHistory.getInputs(), holder.containerAddresses);
         } else {
-            setAddress(transactionHistory.getAddress(), holder.containerAddresses);
+            //TODO change it to addresses
+            String toSetAddresses = "";
+            for (String address:transactionHistory.getAddresses()){
+                toSetAddresses += address + "\n";
+            }
+            setAddress(toSetAddresses, holder.containerAddresses);
+//            setAddress(transactionHistory.getAddresses(), holder.containerAddresses);
         }
     }
 
