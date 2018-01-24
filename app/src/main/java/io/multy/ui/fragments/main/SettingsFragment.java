@@ -7,6 +7,7 @@
 package io.multy.ui.fragments.main;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.multy.R;
+import io.multy.ui.activities.PinSetupActivity;
 import io.multy.ui.fragments.BaseFragment;
 import io.multy.viewmodels.SettingsViewModel;
 
