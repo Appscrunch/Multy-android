@@ -49,8 +49,8 @@ android {
         }
         externalNativeBuild {
             cmake {
+                path "/Users/vadimicus/work/CppProjects/Multy-Core/CMakeLists.txt"
 //                path "/Users/appscrunch/AndroidStudioProjects/Multy-Core/CMakeLists.txt"
-                path "C:\\workspace\\KLUBIKMulty-Core\\CMakeLists.txt"
             }
         }
     }
