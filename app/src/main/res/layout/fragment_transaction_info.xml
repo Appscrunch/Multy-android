@@ -36,6 +36,7 @@
             <ImageView
                 android:id="@+id/back"
                 android:layout_width="wrap_content"
+
                 android:layout_height="match_parent"
                 android:layout_gravity="start|center_vertical"
                 android:foreground="?attr/selectableItemBackgroundBorderless"
@@ -51,7 +52,7 @@
                 android:layout_weight="1"
                 android:fontFamily="@font/montserrat"
                 android:lineSpacingExtra="10sp"
-                android:textColor="#ffffff"
+                android:textColor="white"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 tools:text="BTC ∙ Personal" />

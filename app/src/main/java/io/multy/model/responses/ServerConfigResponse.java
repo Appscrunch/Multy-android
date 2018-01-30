@@ -49,17 +49,17 @@ public class ServerConfigResponse {
 
     public class Donate {
         @SerializedName("BTC")
-        private String btcDonatAddress;
+        private String btcDonateAddress;
 
         @SerializedName("ETH")
-        private String ethDonatAddress;
+        private String ethDonateAddress;
 
-        public String getBtcDonatAddress() {
-            return btcDonatAddress;
+        public String getBtcDonateAddress() {
+            return btcDonateAddress;
         }
 
-        public String getEthDonatAddress() {
-            return ethDonatAddress;
+        public String getEthDonateAddress() {
+            return ethDonateAddress;
         }
     }
 }

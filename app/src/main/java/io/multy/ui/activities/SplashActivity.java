@@ -84,9 +84,9 @@ public class SplashActivity extends AppCompatActivity {
                         }
                         SharedPreferences preferences = getPreferences(MODE_PRIVATE);
                         preferences.edit().putString(Constants.PREF_DONATE_ADDRESS_BTC,
-                                configResponse.getDonateInfo().getBtcDonatAddress()).apply();
+                                configResponse.getDonateInfo().getBtcDonateAddress()).apply();
                         preferences.edit().putString(Constants.PREF_DONATE_ADDRESS_ETH,
-                                configResponse.getDonateInfo().getEthDonatAddress()).apply();
+                                configResponse.getDonateInfo().getEthDonateAddress()).apply();
                     } catch (PackageManager.NameNotFoundException e) {
                         e.printStackTrace();
                     }
