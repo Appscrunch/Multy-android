@@ -1,5 +1,7 @@
 package io.multy.ui.adapters;
 
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,11 +20,14 @@ import io.multy.R;
 import io.multy.model.entities.TransactionHistory;
 import io.multy.model.entities.wallet.WalletAddress;
 import io.multy.storage.RealmManager;
+import io.multy.ui.fragments.asset.TransactionInfoFragment;
 import io.multy.util.Constants;
 import io.multy.util.CryptoFormatUtils;
 import io.multy.util.DateHelper;
 import io.realm.RealmList;
 
+import static io.multy.ui.fragments.asset.TransactionInfoFragment.MODE_RECEIVE;
+import static io.multy.ui.fragments.asset.TransactionInfoFragment.MODE_SEND;
 import static io.multy.util.Constants.TX_CONFIRMED_INCOMING;
 import static io.multy.util.Constants.TX_IN_BLOCK_INCOMING;
 import static io.multy.util.Constants.TX_MEMPOOL_INCOMING;
@@ -137,6 +142,18 @@ public class AssetTransactionsAdapter extends RecyclerView.Adapter<RecyclerView.
         holder.amountLocked.setText(String.format("%s BTC", lockedAmount));
         holder.fiat.setText(String.format("%s USD", amountFiat));
         holder.fiatLocked.setText(String.format("(%s USD)", lockedFiat));
+
+        holder.itemView.setOnClickListener((v) -> {
+            Bundle transactionInfoMode = new Bundle();
+            int mode = isIncoming ? MODE_RECEIVE : MODE_SEND;
+            transactionInfoMode.putInt(TransactionInfoFragment.SELECTED_POSITION, position);
+            transactionInfoMode.putInt(TransactionInfoFragment.TRANSACTION_INFO_MODE, mode);
+            transactionInfoMode.putInt(TransactionInfoFragment.WALLET_INDEX, walletIndex);
+            ((FragmentActivity) v.getContext()).getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container_full, TransactionInfoFragment.newInstance(transactionInfoMode))
+                    .addToBackStack(TransactionInfoFragment.TAG)
+                    .commit();
+        });
     }
 
     private void bindRejected(RejectedHolder holder, int position) {
@@ -150,6 +167,17 @@ public class AssetTransactionsAdapter extends RecyclerView.Adapter<RecyclerView.
         holder.textRejectedDirection.setText(isIncoming ? R.string.rejected_receive : R.string.rejected_send);
         holder.amount.setText(CryptoFormatUtils.satoshiToBtc(transactionHistory.getTxOutAmount()));
         holder.fiat.setText(CryptoFormatUtils.satoshiToUsd(transactionHistory.getTxOutAmount(), transactionHistory.getStockExchangeRates().get(0).getExchanges().getBtcUsd()));
+
+        holder.itemView.setOnClickListener((v) -> {
+            Bundle transactionInfoMode = new Bundle();
+            int mode = isIncoming ? MODE_RECEIVE : MODE_SEND;
+            transactionInfoMode.putInt(TransactionInfoFragment.SELECTED_POSITION, position);
+            transactionInfoMode.putInt(TransactionInfoFragment.TRANSACTION_INFO_MODE, mode);
+            ((FragmentActivity) v.getContext()).getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container_full, TransactionInfoFragment.newInstance(transactionInfoMode))
+                    .addToBackStack(TransactionInfoFragment.TAG)
+                    .commit();
+        });
     }
 
     private void bindConfirmed(Holder holder, int position) {
@@ -189,6 +217,17 @@ public class AssetTransactionsAdapter extends RecyclerView.Adapter<RecyclerView.
                 holder.fiat.setText(String.format("%s USD", CryptoFormatUtils.satoshiToUsd(addressTo.getAmount(), transactionHistory.getStockExchangeRates().get(0).getExchanges().getBtcUsd())));
             }
         }
+
+        holder.itemView.setOnClickListener((v) -> {
+            Bundle transactionInfoMode = new Bundle();
+            int mode = isIncoming ? MODE_RECEIVE : MODE_SEND;
+            transactionInfoMode.putInt(TransactionInfoFragment.SELECTED_POSITION, position);
+            transactionInfoMode.putInt(TransactionInfoFragment.TRANSACTION_INFO_MODE, mode);
+            ((FragmentActivity) v.getContext()).getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container_full, TransactionInfoFragment.newInstance(transactionInfoMode))
+                    .addToBackStack(TransactionInfoFragment.TAG)
+                    .commit();
+        });
     }
 
     private void setAddresses(List<WalletAddress> addresses, ViewGroup destination) {

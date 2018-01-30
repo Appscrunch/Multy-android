@@ -5,7 +5,7 @@
   -->
 
 <resources>
-    <string name="app_name">multy</string>
+    <string name="app_name">Multy</string>
     <string name="wallets">wallets</string>
     <string name="feed">activity</string>
     <string name="contacts">contacts</string>
@@ -218,5 +218,8 @@
     <string name="complete">Complete</string>
     <string name="completed">Completed</string>
     <string name="error_sending_tx">Error while sending transaction</string>
+    <string name="confirmation">Confirmation</string>
+    <string name="failed_html_page">Failed to loading page!</string>
+    <string name="view_in_blockchain">View in Blockchain</string>
 
 </resources>

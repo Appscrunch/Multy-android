@@ -77,4 +77,6 @@ public class Constants {
 
     public static final int REQUEST_CODE_RESTORE = 22;
     public static final int REQUEST_CODE_CREATE = 22;
+
+    public static final String BLOCKCHAIN_INFO_PATH = "https://testnet.blockchain.info/tx/";
 }

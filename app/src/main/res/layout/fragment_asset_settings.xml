@@ -90,8 +90,8 @@
 
     <View
         android:id="@+id/divider_toolbar"
-        app:layout_constraintTop_toBottomOf="@+id/appbar"
-        style="@style/Divider" />
+        style="@style/Divider"
+        app:layout_constraintTop_toBottomOf="@+id/appbar" />
 
     <android.support.v4.widget.NestedScrollView
         android:id="@+id/scroll"
