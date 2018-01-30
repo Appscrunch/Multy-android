@@ -13,15 +13,15 @@ public class ServerConfigResponse {
     @SerializedName("android")
     private AndroidConfig androidConfig;
 
-    @SerializedName("donate")
-    private Donate donate;
+    @SerializedName("donateInfo")
+    private Donate donateInfo;
 
     public AndroidConfig getAndroidConfig() {
         return androidConfig;
     }
 
-    public Donate getDonate() {
-        return donate;
+    public Donate getDonateInfo() {
+        return donateInfo;
     }
 
     public class AndroidConfig {
@@ -49,17 +49,17 @@ public class ServerConfigResponse {
 
     public class Donate {
         @SerializedName("BTC")
-        private String btc;
+        private String btcDonatAddress;
 
         @SerializedName("ETH")
-        private String eth;
+        private String ethDonatAddress;
 
-        public String getBtc() {
-            return btc;
+        public String getBtcDonatAddress() {
+            return btcDonatAddress;
         }
 
-        public String getEth() {
-            return eth;
+        public String getEthDonatAddress() {
+            return ethDonatAddress;
         }
     }
 }

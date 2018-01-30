@@ -140,7 +140,7 @@ public class PinSetupActivity extends BaseActivity {
     }
 
     @OnClick(R.id.button_back)
-    void onBackArrowClick(View view) {
+    void onClickBack(View view) {
         view.setEnabled(false);
         onBackPressed();
     }

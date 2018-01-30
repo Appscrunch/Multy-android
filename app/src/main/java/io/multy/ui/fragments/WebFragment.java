@@ -37,7 +37,7 @@ public class WebFragment extends BaseFragment {
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout refresh;
 
-    private String url = "https://http://multy.io/";
+    private String url = "http://multy.io/";
 
     public static WebFragment newInstance(String url) {
         WebFragment webFragment = new WebFragment();

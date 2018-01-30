@@ -7,11 +7,10 @@
 package io.multy.ui.fragments.asset;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.graphics.drawable.Drawable;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,14 +20,13 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import butterknife.BindColor;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.multy.R;
-import io.multy.api.MultyApi;
 import io.multy.model.entities.TransactionHistory;
 import io.multy.model.entities.wallet.WalletAddress;
-import io.multy.model.responses.ServerConfigResponse;
 import io.multy.storage.RealmManager;
 import io.multy.ui.activities.BaseActivity;
 import io.multy.ui.fragments.BaseFragment;
@@ -37,9 +35,6 @@ import io.multy.util.Constants;
 import io.multy.util.CryptoFormatUtils;
 import io.multy.util.DateHelper;
 import io.multy.viewmodels.WalletViewModel;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 import static io.multy.util.Constants.TX_CONFIRMED_INCOMING;
 import static io.multy.util.Constants.TX_CONFIRMED_OUTCOMING;
@@ -94,11 +89,15 @@ public class TransactionInfoFragment extends BaseFragment {
     @BindView(R.id.button_view)
     TextView buttonView;
     @BindView(R.id.donat_include)
-    View donatBlock;
+    View viewDonate;
     @BindView(R.id.donat_value)
-    TextView donatValue;
+    TextView textDonateValue;
     @BindView(R.id.donat_amount)
-    TextView donateAmount;
+    TextView textDonateAmount;
+    @BindColor(R.color.green_light)
+    int colorGreen;
+    @BindColor(R.color.blue_sky)
+    int colorBlue;
 
     private WalletViewModel viewModel;
     TransactionHistory transaction;
@@ -135,21 +134,17 @@ public class TransactionInfoFragment extends BaseFragment {
             return;
         }
         selectedPosition = getArguments().getInt(SELECTED_POSITION, 0);
-        int backgroundColor;
-        Drawable operationDrawable;
         this.walletIndex = getArguments().getInt(WALLET_INDEX);
         int mode = getArguments().getInt(TRANSACTION_INFO_MODE, 0);
         if (mode == MODE_RECEIVE) {
-            backgroundColor = ContextCompat.getColor(getActivity(), R.color.green_light);
-            operationDrawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_receive_big_new);
+            parent.setBackgroundColor(colorGreen);
+            imageOperation.setImageResource(R.drawable.ic_receive_big_new);
         } else if (mode == MODE_SEND) {
-            backgroundColor = ContextCompat.getColor(getActivity(), R.color.blue_sky);
-            operationDrawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_send_big);
+            parent.setBackgroundColor(colorBlue);
+            imageOperation.setImageResource(R.drawable.ic_send_big);
         } else {
             return;
         }
-        parent.setBackgroundColor(backgroundColor);
-        imageOperation.setImageDrawable(operationDrawable);
         buttonBack.setOnClickListener(view -> getActivity().onBackPressed());
         loadData();
     }
@@ -212,7 +207,7 @@ public class TransactionInfoFragment extends BaseFragment {
             switch (transaction.getTxStatus()) {
                 case TX_MEMPOOL_INCOMING:
                 case TX_MEMPOOL_OUTCOMING:
-                    blocks = "In mempool";
+                    blocks = getString(R.string.in_mempool);
                     break;
                 case TX_IN_BLOCK_INCOMING:
                 case TX_IN_BLOCK_OUTCOMING:
@@ -231,36 +226,24 @@ public class TransactionInfoFragment extends BaseFragment {
     }
 
     private void getServerConfig() {
-        MultyApi.INSTANCE.getServerConfig().enqueue(new Callback<ServerConfigResponse>() {
-            @Override
-            public void onResponse(Call<ServerConfigResponse> call, Response<ServerConfigResponse> response) {
-                if (response.isSuccessful()) {
-                    try {
-                        ServerConfigResponse.Donate donate = response.body().getDonate();
-                        for (WalletAddress address : transaction.getOutputs()) {
-                            if (address.getAddress().equals(donate.getBtc()) ||
-                                    address.getAddress().equals(donate.getEth())) {
-                                initializeDonationBlock(address);
-                                break;
-                            }
-                        }
-                    } catch (Throwable t) {
-                        t.printStackTrace();
-                    }
+        String btcDonateAddress = getActivity().getPreferences(Context.MODE_PRIVATE)
+                .getString(Constants.PREF_DONATE_ADDRESS_BTC, "no address");
+        try {
+            for (WalletAddress address : transaction.getOutputs()) {
+                if (address.getAddress().equals(btcDonateAddress)) {
+                    initializeDonationBlock(address);
+                    break;
                 }
             }
-
-            @Override
-            public void onFailure(Call<ServerConfigResponse> call, Throwable t) {
-                t.printStackTrace();
-            }
-        });
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
     }
 
     private void initializeDonationBlock(WalletAddress address) {
-        donatBlock.setVisibility(View.VISIBLE);
-        donatValue.append(CryptoFormatUtils.satoshiToBtc(address.getAmount()));
-        donateAmount.append(CryptoFormatUtils.satoshiToUsd(address.getAmount(), transaction.getStockExchangeRates().get(0).getExchanges().getBtcUsd()));
+        viewDonate.setVisibility(View.VISIBLE);
+        textDonateValue.append(CryptoFormatUtils.satoshiToBtc(address.getAmount()));
+        textDonateAmount.append(CryptoFormatUtils.satoshiToUsd(address.getAmount(), transaction.getStockExchangeRates().get(0).getExchanges().getBtcUsd()));
     }
 
     @OnClick(R.id.button_view)
