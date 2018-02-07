@@ -159,12 +159,12 @@ public class RequestSummaryFragment extends BaseFragment {
     @OnClick(R.id.button_address)
     void onClickAddressBook(){
         Toast.makeText(getActivity(), R.string.not_implemented, Toast.LENGTH_SHORT).show();
-        viewModel.addAddress();
-        viewModel.getAddress().observe(this, address -> {
-            textAddress.setText(address);
-            generateQR();
-        });
-        Log.i("wise", "generated");
+//        viewModel.addAddress();
+//        viewModel.getAddress().observe(this, address -> {
+//            textAddress.setText(address);
+//            generateQR();
+//        });
+//        Log.i("wise", "generated");
     }
 
     @OnClick(R.id.button_scan_wireless)
