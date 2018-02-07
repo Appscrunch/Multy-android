@@ -37,11 +37,8 @@ import io.multy.util.DateHelper;
 import io.multy.viewmodels.WalletViewModel;
 
 import static io.multy.util.Constants.TX_CONFIRMED_INCOMING;
-import static io.multy.util.Constants.TX_CONFIRMED_OUTCOMING;
 import static io.multy.util.Constants.TX_IN_BLOCK_INCOMING;
-import static io.multy.util.Constants.TX_IN_BLOCK_OUTCOMING;
 import static io.multy.util.Constants.TX_MEMPOOL_INCOMING;
-import static io.multy.util.Constants.TX_MEMPOOL_OUTCOMING;
 
 /**
  * Created by anschutz1927@gmail.com on 16.01.18.
@@ -211,24 +208,7 @@ public class TransactionInfoFragment extends BaseFragment {
         }
         addressesTo = addressesTo.substring(1);
         textAddressesTo.setText(addressesTo);
-        String blocks;
-        switch (transaction.getTxStatus()) {
-            case TX_MEMPOOL_INCOMING:
-            case TX_MEMPOOL_OUTCOMING:
-                blocks = getString(R.string.in_mempool);
-                break;
-            case TX_IN_BLOCK_INCOMING:
-            case TX_IN_BLOCK_OUTCOMING:
-                blocks = "1 - 6 " + getString(R.string.confirmation);
-                break;
-            case TX_CONFIRMED_INCOMING:
-            case TX_CONFIRMED_OUTCOMING:
-                blocks = "6+ " + getString(R.string.confirmation);
-                break;
-            default:
-                blocks = "";
-        }
-        textConfirmations.setText(blocks);
+        textConfirmations.setText(String.valueOf(transaction.getConfirmations() + " " + getString(R.string.confirmation)));
         txid = transaction.getTxId();
     }
 
