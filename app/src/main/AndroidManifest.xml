@@ -68,6 +68,10 @@
             android:name=".ui.activities.CreateAssetActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.activities.AmountChooserActivity"
+            android:label="@string/receive_amount"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.activities.SeedActivity"
             android:windowSoftInputMode="adjustResize"
             android:screenOrientation="portrait" />

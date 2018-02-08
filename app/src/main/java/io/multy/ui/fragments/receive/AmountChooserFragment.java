@@ -9,6 +9,7 @@ package io.multy.ui.fragments.receive;
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -121,9 +122,15 @@ public class AmountChooserFragment extends BaseFragment {
 
     @OnClick(R.id.button_next)
     void onClickNext() {
+//        if (!TextUtils.isEmpty(inputOriginal.getText())) {
+//            viewModel.setAmount(Double.valueOf(inputOriginal.getText().toString()));
+//        }
+//        getActivity().onBackPressed();
+        double amount = 0;
         if (!TextUtils.isEmpty(inputOriginal.getText())) {
-            viewModel.setAmount(Double.valueOf(inputOriginal.getText().toString()));
+            amount = Double.valueOf(inputOriginal.getText().toString());
         }
+        getActivity().setResult(Activity.RESULT_OK, new Intent().putExtra(Constants.EXTRA_AMOUNT, amount));
         getActivity().onBackPressed();
     }
 
@@ -273,30 +280,30 @@ public class AmountChooserFragment extends BaseFragment {
         if (!TextUtils.isEmpty(amount) && amount.length() > max) {
             if (amount.contains(point)) {
                 if (amount.indexOf(point) > max) {
-                    if (start != zero && end != amount.length() && count == amount.length()) {
+                    if (start != 0 && end != amount.length() && count == amount.length()) {
                         StringBuilder stringBuilder = new StringBuilder();
-                        stringBuilder.append(amount.substring(zero, start));
+                        stringBuilder.append(amount.substring(0, start));
                         stringBuilder.append(amount.substring(start + count, amount.length()));
                         input.setText(stringBuilder.toString());
-                        if (start <= input.getText().length()) {
-                            input.setSelection(start);
-                        } else {
-                            input.setSelection(input.getText().length());
-                        }
+                    if (start <= input.getText().length()) {
+                        input.setSelection(start);
                     } else {
-                        input.setText(amount.substring(zero, amount.length() - 1));
+                        input.setSelection(input.getText().length());
+                    }
+                    } else {
+                        input.setText(amount.substring(0, amount.length() - 1));
                         input.setSelection(input.getText().length());
                     }
                 }
             } else {
-                if (start != zero && end != amount.length() && count == amount.length()) {
+                if (start != 0 && end != amount.length() && count == amount.length()) {
                     StringBuilder stringBuilder = new StringBuilder();
-                    stringBuilder.append(amount.substring(zero, start));
+                    stringBuilder.append(amount.substring(0, start));
                     stringBuilder.append(amount.substring(start + count, amount.length()));
                     input.setText(stringBuilder.toString());
                     input.setSelection(start);
                 } else {
-                    input.setText(amount.substring(zero, amount.length() - 1));
+                    input.setText(amount.substring(0, amount.length() - 1));
                     input.setSelection(input.getText().length());
                 }
             }
@@ -308,17 +315,11 @@ public class AmountChooserFragment extends BaseFragment {
         if (!TextUtils.isEmpty(amount) && amount.contains(point)) {
             if (amount.length() - amount.indexOf(point) > max) {
                 StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append(amount.substring(zero, start));
+                stringBuilder.append(amount.substring(0, start));
                 stringBuilder.append(amount.substring(start + count, amount.length()));
                 input.setText(stringBuilder.toString());
                 input.setSelection(start);
             }
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        ((BaseActivity)getActivity()).hideKeyboard(getActivity());
-        super.onDestroy();
     }
 }
