@@ -84,7 +84,6 @@ public class Multy extends Application {
                 e.printStackTrace();
             }
         }
-
         Prefs.putBoolean(Constants.PREF_APP_INITIALIZED, true);
         try {
             String key = new String(Base64.encode(EntropyProvider.generateKey(512), Base64.NO_WRAP));
@@ -101,7 +100,7 @@ public class Multy extends Application {
         try {
             RealmManager.removeDatabase(context);
             Prefs.clear();
-            Multy.makeInitialized();
+//            Multy.makeInitialized();
             Realm.init(context);
         } catch (Exception exc) {
 //            System.exit(0);

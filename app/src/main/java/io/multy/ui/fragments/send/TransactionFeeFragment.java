@@ -75,11 +75,12 @@ public class TransactionFeeFragment extends BaseFragment implements MyFeeAdapter
         ButterKnife.bind(this, view);
         viewModel = ViewModelProviders.of(getActivity()).get(AssetSendViewModel.class);
         setBaseViewModel(viewModel);
-        inputDonation.setOnFocusChangeListener((view1, hasFocus) -> {
-            if (hasFocus) {
-                scrollView.postDelayed(() -> scrollView.fullScroll(ScrollView.FOCUS_DOWN), 500);
-            }
-        });
+//        inputDonation.setOnFocusChangeListener((view1, hasFocus) -> {
+//            if (hasFocus) {
+//                scrollView.postDelayed(() -> scrollView.fullScroll(ScrollView.FOCUS_DOWN), 500);
+//            }
+//        });
+        inputDonation.setOnClickListener(v -> scrollView.postDelayed(() -> scrollView.fullScroll(ScrollView.FOCUS_DOWN), 500));
         setupSwitcher();
         setupInput();
 
