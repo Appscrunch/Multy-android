@@ -4,7 +4,7 @@
  * See LICENSE for details
  */
 
-package io.multy.util;
+package io.multy.util.analytics;
 
 import android.content.Context;
 import android.os.Bundle;
