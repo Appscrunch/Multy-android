@@ -22,6 +22,8 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 
+import com.samwolfand.oneprefs.Prefs;
+
 import java.util.List;
 
 import butterknife.BindInt;
@@ -82,7 +84,9 @@ public class AssetSendActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (getSupportFragmentManager().getBackStackEntryCount() >= one) {
+        if (!Prefs.getBoolean(Constants.PREF_UNLOCKED, true)) {
+            super.onBackPressed();
+        } else if (getSupportFragmentManager().getBackStackEntryCount() >= one) {
             List<Fragment> backStackFragments = getSupportFragmentManager().getFragments();
             for (Fragment backStackFragment : backStackFragments) {
                 if (backStackFragment instanceof SendSummaryFragment) {

@@ -27,6 +27,7 @@ import io.multy.model.entities.wallet.CurrencyCode;
 import io.multy.model.entities.wallet.RecentAddress;
 import io.multy.model.requests.HdTransactionRequestEntity;
 import io.multy.storage.RealmManager;
+import io.multy.ui.activities.BaseActivity;
 import io.multy.ui.fragments.BaseFragment;
 import io.multy.ui.fragments.dialogs.CompleteDialogFragment;
 import io.multy.util.Constants;
@@ -92,11 +93,6 @@ public class SendSummaryFragment extends BaseFragment {
 //            }
 //        });
         return view;
-    }
-
-    @OnClick(R.id.button_next)
-    void onClickNext() {
-        send();
     }
 
     private void send() {
@@ -181,18 +177,6 @@ public class SendSummaryFragment extends BaseFragment {
         }
     }
 
-    private void showError() {
-        viewModel.isLoading.postValue(false);
-        viewModel.errorMessage.postValue(getString(R.string.error_sending_tx));
-    }
-
-    public static String byteArrayToHex(byte[] a) {
-        StringBuilder sb = new StringBuilder(a.length * 2);
-        for (byte b : a)
-            sb.append(String.format("%02x", b));
-        return sb.toString();
-    }
-
     private void setInfo() {
         CurrenciesRate currenciesRate = RealmManager.getSettingsDao().getCurrenciesRate();
         textReceiverBalanceOriginal.setText(NumberFormatter.getInstance().format(viewModel.getAmount()));
@@ -212,4 +196,23 @@ public class SendSummaryFragment extends BaseFragment {
         textFeeAmount.setText(String.format("%s BTC / %s USD", CryptoFormatUtils.satoshiToBtc(viewModel.getTransactionPrice()), CryptoFormatUtils.satoshiToUsd(viewModel.getTransactionPrice())));
     }
 
+    private void showError() {
+        viewModel.isLoading.postValue(false);
+        viewModel.errorMessage.postValue(getString(R.string.error_sending_tx));
+    }
+
+    public static String byteArrayToHex(byte[] a) {
+        StringBuilder sb = new StringBuilder(a.length * 2);
+        for (byte b : a)
+            sb.append(String.format("%02x", b));
+        return sb.toString();
+    }
+
+    @OnClick(R.id.button_next)
+    void onClickNext() {
+        if (getActivity() instanceof BaseActivity) {
+            ((BaseActivity) getActivity()).showLock();
+            ((BaseActivity) getActivity()).setOnLockCLoseListener(this::send);
+        }
+    }
 }
