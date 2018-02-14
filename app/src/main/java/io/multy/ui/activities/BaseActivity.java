@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -47,27 +48,6 @@ public class BaseActivity extends AppCompatActivity implements PinNumbersAdapter
     private StringBuilder stringBuilder;
     boolean isLockVisible = false;
     private OnLockCloseListener onLockCLoseListener;
-
-    public void hideKeyboard(Activity activity) {
-        if (activity != null && activity.getWindow() != null && activity.getWindow().getDecorView() != null) {
-            InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(activity.getWindow().getDecorView().getWindowToken(), 0);
-        }
-    }
-
-    public void showKeyboard() {
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null) {
-            imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
-        }
-    }
-
-    public void hideKeyboard() {
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null && imm.isActive()) {
-            imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-        }
-    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -141,6 +121,55 @@ public class BaseActivity extends AppCompatActivity implements PinNumbersAdapter
         if (getCurrentFocus() != null && inputManager != null) {
             inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
             inputManager.hideSoftInputFromInputMethod(getCurrentFocus().getWindowToken(), 0);
+        }
+    }
+
+    @Override
+    public void onFingerprintClick() {
+
+    }
+
+    @Override
+    public void onNumberClick(int number) {
+        stringBuilder.append(String.valueOf(number));
+
+        ImageView dot = (ImageView) dotsLayoutManager.getChildAt(stringBuilder.toString().length() - 1);
+        dot.setBackgroundResource(R.drawable.circle_white);
+
+        if (stringBuilder.toString().length() >= 6) {
+            if (!SecurePreferencesHelper.getString(this, Constants.PREF_PIN).equals(stringBuilder.toString())) {
+                if (count != 1) {
+                    count--;
+                    showLock();
+                    Toast.makeText(this, count + " number of tries remain", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(this, count + "You reached maximum, number of tries", Toast.LENGTH_LONG).show();
+                    ActivityCompat.finishAffinity(this);
+                }
+            } else {
+                hideLock();
+                if (onLockCLoseListener != null) {
+                    onLockCLoseListener.onLockClosed();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!Prefs.getBoolean(Constants.PREF_LOCK) || Prefs.getBoolean(Constants.PREF_UNLOCKED, true)) {
+            super.onBackPressed();
+        } else {
+            ActivityCompat.finishAffinity(this);
+        }
+    }
+
+    @Override
+    public void onBackSpaceClick() {
+        if (stringBuilder.length() > 0) {
+            ImageView dot = (ImageView) dotsLayoutManager.getChildAt(stringBuilder.toString().length() - 1);
+            dot.setBackgroundResource(R.drawable.circle_border_white);
+            stringBuilder.deleteCharAt(stringBuilder.length() - 1);
         }
     }
 
@@ -228,61 +257,29 @@ public class BaseActivity extends AppCompatActivity implements PinNumbersAdapter
         Prefs.putBoolean(Constants.PREF_UNLOCKED, true);
     }
 
-    @Override
-    public void onFingerprintClick() {
-
-    }
-
-    @Override
-    public void onNumberClick(int number) {
-        stringBuilder.append(String.valueOf(number));
-
-        ImageView dot = (ImageView) dotsLayoutManager.getChildAt(stringBuilder.toString().length() - 1);
-        dot.setBackgroundResource(R.drawable.circle_white);
-
-        if (stringBuilder.toString().length() >= 6) {
-            if (!SecurePreferencesHelper.getString(this, Constants.PREF_PIN).equals(stringBuilder.toString())) {
-                if (count != 1) {
-                    count--;
-                    showLock();
-                    Toast.makeText(this, count + " number of tries remain", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(this, count + "You reached maximum, number of tries", Toast.LENGTH_LONG).show();
-                    finish();
-                }
-            } else {
-                hideLock();
-                if (onLockCLoseListener != null) {
-                    onLockCLoseListener.onLockClosed();
-                }
-            }
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (!Prefs.getBoolean(Constants.PREF_LOCK) || Prefs.getBoolean(Constants.PREF_UNLOCKED, true)) {
-            super.onBackPressed();
-        } else {
-            finish();
-        }
-    }
-
-    @Override
-    public void onBackSpaceClick() {
-        if (stringBuilder.length() > 0) {
-            ImageView dot = (ImageView) dotsLayoutManager.getChildAt(stringBuilder.toString().length() - 1);
-            dot.setBackgroundResource(R.drawable.circle_border_white);
-            stringBuilder.deleteCharAt(stringBuilder.length() - 1);
-        }
-    }
-
     public void setOnLockCLoseListener(OnLockCloseListener onLockCLoseListener) {
         this.onLockCLoseListener = onLockCLoseListener;
     }
 
-    public interface OnLockCloseListener {
-        void onLockClosed();
+    public void hideKeyboard(Activity activity) {
+        if (activity != null && activity.getWindow() != null && activity.getWindow().getDecorView() != null) {
+            InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(activity.getWindow().getDecorView().getWindowToken(), 0);
+        }
+    }
+
+    public void showKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+        }
+    }
+
+    public void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null && imm.isActive()) {
+            imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+        }
     }
 
     public void subscribeToPushNotifications() {
@@ -292,5 +289,9 @@ public class BaseActivity extends AppCompatActivity implements PinNumbersAdapter
                 FirebaseMessaging.getInstance().subscribeToTopic(Constants.PUSH_TOPIC + userId.getUserId());
             }
         }
+    }
+
+    public interface OnLockCloseListener {
+        void onLockClosed();
     }
 }
