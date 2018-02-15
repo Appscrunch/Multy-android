@@ -43,7 +43,6 @@ import io.multy.ui.activities.AssetSendActivity;
 import io.multy.ui.fragments.BaseFragment;
 import io.multy.util.Constants;
 import io.multy.util.CryptoFormatUtils;
-import io.multy.util.NativeDataHelper;
 import io.multy.util.NumberFormatter;
 import io.multy.viewmodels.AssetSendViewModel;
 
@@ -134,8 +133,8 @@ public class AmountChooserFragment extends BaseFragment {
             viewModel.getFee().setAmount(20);
         }
 
-        String estimation = NativeDataHelper.getEstimate(String.valueOf(feePerByte), inputsCount, outputsCount);
-        String estimationForMax = NativeDataHelper.getEstimate(String.valueOf(feePerByte), inputsCount, outputsCountForMax);
+//        String estimation = NativeDataHelper.getEstimate(String.valueOf(feePerByte), inputsCount, outputsCount);
+//        String estimationForMax = NativeDataHelper.getEstimate(String.valueOf(feePerByte), inputsCount, outputsCountForMax);
 
         long donation = 0;
 
@@ -145,8 +144,8 @@ public class AmountChooserFragment extends BaseFragment {
 
         Log.i(TAG, "donation satoshi " + donation);
 
-        transactionPrice = Long.valueOf(estimation) + donation;
-        transactionPriceMax = Long.valueOf(estimationForMax) + donation;
+        transactionPrice = Long.valueOf(0) + donation;
+        transactionPriceMax = Long.valueOf(0) + donation;
 
         spendableSatoshi = 0;
 

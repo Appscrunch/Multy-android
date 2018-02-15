@@ -10,20 +10,21 @@
 #include <multy_core/common.h>
 #include <multy_core/error.h>
 #include <multy_core/mnemonic.h>
-#include <multy_core/internal/u_ptr.h>
 #include <vector>
-#include <multy_core/internal/utility.h>
-#include <multy_core/keys.h>
 #include <multy_core/account.h>
 #include <cstring>
-#include "multy_transaction/transaction.h"
-#include <multy_transaction/internal/u_ptr.h>
-#include <multy_transaction/internal/properties.h>
-#include <multy_transaction/properties.h>
-#include "multy_transaction/internal/amount.h"
-#include "multy_transaction/internal/transaction.h"
-#include "multy_core/internal/account.h"
+#include <functional>
+#include <multy_core/src/utility.h>
+#include <multy_core/key.h>
+#include <multy_core/transaction.h>
+#include <multy_core/src/api/properties_impl.h>
+#include <multy_core/src/api/big_int_impl.h>
+#include <multy_core/big_int.h>
 #include "multy_core/sha3.h"
+#include "multy_core/src/transaction_base.h"
+#include "multy_core/properties.h"
+#include "multy_core/src/api/account_impl.h"
+#include "multy_core/big_int.h`"
 
 
 JavaVM *gJvm = nullptr;
@@ -107,7 +108,6 @@ Java_io_multy_util_NativeDataHelper_runTest(JNIEnv *jenv, jclass jcls) {
 }
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *pjvm, void *reserved) {
-    using namespace wallet_core::internal;
 
     gJvm = pjvm;  // cache the JavaVM pointer
     auto env = getEnv();
@@ -130,13 +130,14 @@ jclass findClass(const char *name) {
 
 JNIEXPORT jbyteArray JNICALL
 Java_io_multy_util_NativeDataHelper_makeSeed(JNIEnv *env, jobject obj, jstring string) {
-    using namespace wallet_core::internal;
+    using namespace multy_core::internal;
     const char *mnemonic = env->GetStringUTFChars(string, JNI_FALSE);
+    const jbyteArray defaultResult{};
 
     BinaryDataPtr data;
     ErrorPtr error;
 
-    ERSOR(make_seed(mnemonic, "", reset_sp(data)), jbyteArray());
+    HANDLE_ERROR(make_seed(mnemonic, "", reset_sp(data)));
     env->ReleaseStringUTFChars(string, mnemonic);
 
     jbyteArray array = env->NewByteArray(data.get()->len);
@@ -147,7 +148,8 @@ Java_io_multy_util_NativeDataHelper_makeSeed(JNIEnv *env, jobject obj, jstring s
 JNIEXPORT jstring JNICALL
 Java_io_multy_util_NativeDataHelper_makeMnemonic(JNIEnv *jniEnv, jobject obj) {
 
-    using namespace wallet_core::internal;
+    using namespace multy_core::internal;
+    const jstring defaultResult{};
 
     auto env = getEnv();
     auto randomClass = env->FindClass("io/multy/util/EntropyProvider");
@@ -170,14 +172,15 @@ Java_io_multy_util_NativeDataHelper_makeMnemonic(JNIEnv *jniEnv, jobject obj) {
 
     ConstCharPtr mnemonic_str;
 
-    ERSOR(make_mnemonic(entropy_source, reset_sp(mnemonic_str)), jstring());
+    HANDLE_ERROR(make_mnemonic(entropy_source, reset_sp(mnemonic_str)));
     return jniEnv->NewStringUTF(mnemonic_str.get());
 }
 
 JNIEXPORT jstring JNICALL
 Java_io_multy_util_NativeDataHelper_makeAccountId(JNIEnv *env, jobject obj, jbyteArray array) {
 
-    using namespace wallet_core::internal;
+    using namespace multy_core::internal;
+    const jstring defaultResult{};
 
     size_t len = (size_t) env->GetArrayLength(array);
     unsigned char *buf = new unsigned char[len];
@@ -186,10 +189,10 @@ Java_io_multy_util_NativeDataHelper_makeAccountId(JNIEnv *env, jobject obj, jbyt
     ExtendedKeyPtr rootKey;
 
     BinaryData seed{buf, len};
-    ERSOR(make_master_key(&seed, reset_sp(rootKey)), jstring());
+    HANDLE_ERROR(make_master_key(&seed, reset_sp(rootKey)));
 
     const char *id = nullptr;
-    ERSOR(make_key_id(rootKey.get(), &id), jstring());
+    HANDLE_ERROR(make_key_id(rootKey.get(), &id));
 
     return env->NewStringUTF(id);
 }
@@ -199,7 +202,8 @@ Java_io_multy_util_NativeDataHelper_makeAccountAddress(JNIEnv *env, jobject obj,
                                                        jint walletIndex, jint addressIndex,
                                                        jint currency) {
 
-    using namespace wallet_core::internal;
+    using namespace multy_core::internal;
+    const jstring defaultResult{};
 
     size_t len = (size_t) env->GetArrayLength(array);
     unsigned char *buf = new unsigned char[len];
@@ -208,59 +212,20 @@ Java_io_multy_util_NativeDataHelper_makeAccountAddress(JNIEnv *env, jobject obj,
     ExtendedKeyPtr rootKey;
 
     BinaryData seed{buf, len};
-    ERSOR(make_master_key(&seed, reset_sp(rootKey)), jstring());
+    HANDLE_ERROR(make_master_key(&seed, reset_sp(rootKey)));
 
     HDAccountPtr hdAccount;
-    ERSOR(make_hd_account(rootKey.get(), static_cast<Currency >((int) currency), walletIndex,
-                          reset_sp(hdAccount)), jstring());
+    HANDLE_ERROR(make_hd_account(rootKey.get(), static_cast<Currency >((int) currency), walletIndex,
+                                 reset_sp(hdAccount)));
 
     AccountPtr account;
-    ERSOR(make_hd_leaf_account(hdAccount.get(), ADDRESS_EXTERNAL, addressIndex, reset_sp(account)),
-          jstring());
+    HANDLE_ERROR(make_hd_leaf_account(hdAccount.get(), ADDRESS_EXTERNAL, addressIndex,
+                                      reset_sp(account)));
 
     ConstCharPtr address;
-    ERSOR(get_account_address_string(account.get(), reset_sp(address)), jstring());
+    HANDLE_ERROR(account_get_address_string(account.get(), reset_sp(address)));
 
     return env->NewStringUTF(address.get());
-}
-
-//JNIEXPORT jstring JNICALL
-//Java_io_multy_util_NativeDataHelper_makePrivateKey
-
-JNIEXPORT jstring JNICALL
-Java_io_multy_util_NativeDataHelper_getEstimate(JNIEnv *env, jclass type, jstring feePerByte_,
-                                                jint inputs, jint outputs) {
-
-    using namespace wallet_core::internal;
-    using namespace multy_transaction::internal;
-
-    const char *feePerByte = env->GetStringUTFChars(feePerByte_, 0);
-
-    size_t in = inputs;
-    size_t out = outputs;
-    Amount fee_per_byte(feePerByte);
-
-    ErrorPtr error;
-    AccountPtr baseAccount;
-    error.reset(
-            make_account(CURRENCY_BITCOIN, "cQeGKosJjWPn9GkB7QmvmotmBbVg1hm8UjdN6yLXEWZ5HAcRwam7",
-                         reset_sp(baseAccount)));
-
-    TransactionPtr transaction;
-    error.reset(make_transaction(baseAccount.get(), reset_sp(transaction)));
-
-    {
-        Properties &fee = transaction->get_fee();
-        fee.set_property("amount_per_byte", fee_per_byte);
-    }
-
-    Amount total_fee = transaction->estimate_total_fee(out, in);
-
-    //  const char* ret = fee_per_byte.get_value();
-
-    env->ReleaseStringUTFChars(feePerByte_, feePerByte);
-
-    return env->NewStringUTF(total_fee.get_value().c_str());
 }
 
 JNIEXPORT jbyteArray JNICALL
@@ -270,10 +235,9 @@ Java_io_multy_util_NativeDataHelper_makeTransaction(JNIEnv *jniEnv, jobject obj,
                                                     jstring jDestinationAddress,
                                                     jstring jChangeAddress,
                                                     jstring jDonationAddress) {
-    const jbyteArray  defaultResult{};
+    const jbyteArray defaultResult{};
 
-    using namespace wallet_core::internal;
-    using namespace multy_transaction::internal;
+    using namespace multy_core::internal;
 
     JNIEnv *env = getEnv();
     size_t len = (size_t) env->GetArrayLength(jSeed);
@@ -311,7 +275,7 @@ Java_io_multy_util_NativeDataHelper_makeTransaction(JNIEnv *jniEnv, jobject obj,
     TransactionPtr transaction;
     HANDLE_ERROR(make_transaction(baseAccount.get(), reset_sp(transaction)));
 
-    Amount sum(0);
+    BigInt sum(0);
 
     const char *donationAmountStr = env->GetStringUTFChars(jDonation, nullptr);
     const char *feePerByteStr = env->GetStringUTFChars(jFeePerByte, nullptr);
@@ -321,11 +285,11 @@ Java_io_multy_util_NativeDataHelper_makeTransaction(JNIEnv *jniEnv, jobject obj,
     const char *changeAddressStr = env->GetStringUTFChars(jChangeAddress, nullptr);
     const char *donationAddressStr = env->GetStringUTFChars(jDonationAddress, nullptr);
 
-    const Amount destinationAmount(destinationAmountStr);
-    const Amount feePerByte(feePerByteStr);
-    const Amount donationAmount(donationAmountStr);
+    const BigInt destinationAmount(destinationAmountStr);
+    const BigInt feePerByte(feePerByteStr);
+    const BigInt donationAmount(donationAmountStr);
     size_t outputsCount = 0;
-    Amount total_fee;
+    BigInt total_fee;
 
     try {
 
@@ -348,7 +312,7 @@ Java_io_multy_util_NativeDataHelper_makeTransaction(JNIEnv *jniEnv, jobject obj,
 
             AccountPtr account;
             HANDLE_ERROR(make_hd_leaf_account(hdAccount.get(), ADDRESS_EXTERNAL, addressId,
-                                             reset_sp(account)));
+                                              reset_sp(account)));
 
             for (int k = 0; k < stringCount; k++) {
                 jstring jHash = (jstring) (env->GetObjectArrayElement(hashes, k));
@@ -361,17 +325,35 @@ Java_io_multy_util_NativeDataHelper_makeTransaction(JNIEnv *jniEnv, jobject obj,
 
                 BinaryDataPtr binaryDataTxHash;
                 BinaryDataPtr binaryDataPubKey;
-                make_binary_data_from_hex(hashString, reset_sp(binaryDataTxHash));
-                make_binary_data_from_hex(keyString, reset_sp(binaryDataPubKey));
+                BigIntPtr amount;
+                PrivateKey *private_key_ptr;
+                HANDLE_ERROR(account_get_key(account.get(), KEY_TYPE_PRIVATE,
+                                             reinterpret_cast<Key **>(&private_key_ptr)));
+                PrivateKeyPtr private_key(private_key_ptr);
+                HANDLE_ERROR(make_binary_data_from_hex(hashString, reset_sp(binaryDataTxHash)));
+                HANDLE_ERROR(make_binary_data_from_hex(keyString, reset_sp(binaryDataPubKey)));
+                HANDLE_ERROR(make_big_int(amountString, reset_sp(amount)));
 
                 sum += amountString;
 
-                Properties &source = transaction->add_source();
-                source.set_property("amount", Amount(amountString));
-                source.set_property("prev_tx_hash", *binaryDataTxHash);
-                source.set_property("prev_tx_out_index", outId);
-                source.set_property("prev_tx_out_script_pubkey", *binaryDataPubKey);
-                source.set_property("private_key", *account->get_private_key());
+                ﻿
+                Properties *source = nullptr;
+                HANDLE_ERROR(transaction_add_source(transaction.get(), &source));
+                HANDLE_ERROR(properties_set_big_int_value(source, "amount", amount.get()));
+                HANDLE_ERROR(properties_set_binary_data_value(source, "prev_tx_hash",
+                                                              binaryDataTxHash.get()));
+                HANDLE_ERROR(properties_set_int32_value(source, "prev_tx_out_index", outId));
+                HANDLE_ERROR(properties_set_binary_data_value(source, "prev_tx_out_script_pubkey",
+                                                              binaryDataPubKey.get()));
+                HANDLE_ERROR(
+                        properties_set_private_key_value(source, "private_key", private_key.get()));
+
+//                Properties &source = transaction->add_source();
+//                source.set_property_value("amount", BigInt(amountString));
+//                source.set_property_value("prev_tx_hash", *binaryDataTxHash);
+//                source.set_property_value("prev_tx_out_index", outId);
+//                source.set_property_value("prev_tx_out_script_pubkey", *binaryDataPubKey);
+//                source.set_property_value("private_key", *account->get_private_key());
 
                 outputsCount++;
 
@@ -383,36 +365,56 @@ Java_io_multy_util_NativeDataHelper_makeTransaction(JNIEnv *jniEnv, jobject obj,
         }
 
         {
-            Properties &fee = transaction->get_fee();
-            fee.set_property("amount_per_byte", feePerByte);
-            fee.set_property("min_amount_per_byte", Amount(0));
-            fee.set_property("max_amount_per_byte", feePerByte + "1000");
+            Properties *destination = nullptr;
+            HANDLE_ERROR(transaction_add_destination(transaction.get(), &destination));
+            HANDLE_ERROR(properties_set_big_int_value(destination, "amount", &destinationAmount));
+            HANDLE_ERROR(
+                    properties_set_string_value(destination, "address", destinationAddressStr));
+//            Properties &destination = transaction->add_destination();
+//            destination.set_property_value("address", destinationAddressStr);
+//            destination.set_property_value("amount", destinationAmount);
+        }
+
+        if (donationAmount != "0") {
+
+            Properties *donation = nullptr;
+            HANDLE_ERROR(transaction_add_destination(transaction.get(), &donation));
+            HANDLE_ERROR(properties_set_big_int_value(donation, "amount", &donationAmount));
+            HANDLE_ERROR(properties_set_string_value(donation, "address", donationAddressStr));
+//            Properties &donation = transaction->add_destination();
+//            donation.set_property_value("address", donationAddressStr);
+//            donation.set_property_value("amount", donationAmount);
+        }
+
+        {
+
+// change:
+            Properties *change = nullptr;
+            HANDLE_ERROR(transaction_add_destination(transaction.get(), &change));
+            HANDLE_ERROR(properties_set_int32_value(change, "is_change", 1));
+            HANDLE_ERROR(properties_set_string_value(change, "address", changeAddressStr));
+//            Properties &change = transaction->add_destination();
+//            change.set_property_value("address", changeAddressStr);
+//            change.set_property_value("amount",
+            sum - destinationAmount - donationAmount - total_fee);
+        }
+
+        {
+//            Properties &fee = transaction->get_fee();
+//            fee.set_property_value("amount_per_byte", feePerByte);
+//            fee.set_property_value("min_amount_per_byte", BigInt(0));
+            Properties *fee = nullptr;
+            HANDLE_ERROR(transaction_get_fee(transaction.get(), &fee));
+            HANDLE_ERROR(properties_set_big_int_value(fee, "amount_per_byte", &feePerByte));
         }
 
         total_fee = transaction->estimate_total_fee(outputsCount, donationAmount == "0" ? 2 : 3);
 
-        {
-            Properties &destination = transaction->add_destination();
-            destination.set_property("address", destinationAddressStr);
-            destination.set_property("amount", destinationAmount);
-        }
 
-        if (donationAmount != "0") {
-            Properties &donation = transaction->add_destination();
-            donation.set_property("address", donationAddressStr);
-            donation.set_property("amount", donationAmount);
-        }
+        BinaryDataPtr serialized;
 
-        {
-            Properties &change = transaction->add_destination();
-            change.set_property("address", changeAddressStr);
-            change.set_property("amount", sum - destinationAmount - donationAmount - total_fee);
-        }
-
-        transaction->update_state();
-        transaction->sign();
-        BinaryDataPtr serialized = transaction->serialize();
-
+        HANDLE_ERROR(transaction_update(transaction.get()));
+        HANDLE_ERROR(transaction_serialize(transaction.get(), reset_sp(serialized)));
 
         env->ReleaseStringUTFChars(jDonation, donationAmountStr);
         env->ReleaseStringUTFChars(jFeePerByte, feePerByteStr);
@@ -462,7 +464,9 @@ struct FinallyWrapper {
 extern "C"
 JNIEXPORT jbyteArray JNICALL
 Java_io_multy_util_NativeDataHelper_digestSha3256(JNIEnv *env, jclass type, jbyteArray s_) {
-    using namespace wallet_core::internal;
+    using namespace multy_core::internal;
+    const jbyteArray defaultResult{};
+
     jbyte *data = env->GetByteArrayElements(s_, nullptr);
     FINALLY(env->ReleaseByteArrayElements(s_, data, 0));
 
@@ -471,7 +475,7 @@ Java_io_multy_util_NativeDataHelper_digestSha3256(JNIEnv *env, jclass type, jbyt
 
     const BinaryData input{reinterpret_cast<unsigned char *>(data),
                            static_cast<size_t>(env->GetArrayLength(s_))};
-    ERSOR(sha3(&input, &output), jbyteArray());
+    HANDLE_ERROR(sha3(&input, &output));
 
     jbyteArray resultArray = env->NewByteArray(output.len);
     env->SetByteArrayRegion(resultArray, 0, output.len,
