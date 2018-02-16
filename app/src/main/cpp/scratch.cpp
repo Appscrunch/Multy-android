@@ -15,7 +15,7 @@
 #include <cstring>
 #include <functional>
 #include <multy_core/src/utility.h>
-#include <multy_core/key.h>
+#include "multy_core/key.h"
 #include <multy_core/transaction.h>
 #include <multy_core/src/api/properties_impl.h>
 #include <multy_core/src/api/big_int_impl.h>
@@ -24,7 +24,9 @@
 #include "multy_core/src/transaction_base.h"
 #include "multy_core/properties.h"
 #include "multy_core/src/api/account_impl.h"
-#include "multy_core/big_int.h`"
+#include "multy_core/src/api/big_int_impl.h"
+
+
 
 
 JavaVM *gJvm = nullptr;
@@ -236,7 +238,7 @@ Java_io_multy_util_NativeDataHelper_makeTransaction(JNIEnv *jniEnv, jobject obj,
                                                     jstring jChangeAddress,
                                                     jstring jDonationAddress) {
     const jbyteArray defaultResult{};
-
+    bool fladPayFee = false;
     using namespace multy_core::internal;
 
     JNIEnv *env = getEnv();
@@ -329,6 +331,7 @@ Java_io_multy_util_NativeDataHelper_makeTransaction(JNIEnv *jniEnv, jobject obj,
                 PrivateKey *private_key_ptr;
                 HANDLE_ERROR(account_get_key(account.get(), KEY_TYPE_PRIVATE,
                                              reinterpret_cast<Key **>(&private_key_ptr)));
+
                 PrivateKeyPtr private_key(private_key_ptr);
                 HANDLE_ERROR(make_binary_data_from_hex(hashString, reset_sp(binaryDataTxHash)));
                 HANDLE_ERROR(make_binary_data_from_hex(keyString, reset_sp(binaryDataPubKey)));
@@ -336,8 +339,7 @@ Java_io_multy_util_NativeDataHelper_makeTransaction(JNIEnv *jniEnv, jobject obj,
 
                 sum += amountString;
 
-                ﻿
-                Properties *source = nullptr;
+                Properties* source = nullptr;
                 HANDLE_ERROR(transaction_add_source(transaction.get(), &source));
                 HANDLE_ERROR(properties_set_big_int_value(source, "amount", amount.get()));
                 HANDLE_ERROR(properties_set_binary_data_value(source, "prev_tx_hash",
@@ -348,7 +350,6 @@ Java_io_multy_util_NativeDataHelper_makeTransaction(JNIEnv *jniEnv, jobject obj,
                 HANDLE_ERROR(
                         properties_set_private_key_value(source, "private_key", private_key.get()));
 
-//                Properties &source = transaction->add_source();
 //                source.set_property_value("amount", BigInt(amountString));
 //                source.set_property_value("prev_tx_hash", *binaryDataTxHash);
 //                source.set_property_value("prev_tx_out_index", outId);
@@ -364,16 +365,16 @@ Java_io_multy_util_NativeDataHelper_makeTransaction(JNIEnv *jniEnv, jobject obj,
             env->ReleaseIntArrayElements(outIds, outIdArr, 0);
         }
 
-        {
-            Properties *destination = nullptr;
-            HANDLE_ERROR(transaction_add_destination(transaction.get(), &destination));
-            HANDLE_ERROR(properties_set_big_int_value(destination, "amount", &destinationAmount));
-            HANDLE_ERROR(
-                    properties_set_string_value(destination, "address", destinationAddressStr));
+
+        Properties *destination = nullptr;
+        HANDLE_ERROR(transaction_add_destination(transaction.get(), &destination));
+        HANDLE_ERROR(properties_set_big_int_value(destination, "amount", &destinationAmount));
+        HANDLE_ERROR(
+                properties_set_string_value(destination, "address", destinationAddressStr));
 //            Properties &destination = transaction->add_destination();
 //            destination.set_property_value("address", destinationAddressStr);
 //            destination.set_property_value("amount", destinationAmount);
-        }
+
 
         if (donationAmount != "0") {
 
@@ -386,18 +387,18 @@ Java_io_multy_util_NativeDataHelper_makeTransaction(JNIEnv *jniEnv, jobject obj,
 //            donation.set_property_value("amount", donationAmount);
         }
 
-        {
+
 
 // change:
-            Properties *change = nullptr;
-            HANDLE_ERROR(transaction_add_destination(transaction.get(), &change));
-            HANDLE_ERROR(properties_set_int32_value(change, "is_change", 1));
-            HANDLE_ERROR(properties_set_string_value(change, "address", changeAddressStr));
+        Properties *change = nullptr;
+        HANDLE_ERROR(transaction_add_destination(transaction.get(), &change));
+        HANDLE_ERROR(properties_set_int32_value(change, "is_change", 1));
+        HANDLE_ERROR(properties_set_string_value(change, "address", changeAddressStr));
 //            Properties &change = transaction->add_destination();
 //            change.set_property_value("address", changeAddressStr);
 //            change.set_property_value("amount",
-            sum - destinationAmount - donationAmount - total_fee);
-        }
+//            sum - destinationAmount - donationAmount - total_fee);
+
 
         {
 //            Properties &fee = transaction->get_fee();
@@ -412,6 +413,20 @@ Java_io_multy_util_NativeDataHelper_makeTransaction(JNIEnv *jniEnv, jobject obj,
 
 
         BinaryDataPtr serialized;
+
+        HANDLE_ERROR(transaction_update(transaction.get()));
+
+        if (!fladPayFee){
+
+            BigIntPtr fee_transaction;
+            HANDLE_ERROR(transaction_get_total_fee(transaction.get(), reset_sp(fee_transaction)));
+            BigInt noPtrFeeTransaction(*fee_transaction);
+            //HANDLE_ERROR(big_int_to_string(fee_transaction.get(), &asd));
+           // destinationAmount -= noPtrFeeTransaction;
+            BigInt destinationAm(destinationAmount-noPtrFeeTransaction);
+            HANDLE_ERROR(properties_set_big_int_value(destination, "amount", &destinationAm));
+
+        }
 
         HANDLE_ERROR(transaction_update(transaction.get()));
         HANDLE_ERROR(transaction_serialize(transaction.get(), reset_sp(serialized)));
@@ -482,3 +497,5 @@ Java_io_multy_util_NativeDataHelper_digestSha3256(JNIEnv *env, jclass type, jbyt
                             reinterpret_cast<const jbyte *>(output.data));
     return resultArray;
 }
+
+
