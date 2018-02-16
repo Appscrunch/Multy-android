@@ -550,4 +550,11 @@ public class AmountChooserFragment extends BaseFragment {
         }
     }
 
+    public static void updateTransactionPrice(String changeAmountString) {
+        long changeAmount = Long.valueOf(changeAmountString);
+        Log.i("wise", "price " + changeAmount);
+
+
+    }
+
 }

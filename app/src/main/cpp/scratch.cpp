@@ -236,9 +236,9 @@ Java_io_multy_util_NativeDataHelper_makeTransaction(JNIEnv *jniEnv, jobject obj,
                                                     jstring jFeePerByte, jstring jDonation,
                                                     jstring jDestinationAddress,
                                                     jstring jChangeAddress,
-                                                    jstring jDonationAddress) {
+                                                    jstring jDonationAddress, jboolean payFee) {
     const jbyteArray defaultResult{};
-    bool fladPayFee = false;
+    bool fladPayFee = (bool) (payFee == JNI_TRUE);
     using namespace multy_core::internal;
 
     JNIEnv *env = getEnv();
@@ -417,7 +417,6 @@ Java_io_multy_util_NativeDataHelper_makeTransaction(JNIEnv *jniEnv, jobject obj,
         HANDLE_ERROR(transaction_update(transaction.get()));
 
         if (!fladPayFee){
-
             BigIntPtr fee_transaction;
             HANDLE_ERROR(transaction_get_total_fee(transaction.get(), reset_sp(fee_transaction)));
             BigInt noPtrFeeTransaction(*fee_transaction);
@@ -428,8 +427,22 @@ Java_io_multy_util_NativeDataHelper_makeTransaction(JNIEnv *jniEnv, jobject obj,
 
         }
 
+
         HANDLE_ERROR(transaction_update(transaction.get()));
         HANDLE_ERROR(transaction_serialize(transaction.get(), reset_sp(serialized)));
+
+        auto env = getEnv();
+        auto randomClass = env->FindClass("io/multy/ui/fragments/send/AmountChooserFragment");
+
+        jmethodID mid = env->GetStaticMethodID(randomClass, "updateTransactionPrice", "(Ljava/lang/String;)V");
+        jbyteArray result = (jbyteArray) env->CallStaticObjectMethod(randomClass, mid, 160);
+
+
+        BigInt change_amount;
+        change->get_property_value("amount", &change_amount);
+        ConstCharPtr change_amount_str;
+        big_int_to_string(&change_amount, reset_sp(change_amount_str));
+
 
         env->ReleaseStringUTFChars(jDonation, donationAmountStr);
         env->ReleaseStringUTFChars(jFeePerByte, feePerByteStr);

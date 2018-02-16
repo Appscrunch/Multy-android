@@ -23,7 +23,6 @@ import butterknife.OnClick;
 import io.multy.R;
 import io.multy.api.MultyApi;
 import io.multy.api.socket.CurrenciesRate;
-import io.multy.model.DataManager;
 import io.multy.model.entities.wallet.CurrencyCode;
 import io.multy.model.entities.wallet.RecentAddress;
 import io.multy.model.requests.HdTransactionRequestEntity;
@@ -122,8 +121,8 @@ public class SendSummaryFragment extends BaseFragment {
             final String changeAddress = NativeDataHelper.makeAccountAddress(seed, viewModel.getWallet().getWalletIndex(), addressesSize, NativeDataHelper.Currency.BTC.getValue());
 
             //TODO make fee per byte
-            byte[] transactionHex = NativeDataHelper.makeTransaction(DataManager.getInstance().getSeed().getSeed(), viewModel.getWallet().getWalletIndex(), String.valueOf(amountSatoshi),
-                    String.valueOf(viewModel.getFee().getAmount()), String.valueOf(amountDonationSatoshi), addressTo, changeAddress, Prefs.getString(Constants.PREF_DONATE_ADDRESS_BTC));
+            byte[] transactionHex = NativeDataHelper.makeTransaction(seed, viewModel.getWallet().getWalletIndex(), String.valueOf(amountSatoshi),
+                    String.valueOf(viewModel.getFee().getAmount()), String.valueOf(amountDonationSatoshi), addressTo, changeAddress, Prefs.getString(Constants.PREF_DONATE_ADDRESS_BTC), true);
             Timber.i("donation amount " + amountDonationSatoshi);
             Timber.i("fee per byte " + viewModel.getFee().getAmount());
             String hex = byteArrayToHex(transactionHex);
