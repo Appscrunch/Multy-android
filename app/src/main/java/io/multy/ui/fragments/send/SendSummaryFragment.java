@@ -9,10 +9,13 @@ package io.multy.ui.fragments.send;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.samwolfand.oneprefs.Prefs;
@@ -20,7 +23,7 @@ import com.samwolfand.oneprefs.Prefs;
 import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
+import butterknife.OnTouch;
 import io.multy.R;
 import io.multy.api.MultyApi;
 import io.multy.api.socket.CurrenciesRate;
@@ -71,6 +74,10 @@ public class SendSummaryFragment extends BaseFragment {
     View buttonNext;
     @BindView(R.id.input_note)
     View inputNote;
+    @BindView(R.id.image_slider)
+    View slider;
+    @BindView(R.id.scrollview)
+    ScrollView scrollView;
 
     @BindString(R.string.donation_format_pattern)
     String formatPattern;
@@ -108,9 +115,16 @@ public class SendSummaryFragment extends BaseFragment {
         return view;
     }
 
-    @OnClick(R.id.button_next)
-    void onClickNext() {
-        send();
+    @Override
+    public void onResume() {
+        super.onResume();
+        startSlideAnimation();
+    }
+
+    @Override
+    public void onPause() {
+        stopSlideAnimation();
+        super.onPause();
     }
 
     private void send() {
@@ -195,18 +209,6 @@ public class SendSummaryFragment extends BaseFragment {
         }
     }
 
-    private void showError() {
-        viewModel.isLoading.postValue(false);
-        viewModel.errorMessage.postValue(getString(R.string.error_sending_tx));
-    }
-
-    public static String byteArrayToHex(byte[] a) {
-        StringBuilder sb = new StringBuilder(a.length * 2);
-        for (byte b : a)
-            sb.append(String.format("%02x", b));
-        return sb.toString();
-    }
-
     private void setInfo() {
         CurrenciesRate currenciesRate = RealmManager.getSettingsDao().getCurrenciesRate();
         textReceiverBalanceOriginal.setText(NumberFormatter.getInstance().format(viewModel.getAmount()));
@@ -226,4 +228,72 @@ public class SendSummaryFragment extends BaseFragment {
         textFeeAmount.setText(String.format("%s BTC / %s USD", CryptoFormatUtils.satoshiToBtc(viewModel.getTransactionPrice()), CryptoFormatUtils.satoshiToUsd(viewModel.getTransactionPrice())));
     }
 
+    private void showError() {
+        viewModel.isLoading.postValue(false);
+        viewModel.errorMessage.postValue(getString(R.string.error_sending_tx));
+    }
+
+    private void startSlideAnimation() {
+        slider.animate().cancel();
+        slider.animate().setStartDelay(2000).withEndAction(() ->
+                slider.animate().setStartDelay(0).withEndAction(this::slideAnimation).start())
+                .start();
+    }
+
+    private void slideAnimation() {
+        float dragRange = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
+        int dragDuration = 700;
+        slider.animate()
+                .translationX(dragRange)
+                .setDuration(dragDuration)
+                .setInterpolator(new AccelerateDecelerateInterpolator())
+                .withEndAction(() ->
+                        slider.animate()
+                                .translationX(0)
+                                .setDuration(dragDuration)
+                                .setInterpolator(new AccelerateDecelerateInterpolator())
+                                .withEndAction(this::slideAnimation));
+    }
+
+    private void stopSlideAnimation() {
+        slider.animate().cancel();
+    }
+
+    private void moveSliderToNextPoint(float rawX) {
+        rawX -= slider.getWidth() / 2;
+        slider.setTranslationX(rawX);
+        if (slider.getX() + slider.getWidth() > buttonNext.getX() + buttonNext.getWidth()) {
+            send();
+        }
+    }
+
+    private void returnSliderOnStart() {
+        slider.setTranslationX(0f);
+        startSlideAnimation();
+    }
+
+    public static String byteArrayToHex(byte[] a) {
+        StringBuilder sb = new StringBuilder(a.length * 2);
+        for (byte b : a)
+            sb.append(String.format("%02x", b));
+        return sb.toString();
+    }
+
+    @OnTouch(R.id.image_slider)
+    boolean OnSliderTouch(View v, MotionEvent ev) {
+        scrollView.requestDisallowInterceptTouchEvent(true);
+        stopSlideAnimation();
+        switch (ev.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                return true;
+            case MotionEvent.ACTION_MOVE:
+                moveSliderToNextPoint(ev.getRawX());
+                return true;
+            case MotionEvent.ACTION_UP:
+                returnSliderOnStart();
+            case MotionEvent.ACTION_CANCEL:
+                return true;
+                default: return false;
+        }
+    }
 }
