@@ -6,6 +6,7 @@
 
 package io.multy.ui.fragments.send;
 
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -26,9 +27,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import butterknife.BindDimen;
-import butterknife.BindInt;
-import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -37,7 +35,6 @@ import io.multy.api.socket.CurrenciesRate;
 import io.multy.model.entities.Output;
 import io.multy.model.entities.wallet.CurrencyCode;
 import io.multy.model.entities.wallet.WalletAddress;
-import io.multy.model.entities.wallet.WalletRealmObject;
 import io.multy.storage.RealmManager;
 import io.multy.ui.activities.AssetSendActivity;
 import io.multy.ui.fragments.BaseFragment;
@@ -47,12 +44,12 @@ import io.multy.util.NumberFormatter;
 import io.multy.viewmodels.AssetSendViewModel;
 
 
-public class AmountChooserFragment extends BaseFragment {
+public class MyChooserFragment extends BaseFragment {
 
-    public static final String TAG = AmountChooserFragment.class.getSimpleName();
+    public static final String TAG = MyChooserFragment.class.getSimpleName();
 
-    public static AmountChooserFragment newInstance() {
-        return new AmountChooserFragment();
+    public static MyChooserFragment newInstance() {
+        return new MyChooserFragment();
     }
 
     @BindView(R.id.root)
@@ -76,26 +73,10 @@ public class AmountChooserFragment extends BaseFragment {
     @BindView(R.id.container_input_currency)
     ConstraintLayout containerInputCurrency;
 
-    @BindInt(R.integer.zero)
-    int zero;
-    @BindDimen(R.dimen.amount_size_huge)
-    int sizeHuge;
-    @BindDimen(R.dimen.amount_size_medium)
-    int sizeMedium;
-    @BindInt(R.integer.one)
-    int one;
-    @BindString(R.string.point)
-    String point;
-    @BindString(R.string.donation_format_pattern)
-    String formatPattern;
-    @BindString(R.string.donation_format_pattern_bitcoin)
-    String formatPatternBitcoin;
-
-    private boolean isAmountSwapped;
     private AssetSendViewModel viewModel;
     private CurrenciesRate currenciesRate;
+    private boolean isAmountSwapped = false;
     private long transactionPrice;
-    private long transactionPriceMax;
     private long spendableSatoshi;
 
     @Nullable
@@ -106,46 +87,31 @@ public class AmountChooserFragment extends BaseFragment {
         viewModel = ViewModelProviders.of(getActivity()).get(AssetSendViewModel.class);
         setBaseViewModel(viewModel);
         currenciesRate = RealmManager.getSettingsDao().getCurrenciesRate();
-        isAmountSwapped = false;
+
+        subscribeToUpdates();
         setupSwitcher();
         setupInputOriginal();
         setupInputCurrency();
         setAmountTotalWithFee();
-        initTransactionPrice();
+        initSpendable();
         return view;
     }
 
-    private void initTransactionPrice() {
-        WalletRealmObject wallet = viewModel.getWallet();
-        boolean isDonationIncluded = viewModel.getDonationAmount() != null;
+    private void subscribeToUpdates() {
+        viewModel.transaction.observe(getActivity(), s -> ((AssetSendActivity) getActivity()).setFragment(R.string.send_summary, R.id.container, SendSummaryFragment.newInstance()));
+        AssetSendViewModel.transactionPrice.observe(getActivity(), transactionPrice -> {
+            if (transactionPrice != null) {
+                this.transactionPrice = transactionPrice;
+                setTotalAmountForInput();
+            }
+        });
+    }
 
-        int inputsCount = 0;
-        for (WalletAddress walletAddress : wallet.getAddresses()) {
-            inputsCount += walletAddress.getOutputs().size();
-        }
-
-        int outputsCount = isDonationIncluded ? 2 : 1;
-        int outputsCountForMax = isDonationIncluded ? 3 : 2;
-
+    private void initSpendable() {
         long feePerByte = viewModel.getFee().getAmount();
         if (feePerByte < 20) {
-            feePerByte = 20;
             viewModel.getFee().setAmount(20);
         }
-
-//        String estimation = NativeDataHelper.getEstimate(String.valueOf(feePerByte), inputsCount, outputsCount);
-//        String estimationForMax = NativeDataHelper.getEstimate(String.valueOf(feePerByte), inputsCount, outputsCountForMax);
-
-        long donation = 0;
-
-        if (viewModel.getDonationAmount() != null && !viewModel.getDonationAmount().equals("")) {
-            donation = (long) (Double.valueOf(viewModel.getDonationAmount()) * Math.pow(10, 8));
-        }
-
-        Log.i(TAG, "donation satoshi " + donation);
-
-        transactionPrice = Long.valueOf(0) + donation;
-        transactionPriceMax = Long.valueOf(0) + donation;
 
         spendableSatoshi = 0;
 
@@ -156,9 +122,7 @@ public class AmountChooserFragment extends BaseFragment {
                 }
             }
         }
-
         textSpendable.setText(String.format("%s BTC", CryptoFormatUtils.satoshiToBtc(spendableSatoshi)));
-//        viewModel.setTransactionPrice(transactionPrice);
     }
 
     @Override
@@ -170,15 +134,19 @@ public class AmountChooserFragment extends BaseFragment {
 
     @OnClick(R.id.button_next)
     void onClickNext() {
-        if (!TextUtils.isEmpty(inputOriginal.getText()) && isParsable(inputOriginal.getText().toString()) && Double.valueOf(inputOriginal.getText().toString()) != zero) {
-            if (!TextUtils.isEmpty(inputOriginal.getText()) &&
-                    (Double.parseDouble(inputOriginal.getText().toString())
-                            + viewModel.getFee().getAmount()
-                            + (viewModel.getDonationAmount() == null ? zero : Double.parseDouble(viewModel.getDonationAmount())) > viewModel.getWallet().getBalance())) {
+        if (!TextUtils.isEmpty(inputOriginal.getText()) && isParsable(inputOriginal.getText().toString()) && Double.valueOf(inputOriginal.getText().toString()) != 0) {
+            boolean invalid;
+            if (switcher.isChecked()) {
+                invalid = getFeePlusDonation() + CryptoFormatUtils.btcToSatoshi(inputOriginal.getText().toString()) > spendableSatoshi;
+            } else {
+                invalid = CryptoFormatUtils.btcToSatoshi(inputOriginal.getText().toString()) > spendableSatoshi;
+            }
+
+            if (invalid) {
                 Toast.makeText(getActivity(), R.string.error_balance, Toast.LENGTH_LONG).show();
             } else {
                 viewModel.setAmount(Double.valueOf(inputOriginal.getText().toString()));
-                ((AssetSendActivity) getActivity()).setFragment(R.string.send_summary, R.id.container, SendSummaryFragment.newInstance());
+                viewModel.signTransaction();
             }
         } else {
             Toast.makeText(getActivity(), R.string.choose_amount, Toast.LENGTH_SHORT).show();
@@ -208,7 +176,7 @@ public class AmountChooserFragment extends BaseFragment {
 
     @OnClick(R.id.text_max)
     void onClickMax() {
-        if (spendableSatoshi - transactionPriceMax < 0) {
+        if (spendableSatoshi - transactionPrice < 0) {
             return;
         }
 
@@ -234,9 +202,9 @@ public class AmountChooserFragment extends BaseFragment {
         containerInputOriginal.animate().scaleX(1.5f).setInterpolator(new AccelerateInterpolator()).setDuration(300);
         containerInputCurrency.animate().scaleY(1f).setInterpolator(new AccelerateInterpolator()).setDuration(300);
         containerInputCurrency.animate().scaleX(1f).setInterpolator(new AccelerateInterpolator()).setDuration(300);
-        isAmountSwapped = false;
         inputOriginal.setTextColor(ContextCompat.getColor(getActivity(), R.color.text_main));
         inputCurrency.setTextColor(ContextCompat.getColor(getActivity(), R.color.text_grey));
+        isAmountSwapped = false;
     }
 
     private void animateCurrencyBalance() {
@@ -244,13 +212,14 @@ public class AmountChooserFragment extends BaseFragment {
         containerInputOriginal.animate().scaleX(1f).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(300);
         containerInputCurrency.animate().scaleY(1.5f).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(300);
         containerInputCurrency.animate().scaleX(1.5f).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(300);
-        isAmountSwapped = true;
         inputOriginal.setTextColor(ContextCompat.getColor(getActivity(), R.color.text_grey));
         inputCurrency.setTextColor(ContextCompat.getColor(getActivity(), R.color.text_main));
+        isAmountSwapped = true;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void setupInputOriginal() {
-        if (viewModel.getAmount() != zero) {
+        if (viewModel.getAmount() != 0) {
             inputOriginal.setText(String.valueOf(viewModel.getAmount()));
         }
 
@@ -285,15 +254,13 @@ public class AmountChooserFragment extends BaseFragment {
                 if (!isAmountSwapped) { // if currency input is main
                     if (!TextUtils.isEmpty(charSequence)) {
                         if (isParsable(charSequence.toString())) {
-                                inputCurrency.setText(NumberFormatter.getFiatInstance()
-                                        .format(viewModel.getCurrenciesRate().getBtcToUsd() * Double.parseDouble(charSequence.toString())));
+                            inputCurrency.setText(NumberFormatter.getFiatInstance().format(viewModel.getCurrenciesRate().getBtcToUsd() * Double.parseDouble(charSequence.toString())));
                             setTotalAmountForInput();
                         }
                     } else {
                         setEmptyTotalWithFee();
                         inputCurrency.getText().clear();
                         inputOriginal.getText().clear();
-//                        textTotal.getEditableText().clear();
                     }
                 }
                 checkMaxLengthAfterPoint(inputOriginal, 9, i, i2);
@@ -303,12 +270,17 @@ public class AmountChooserFragment extends BaseFragment {
             @Override
             public void afterTextChanged(Editable editable) {
                 checkForPointAndZeros(editable.toString(), inputOriginal);
+
+                long amountSatoshi = CryptoFormatUtils.btcToSatoshi(inputOriginal.getText().toString());
+                if (amountSatoshi != -1) {
+                    viewModel.scheduleUpdateTransactionPrice(amountSatoshi);
+                }
             }
         });
     }
 
     private void setupInputCurrency() {
-        if (viewModel.getAmount() != zero) {
+        if (viewModel.getAmount() != 0) {
             inputCurrency.setText(NumberFormatter.getInstance().format(viewModel.getAmount() * currenciesRate.getBtcToUsd()));
         }
 
@@ -364,12 +336,12 @@ public class AmountChooserFragment extends BaseFragment {
 
             @Override
             public void afterTextChanged(Editable editable) {
-//                if (!TextUtils.isEmpty(editable)
-//                        && editable.toString().length() == one
-//                        && editable.toString().contains(point)) {
-//                    String result = editable.toString().replaceAll(point, "");
-//                    inputOriginal.setText(result);
-//                }
+                if (!TextUtils.isEmpty(editable)
+                        && editable.toString().length() == 0
+                        && editable.toString().contains(".")) {
+                    String result = editable.toString().replaceAll(".", "");
+                    inputOriginal.setText(result);
+                }
             }
         });
     }
@@ -379,7 +351,7 @@ public class AmountChooserFragment extends BaseFragment {
             viewModel.setPayForCommission(isChecked);
             if (isChecked) {
                 checkCommas();
-                if (Double.parseDouble(inputOriginal.getText().toString()) * Math.pow(10, 8) + transactionPriceMax >= spendableSatoshi) {
+                if (Double.parseDouble(inputOriginal.getText().toString()) * Math.pow(10, 8) + transactionPrice >= spendableSatoshi) {
                     viewModel.errorMessage.setValue("You reached spendable amount");
                     switcher.setChecked(false);
                 }
@@ -410,7 +382,7 @@ public class AmountChooserFragment extends BaseFragment {
                 if (!TextUtils.isEmpty(inputCurrency.getText())) {  // checks input for value to not parse null
                     if (switcher.isChecked()) {                     // if pay for commission is checked we add fee and donation to total amount
                         textTotal.setText(NumberFormatter.getFiatInstance()
-                                .format(Double.parseDouble(inputCurrency.getText().toString()) + (Double.parseDouble(CryptoFormatUtils.satoshiToBtc(transactionPrice)) * currenciesRate.getBtcToUsd())));
+                                .format(Double.parseDouble(inputCurrency.getText().toString()) + (Double.parseDouble(CryptoFormatUtils.satoshiToBtc(getFeePlusDonation())) * currenciesRate.getBtcToUsd())));
                     } else {                                        // if pay for commission is unchecked we add just value from input to total amount
                         textTotal.setText(NumberFormatter.getFiatInstance().format(Double.parseDouble(inputCurrency.getText().toString())));
                     }
@@ -424,7 +396,7 @@ public class AmountChooserFragment extends BaseFragment {
                     if (switcher.isChecked()) {                    // if pay for commission is checked we add fee and donation to total amount
 
                         textTotal.setText(NumberFormatter.getInstance()
-                                .format(Double.parseDouble(inputOriginal.getText().toString()) + Double.parseDouble(CryptoFormatUtils.satoshiToBtc(transactionPrice))));
+                                .format(Double.parseDouble(inputOriginal.getText().toString()) + Double.parseDouble(CryptoFormatUtils.satoshiToBtc(getFeePlusDonation()))));
                     } else {                                       // if pay for commission is unchecked we add just value from input to total amount
                         textTotal.setText(inputOriginal.getText());
                     }
@@ -439,6 +411,10 @@ public class AmountChooserFragment extends BaseFragment {
         }
     }
 
+    private long getFeePlusDonation() {
+        return Long.valueOf(viewModel.getDonationSatoshi()) + transactionPrice;
+    }
+
     private boolean isParsable(String input) {
         try {
             Double.parseDouble(input);
@@ -451,14 +427,12 @@ public class AmountChooserFragment extends BaseFragment {
     private void setEmptyTotalWithFee() {
         if (switcher.isChecked()) {
             if (isAmountSwapped) {
-                textTotal.setText(NumberFormatter.getFiatInstance().format((viewModel.getFee().getAmount()
-                        + (viewModel.getDonationAmount() == null ? zero : Double.parseDouble(viewModel.getDonationAmount())))
+                textTotal.setText(NumberFormatter.getFiatInstance().format(viewModel.getDonationAmount() == null ? 0 : Double.parseDouble(viewModel.getDonationAmount())
                         * currenciesRate.getBtcToUsd()));
                 textTotal.append(Constants.SPACE);
                 textTotal.append(CurrencyCode.USD.name());
             } else {
-                textTotal.setText(NumberFormatter.getInstance().format(viewModel.getFee().getAmount()
-                        + (viewModel.getDonationAmount() == null ? zero : Double.parseDouble(viewModel.getDonationAmount()))));
+                textTotal.setText(NumberFormatter.getInstance().format(viewModel.getDonationAmount() == null ? 0 : Double.parseDouble(viewModel.getDonationAmount())));
                 textTotal.append(Constants.SPACE);
                 textTotal.append(CurrencyCode.BTC.name());
             }
@@ -472,14 +446,14 @@ public class AmountChooserFragment extends BaseFragment {
             if (isAmountSwapped) {
                 textTotal.setText(NumberFormatter.getFiatInstance().format((viewModel.getFee().getAmount()
                         + viewModel.getAmount()
-                        + (viewModel.getDonationAmount() == null ? zero : Double.parseDouble(viewModel.getDonationAmount())))
+                        + (viewModel.getDonationAmount() == null ? 0 : Double.parseDouble(viewModel.getDonationAmount())))
                         * currenciesRate.getBtcToUsd()));
                 textTotal.append(Constants.SPACE);
                 textTotal.append(CurrencyCode.USD.name());
             } else {
                 textTotal.setText(NumberFormatter.getInstance().format(viewModel.getFee().getAmount()
                         + viewModel.getAmount()
-                        + (viewModel.getDonationAmount() == null ? zero : Double.parseDouble(viewModel.getDonationAmount()))));
+                        + (viewModel.getDonationAmount() == null ? 0 : Double.parseDouble(viewModel.getDonationAmount()))));
                 textTotal.append(Constants.SPACE);
                 textTotal.append(CurrencyCode.BTC.name());
             }
@@ -490,13 +464,10 @@ public class AmountChooserFragment extends BaseFragment {
 
     private void checkForPointAndZeros(String input, EditText inputView) {
         int selection = inputView.getSelectionStart();
-        if (!TextUtils.isEmpty(input)
-                && input.length() == one
-                && input.contains(point)) {
-            String result = input.replaceAll(point, "");
+        if (!TextUtils.isEmpty(input) && input.length() == 1 && input.contains(".")) {
+            String result = input.replaceAll(".", "");
             inputView.setText(result);
-        } else if (!TextUtils.isEmpty(input)
-                && input.startsWith("00")) {
+        } else if (!TextUtils.isEmpty(input) && input.startsWith("00")) {
             inputView.setText(input.substring(1, input.length()));
             inputView.setSelection(selection - 1);
         }
@@ -505,8 +476,8 @@ public class AmountChooserFragment extends BaseFragment {
     private void checkMaxLengthBeforePoint(EditText input, int max, int start, int end, int count) {
         String amount = input.getText().toString();
         if (!TextUtils.isEmpty(amount) && amount.length() > max) {
-            if (amount.contains(point)) {
-                if (amount.indexOf(point) > max) {
+            if (amount.contains(".")) {
+                if (amount.indexOf(".") > max) {
                     if (start != 0 && end != amount.length() && count == amount.length()) {
                         StringBuilder stringBuilder = new StringBuilder();
                         stringBuilder.append(amount.substring(0, start));
@@ -539,8 +510,8 @@ public class AmountChooserFragment extends BaseFragment {
 
     private void checkMaxLengthAfterPoint(EditText input, int max, int start, int count) {
         String amount = input.getText().toString();
-        if (!TextUtils.isEmpty(amount) && amount.contains(point)) {
-            if (amount.length() - amount.indexOf(point) > max) {
+        if (!TextUtils.isEmpty(amount) && amount.contains(".")) {
+            if (amount.length() - amount.indexOf(".") > max) {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append(amount.substring(0, start));
                 stringBuilder.append(amount.substring(start + count, amount.length()));
@@ -553,7 +524,6 @@ public class AmountChooserFragment extends BaseFragment {
     public static void updateTransactionPrice(String changeAmountString) {
         long changeAmount = Long.valueOf(changeAmountString);
         Log.i("wise", "price " + changeAmount);
-
 
     }
 

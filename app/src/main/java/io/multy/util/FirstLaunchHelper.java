@@ -10,7 +10,6 @@ import android.app.Activity;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.samwolfand.oneprefs.Prefs;
 import com.scottyab.rootbeer.RootBeer;
@@ -52,18 +51,14 @@ public class FirstLaunchHelper {
         String mnemonic = null;
         byte[] seed;
 
-        Log.i("wise", "set creds");
         if (TextUtils.isEmpty(seedPhrase)) {
             mnemonic = NativeDataHelper.makeMnemonic();
-            Log.i("wise", "makeMnemonic");
             seed = NativeDataHelper.makeSeed(mnemonic);
-            Log.i("wise", "makeSeed");
         } else {
             seed = NativeDataHelper.makeSeed(seedPhrase);
         }
 
         final String userId = NativeDataHelper.makeAccountId(seed);
-        Log.i("wise", "makeAccoundId");
         final String deviceId = Settings.Secure.ANDROID_ID;
 
         DataManager dataManager = DataManager.getInstance();

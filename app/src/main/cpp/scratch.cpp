@@ -24,9 +24,6 @@
 #include "multy_core/src/transaction_base.h"
 #include "multy_core/properties.h"
 #include "multy_core/src/api/account_impl.h"
-#include "multy_core/src/api/big_int_impl.h"
-
-
 
 
 JavaVM *gJvm = nullptr;
@@ -157,6 +154,7 @@ Java_io_multy_util_NativeDataHelper_makeMnemonic(JNIEnv *jniEnv, jobject obj) {
     auto randomClass = env->FindClass("io/multy/util/EntropyProvider");
 
     jmethodID mid = env->GetStaticMethodID(randomClass, "generateKey", "(I)[B");
+    //160 is for 15 mnemonic words
     jbyteArray result = (jbyteArray) env->CallStaticObjectMethod(randomClass, mid, 160);
 
     typedef std::vector<unsigned char> bytes;
@@ -287,7 +285,7 @@ Java_io_multy_util_NativeDataHelper_makeTransaction(JNIEnv *jniEnv, jobject obj,
     const char *changeAddressStr = env->GetStringUTFChars(jChangeAddress, nullptr);
     const char *donationAddressStr = env->GetStringUTFChars(jDonationAddress, nullptr);
 
-    const BigInt destinationAmount(destinationAmountStr);
+    BigInt destinationAmount(destinationAmountStr);
     const BigInt feePerByte(feePerByteStr);
     const BigInt donationAmount(donationAmountStr);
     size_t outputsCount = 0;
@@ -315,7 +313,7 @@ Java_io_multy_util_NativeDataHelper_makeTransaction(JNIEnv *jniEnv, jobject obj,
             AccountPtr account;
             HANDLE_ERROR(make_hd_leaf_account(hdAccount.get(), ADDRESS_EXTERNAL, addressId,
                                               reset_sp(account)));
-
+// START SET INPUTS
             for (int k = 0; k < stringCount; k++) {
                 jstring jHash = (jstring) (env->GetObjectArrayElement(hashes, k));
                 jstring jKey = (jstring) (env->GetObjectArrayElement(keys, k));
@@ -339,7 +337,7 @@ Java_io_multy_util_NativeDataHelper_makeTransaction(JNIEnv *jniEnv, jobject obj,
 
                 sum += amountString;
 
-                Properties* source = nullptr;
+                Properties *source = nullptr;
                 HANDLE_ERROR(transaction_add_source(transaction.get(), &source));
                 HANDLE_ERROR(properties_set_big_int_value(source, "amount", amount.get()));
                 HANDLE_ERROR(properties_set_binary_data_value(source, "prev_tx_hash",
@@ -364,85 +362,106 @@ Java_io_multy_util_NativeDataHelper_makeTransaction(JNIEnv *jniEnv, jobject obj,
             }
             env->ReleaseIntArrayElements(outIds, outIdArr, 0);
         }
+// END SET INPUTS
 
-
-        Properties *destination = nullptr;
-        HANDLE_ERROR(transaction_add_destination(transaction.get(), &destination));
-        HANDLE_ERROR(properties_set_big_int_value(destination, "amount", &destinationAmount));
-        HANDLE_ERROR(
-                properties_set_string_value(destination, "address", destinationAddressStr));
-//            Properties &destination = transaction->add_destination();
-//            destination.set_property_value("address", destinationAddressStr);
-//            destination.set_property_value("amount", destinationAmount);
-
-
-        if (donationAmount != "0") {
-
-            Properties *donation = nullptr;
-            HANDLE_ERROR(transaction_add_destination(transaction.get(), &donation));
-            HANDLE_ERROR(properties_set_big_int_value(donation, "amount", &donationAmount));
-            HANDLE_ERROR(properties_set_string_value(donation, "address", donationAddressStr));
-//            Properties &donation = transaction->add_destination();
-//            donation.set_property_value("address", donationAddressStr);
-//            donation.set_property_value("amount", donationAmount);
-        }
-
-
-
-// change:
-        Properties *change = nullptr;
-        HANDLE_ERROR(transaction_add_destination(transaction.get(), &change));
-        HANDLE_ERROR(properties_set_int32_value(change, "is_change", 1));
-        HANDLE_ERROR(properties_set_string_value(change, "address", changeAddressStr));
-//            Properties &change = transaction->add_destination();
-//            change.set_property_value("address", changeAddressStr);
-//            change.set_property_value("amount",
-//            sum - destinationAmount - donationAmount - total_fee);
-
-
+// set fee per byte
         {
-//            Properties &fee = transaction->get_fee();
-//            fee.set_property_value("amount_per_byte", feePerByte);
-//            fee.set_property_value("min_amount_per_byte", BigInt(0));
             Properties *fee = nullptr;
             HANDLE_ERROR(transaction_get_fee(transaction.get(), &fee));
             HANDLE_ERROR(properties_set_big_int_value(fee, "amount_per_byte", &feePerByte));
         }
-
-        total_fee = transaction->estimate_total_fee(outputsCount, donationAmount == "0" ? 2 : 3);
-
-
-        BinaryDataPtr serialized;
-
-        HANDLE_ERROR(transaction_update(transaction.get()));
-
-        if (!fladPayFee){
-            BigIntPtr fee_transaction;
-            HANDLE_ERROR(transaction_get_total_fee(transaction.get(), reset_sp(fee_transaction)));
-            BigInt noPtrFeeTransaction(*fee_transaction);
-            //HANDLE_ERROR(big_int_to_string(fee_transaction.get(), &asd));
-           // destinationAmount -= noPtrFeeTransaction;
-            BigInt destinationAm(destinationAmount-noPtrFeeTransaction);
-            HANDLE_ERROR(properties_set_big_int_value(destination, "amount", &destinationAm));
-
+// set donation
+        if (donationAmount != "0") {
+            // donation
+            Properties *donation = nullptr;
+            HANDLE_ERROR(transaction_add_destination(transaction.get(), &donation));
+            HANDLE_ERROR(properties_set_big_int_value(donation, "amount", &donationAmount));
+            HANDLE_ERROR(properties_set_string_value(donation, "address", donationAddressStr));
         }
 
+// SET DESTINATION AND CHANGE ADDRESS
+        Properties *destination = nullptr;
+        Properties *change = nullptr;
+        HANDLE_ERROR(transaction_add_destination(transaction.get(), &destination));
+        HANDLE_ERROR(properties_set_string_value(destination, "address", destinationAddressStr));
+        if (sum == destinationAmount)
+        {
+            HANDLE_ERROR(properties_set_int32_value(destination, "is_change", 1));
+        } else
+        {
+            if (!fladPayFee)
+            {
+                destinationAmount =  destinationAmount - donationAmount;
+            }
+            // set destination amount
+            HANDLE_ERROR(properties_set_big_int_value(destination, "amount", &destinationAmount));
 
+            //set change destination
+            HANDLE_ERROR(transaction_add_destination(transaction.get(), &change));
+            HANDLE_ERROR(properties_set_int32_value(change, "is_change", 1));
+            HANDLE_ERROR(properties_set_string_value(change, "address", changeAddressStr));
+
+            if (!fladPayFee)
+            {
+                HANDLE_ERROR(transaction_update(transaction.get()));
+                BigIntPtr fee_transaction;
+                HANDLE_ERROR(transaction_get_total_fee(transaction.get(), reset_sp(fee_transaction)));
+                BigInt noPtrFeeTransaction(*fee_transaction);
+                destinationAmount -=noPtrFeeTransaction;
+                HANDLE_ERROR(properties_set_big_int_value(destination, "amount", &destinationAmount));
+            }
+        }
         HANDLE_ERROR(transaction_update(transaction.get()));
+
+        BinaryDataPtr serialized;
         HANDLE_ERROR(transaction_serialize(transaction.get(), reset_sp(serialized)));
 
+        BigIntPtr fee_transaction;
+        HANDLE_ERROR(transaction_get_total_fee(transaction.get(), reset_sp(fee_transaction)));
+        BigInt noPtrFeeTransaction(*fee_transaction);
+
         auto env = getEnv();
-        auto randomClass = env->FindClass("io/multy/ui/fragments/send/AmountChooserFragment");
+        auto randomClass = env->FindClass("io/multy/viewmodels/AssetSendViewModel");
 
-        jmethodID mid = env->GetStaticMethodID(randomClass, "updateTransactionPrice", "(Ljava/lang/String;)V");
-        jbyteArray result = (jbyteArray) env->CallStaticObjectMethod(randomClass, mid, 160);
+        jstring jstrBuf = env->NewStringUTF(noPtrFeeTransaction.get_value().c_str());
+
+        jmethodID mid = env->GetStaticMethodID(randomClass, "setTransactionPrice",
+                                               "(Ljava/lang/String;)V");
+        env->CallStaticVoidMethod(randomClass, mid, jstrBuf);
 
 
-        BigInt change_amount;
-        change->get_property_value("amount", &change_amount);
-        ConstCharPtr change_amount_str;
-        big_int_to_string(&change_amount, reset_sp(change_amount_str));
 
+
+
+// change:
+//        Properties *change = nullptr;
+//        HANDLE_ERROR(transaction_add_destination(transaction.get(), &change));
+//        HANDLE_ERROR(properties_set_int32_value(change, "is_change", 1));
+//        HANDLE_ERROR(properties_set_string_value(change, "address", changeAddressStr));
+//            Properties &change = transaction->add_destination();
+//            change.set_property_value("address", changeAddressStr);
+//            change.set_property_value("amount",
+//            sum - destinationAmount - donationAmount - total_fee);
+//       total_fee = transaction->estimate_total_fee(outputsCount, donationAmount == "0" ? 2 : 3);
+
+
+//        if (!fladPayFee) {
+//            HANDLE_ERROR(transaction_get_total_fee(transaction.get(), reset_sp(fee_transaction)));
+//            BigInt noPtrFeeTransaction(*fee_transaction);
+//            //HANDLE_ERROR(big_int_to_string(fee_transaction.get(), &asd));
+//            // destinationAmount -= noPtrFeeTransaction;
+//            BigInt destinationAm(destinationAmount - noPtrFeeTransaction);
+//            HANDLE_ERROR(properties_set_big_int_value(destination, "amount", &destinationAm));
+//        }
+//
+//
+//        BigInt change_amount;
+//        change->get_property_value("amount", &change_amount);
+//        ConstCharPtr change_amount_str;
+//        big_int_to_string(&change_amount, reset_sp(change_amount_str));
+
+
+        //let java side know about tx fee
 
         env->ReleaseStringUTFChars(jDonation, donationAmountStr);
         env->ReleaseStringUTFChars(jFeePerByte, feePerByteStr);
