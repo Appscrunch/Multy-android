@@ -111,7 +111,7 @@ public class TransactionFeeFragment extends BaseFragment implements MyFeeAdapter
                 viewModel.setDonationAmount(null);
             }
 
-            ((AssetSendActivity) getActivity()).setFragment(R.string.send_amount, R.id.container, MyChooserFragment.newInstance());
+            ((AssetSendActivity) getActivity()).setFragment(R.string.send_amount, R.id.container, AmountChooserFragment.newInstance());
 
             if (viewModel.isAmountScanned()) {
                 ((AssetSendActivity) getActivity()).setFragment(R.string.send_summary, R.id.container, SendSummaryFragment.newInstance());
