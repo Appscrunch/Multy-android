@@ -49,6 +49,8 @@ import io.multy.ui.activities.SeedActivity;
 import io.multy.ui.adapters.WalletsAdapter;
 import io.multy.ui.fragments.BaseFragment;
 import io.multy.util.Constants;
+import io.multy.util.analytics.Analytics;
+import io.multy.util.analytics.AnalyticsConstants;
 import io.multy.viewmodels.AssetsViewModel;
 import io.realm.RealmResults;
 import retrofit2.Call;
@@ -89,6 +91,9 @@ public class AssetsFragment extends BaseFragment implements WalletsAdapter.OnWal
         ButterKnife.bind(this, view);
         viewModel = ViewModelProviders.of(getActivity()).get(AssetsViewModel.class);
         initialize();
+        if (!viewModel.isFirstStart()) {
+            Analytics.getInstance(getActivity()).logMainLaunch();
+        }
         return view;
     }
 
@@ -245,23 +250,32 @@ public class AssetsFragment extends BaseFragment implements WalletsAdapter.OnWal
     @OnClick(R.id.button_add)
     void onClickAdd() {
 //        showAddWalletActions();
+        Analytics.getInstance(getActivity()).logMain(AnalyticsConstants.MAIN_CREATE_WALLET);
         onWalletAddClick();
     }
 
     @OnClick(R.id.button_create)
     void onClickCreate() {
 //        showAddWalletActions();
+        Analytics.getInstance(getActivity()).logFirstLaunchCreateWallet();
         onWalletAddClick();
     }
 
     @OnClick(R.id.button_restore)
     void onClickRestore() {
+        Analytics.getInstance(getActivity()).logFirstLaunchRestoreSeed();
         startActivityForResult(new Intent(getActivity(), SeedActivity.class).addCategory(Constants.EXTRA_RESTORE), Constants.REQUEST_CODE_RESTORE);
     }
 
     @OnClick(R.id.button_warn)
     void onClickWarn() {
+        Analytics.getInstance(getActivity()).logMain(AnalyticsConstants.MAIN_BACKUP_SEED);
         startActivity(new Intent(getActivity(), SeedActivity.class));
+    }
+
+    @OnClick(R.id.logo)
+    void onClickLogo() {
+        Analytics.getInstance(getActivity()).logMain(AnalyticsConstants.MAIN_LOGO);
     }
 
     @Override
@@ -276,6 +290,7 @@ public class AssetsFragment extends BaseFragment implements WalletsAdapter.OnWal
 
     @Override
     public void onWalletClick(WalletRealmObject wallet) {
+        Analytics.getInstance(getActivity()).logMainWalletOpen(viewModel.getChainId());
         Intent intent = new Intent(getActivity(), AssetActivity.class);
         intent.putExtra(Constants.EXTRA_WALLET_ID, wallet.getWalletIndex());
         startActivity(intent);

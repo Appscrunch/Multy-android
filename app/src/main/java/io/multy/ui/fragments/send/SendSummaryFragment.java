@@ -10,6 +10,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -31,6 +32,8 @@ import io.multy.util.Constants;
 import io.multy.util.CryptoFormatUtils;
 import io.multy.util.NativeDataHelper;
 import io.multy.util.NumberFormatter;
+import io.multy.util.analytics.Analytics;
+import io.multy.util.analytics.AnalyticsConstants;
 import io.multy.viewmodels.AssetSendViewModel;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -41,6 +44,7 @@ import timber.log.Timber;
 public class SendSummaryFragment extends BaseFragment {
 
     private static final String TAG = SendSummaryFragment.class.getSimpleName();
+    public static final String TAG_SEND_SUCCESS = SendSummaryFragment.class.getSimpleName();
 
     @BindView(R.id.text_receiver_balance_original)
     TextView textReceiverBalanceOriginal;
@@ -62,6 +66,8 @@ public class SendSummaryFragment extends BaseFragment {
     TextView textFeeSpeedLabel;
     @BindView(R.id.button_next)
     View buttonNext;
+    @BindView(R.id.input_note)
+    View inputNote;
 
     @BindString(R.string.donation_format_pattern)
     String formatPattern;
@@ -83,6 +89,12 @@ public class SendSummaryFragment extends BaseFragment {
         setBaseViewModel(viewModel);
         subscribeToErrors();
         setInfo();
+        inputNote.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                Analytics.getInstance(getActivity()).logSendSummary(AnalyticsConstants.SEND_SUMMARY_NOTE, viewModel.getChainId());
+            }
+        });
+        Analytics.getInstance(getActivity()).logSendSummaryLaunch(viewModel.getChainId());
         return view;
     }
 
@@ -110,8 +122,9 @@ public class SendSummaryFragment extends BaseFragment {
                     if (response.isSuccessful()) {
                         viewModel.isLoading.postValue(false);
                         RealmManager.getAssetsDao().saveRecentAddress(new RecentAddress(NativeDataHelper.Currency.BTC.getValue(), addressTo));
-                        new CompleteDialogFragment().show(getActivity().getSupportFragmentManager(), "");
+                        CompleteDialogFragment.newInstance(viewModel.getChainId()).show(getActivity().getSupportFragmentManager(), TAG_SEND_SUCCESS);
                     } else {
+                        Analytics.getInstance(getActivity()).logError(AnalyticsConstants.ERROR_TRANSACTION_API);
                         showError();
                     }
                 }

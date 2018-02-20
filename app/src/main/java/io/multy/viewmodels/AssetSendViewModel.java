@@ -213,5 +213,8 @@ public class AssetSendViewModel extends BaseViewModel {
         for (byte b : a)
             sb.append(String.format("%02x", b));
         return sb.toString();
+      
+    public int getChainId() {
+        return 1;
     }
 }

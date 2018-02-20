@@ -36,6 +36,8 @@ import io.multy.ui.fragments.send.SendSummaryFragment;
 import io.multy.ui.fragments.send.TransactionFeeFragment;
 import io.multy.ui.fragments.send.WalletChooserFragment;
 import io.multy.util.Constants;
+import io.multy.util.analytics.Analytics;
+import io.multy.util.analytics.AnalyticsConstants;
 import io.multy.viewmodels.AssetSendViewModel;
 import timber.log.Timber;
 
@@ -53,6 +55,7 @@ public class AssetSendActivity extends BaseActivity {
     int oneNegative;
 
     private boolean isFirstFragmentCreation;
+    private AssetSendViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +63,7 @@ public class AssetSendActivity extends BaseActivity {
         setContentView(R.layout.activity_asset_send);
         ButterKnife.bind(this);
         isFirstFragmentCreation = true;
+        viewModel = ViewModelProviders.of(this).get(AssetSendViewModel.class);
 
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
@@ -101,6 +105,7 @@ public class AssetSendActivity extends BaseActivity {
         } else {
             super.onBackPressed();
         }
+        logCancel();
     }
 
     private void startFlow() {
@@ -151,6 +156,7 @@ public class AssetSendActivity extends BaseActivity {
 
     @OnClick(R.id.button_cancel)
     void ocLickCancel() {
+        logCancel();
         finish();
     }
 
@@ -178,7 +184,10 @@ public class AssetSendActivity extends BaseActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == Constants.CAMERA_REQUEST_CODE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Analytics.getInstance(this).logSendTo(AnalyticsConstants.PERMISSION_GRANTED);
                 showScanScreen();
+            } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                Analytics.getInstance(this).logSendTo(AnalyticsConstants.PERMISSION_DENIED);
             }
         }
     }
@@ -193,6 +202,23 @@ public class AssetSendActivity extends BaseActivity {
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void logCancel() {
+        List<Fragment> backStackFragments = getSupportFragmentManager().getFragments();
+        for (Fragment backStackFragment : backStackFragments) {
+            if (backStackFragment instanceof SendSummaryFragment && backStackFragment.isVisible()) {
+                Analytics.getInstance(this).logSendSummary(AnalyticsConstants.BUTTON_CLOSE, viewModel.getChainId());
+            } else if (backStackFragment instanceof AmountChooserFragment && backStackFragment.isVisible()) {
+                Analytics.getInstance(this).logSendChooseAmount(AnalyticsConstants.BUTTON_CLOSE, viewModel.getChainId());
+            } else if (backStackFragment instanceof TransactionFeeFragment && backStackFragment.isVisible()) {
+                Analytics.getInstance(this).logTransactionFee(AnalyticsConstants.BUTTON_CLOSE, viewModel.getChainId());
+            } else if (backStackFragment instanceof WalletChooserFragment && backStackFragment.isVisible()) {
+                Analytics.getInstance(this).logSendFrom(AnalyticsConstants.BUTTON_CLOSE, viewModel.getChainId());
+            } else if (backStackFragment instanceof AssetSendFragment && backStackFragment.isVisible()) {
+                Analytics.getInstance(this).logSendTo(AnalyticsConstants.BUTTON_CLOSE);
+            }
+        }
     }
 }
 

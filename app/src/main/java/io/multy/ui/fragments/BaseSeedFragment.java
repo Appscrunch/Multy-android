@@ -15,12 +15,19 @@ import butterknife.OnClick;
 import io.multy.R;
 import io.multy.ui.adapters.BricksAdapter;
 import io.multy.ui.fragments.dialogs.SimpleDialogFragment;
+import io.multy.ui.fragments.seed.HelloSeedFragment;
+import io.multy.ui.fragments.seed.SeedFragment;
+import io.multy.ui.fragments.seed.SeedResultFragment;
+import io.multy.ui.fragments.seed.SeedValidationFragment;
 import io.multy.util.BrickView;
 import io.multy.util.RandomSpanWidthLookup;
+import io.multy.util.analytics.Analytics;
+import io.multy.util.analytics.AnalyticsConstants;
 
 
 public class BaseSeedFragment extends BaseFragment {
 
+//    private static final String TAG = BaseSeedFragment.class.getSimpleName();
     public static final int BRICK_BLUE = 0;
     public static final int BRICK_RED = 1;
     public static final int BRICK_GREEN = 2;
@@ -28,6 +35,7 @@ public class BaseSeedFragment extends BaseFragment {
     private int redrawPosition = 0;
     private GridLayoutManager layoutManager;
     protected BricksAdapter adapter;
+    protected boolean isFailed;
 
     protected void initBricks(RecyclerView recyclerView) {
         final int spanCount = 16 * 8; //total cell count * span per item
@@ -131,6 +139,28 @@ public class BaseSeedFragment extends BaseFragment {
                 R.string.cancel,
                 R.string.cancel_message,
                 view -> close()).show(getFragmentManager(), "");
+
+        if (getActivity() != null) {
+            for (Fragment fragment : getActivity().getSupportFragmentManager().getFragments()) {
+                if (fragment instanceof HelloSeedFragment && fragment.isVisible()) {
+                    Analytics.getInstance(getActivity()).logSeedPhraseClose();
+                    break;
+                } else if (fragment instanceof SeedValidationFragment && fragment.isVisible()) {
+                    Analytics.getInstance(getActivity()).logRestoreSeedClose();
+                    break;
+                } else if (fragment instanceof SeedResultFragment && fragment.isVisible()) {
+                    if (isFailed) {
+                        Analytics.getInstance(getActivity()).logSeedFailClose();
+                    } else {
+                        Analytics.getInstance(getActivity()).logSeedSuccessClose();
+                    }
+                    break;
+                } else if (fragment instanceof SeedFragment && fragment.isVisible()) {
+                    Analytics.getInstance(getActivity()).logSeedPhraseClose();
+                    break;
+                }
+            }
+        }
 
 //        new AlertDialog.Builder(getActivity())
 //                .setTitle(R.string.cancel)

@@ -26,7 +26,10 @@ import android.view.animation.AccelerateInterpolator;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import org.w3c.dom.Text;
+import butterknife.BindDimen;
+import butterknife.BindInt;
+import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -41,6 +44,8 @@ import io.multy.ui.fragments.BaseFragment;
 import io.multy.util.Constants;
 import io.multy.util.CryptoFormatUtils;
 import io.multy.util.NumberFormatter;
+import io.multy.util.analytics.Analytics;
+import io.multy.util.analytics.AnalyticsConstants;
 import io.multy.viewmodels.AssetSendViewModel;
 
 
@@ -94,6 +99,9 @@ public class AmountChooserFragment extends BaseFragment {
         setupInputCurrency();
         setAmountTotalWithFee();
         initSpendable();
+        if (!viewModel.isAmountScanned()) {
+            Analytics.getInstance(getActivity()).logSendChooseAmountLaunch(viewModel.getChainId());
+        }
         return view;
     }
 
@@ -160,6 +168,7 @@ public class AmountChooserFragment extends BaseFragment {
         } else {
             inputCurrency.requestFocus();
         }
+        Analytics.getInstance(getActivity()).logSendChooseAmount(AnalyticsConstants.SEND_AMOUNT_SWAP, viewModel.getChainId());
     }
 
     private void checkCommas() {
@@ -230,6 +239,7 @@ public class AmountChooserFragment extends BaseFragment {
                 return true;
             }
             showKeyboard(getActivity(), v);
+            Analytics.getInstance(getActivity()).logSendChooseAmount(AnalyticsConstants.SEND_AMOUNT_CRYPTO, viewModel.getChainId());
             return true;
         });
 
@@ -291,6 +301,7 @@ public class AmountChooserFragment extends BaseFragment {
                 return true;
             }
             showKeyboard(getActivity(), v);
+            Analytics.getInstance(getActivity()).logSendChooseAmount(AnalyticsConstants.SEND_AMOUNT_FIAT, viewModel.getChainId());
             return true;
         });
 
@@ -348,6 +359,7 @@ public class AmountChooserFragment extends BaseFragment {
 
     private void setupSwitcher() {
         switcher.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+            isPayForCommissionChanged = true;
             viewModel.setPayForCommission(isChecked);
             if (isChecked) {
                 checkCommas();
@@ -355,8 +367,9 @@ public class AmountChooserFragment extends BaseFragment {
                     viewModel.errorMessage.setValue("You reached spendable amount");
                     switcher.setChecked(false);
                 }
+                Analytics.getInstance(getActivity()).logSendChooseAmount(AnalyticsConstants.SEND_AMOUNT_COMMISSION_ENABLED, viewModel.getChainId());
             } else {
-
+                Analytics.getInstance(getActivity()).logSendChooseAmount(AnalyticsConstants.SEND_AMOUNT_COMMISSION_DISABLED, viewModel.getChainId());
             }
             setTotalAmountForInput();
         });
