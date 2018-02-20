@@ -176,7 +176,7 @@ public class AssetSendViewModel extends BaseViewModel {
                 //important notice - native makeTransaction() method will update UI automatically with correct transaction price
                 byte[] transactionHex = NativeDataHelper.makeTransaction(
                         seed, walletIndex, String.valueOf(amount),
-                        "20", getDonationSatoshi(),
+                        String.valueOf(getFee().getAmount()), getDonationSatoshi(),
                         getReceiverAddress().getValue(), changeAddress, donationAddress, false);
             } catch (JniException e) {
                 e.printStackTrace();
@@ -189,7 +189,7 @@ public class AssetSendViewModel extends BaseViewModel {
         try {
             byte[] transactionHex = NativeDataHelper.makeTransaction(
                     seed, getWallet().getWalletIndex(), String.valueOf(CryptoFormatUtils.btcToSatoshi(String.valueOf(String.valueOf(amount)))),
-                    "20", getDonationSatoshi(),
+                    String.valueOf(getFee().getAmount()), getDonationSatoshi(),
                     getReceiverAddress().getValue(), changeAddress, donationAddress, isPayForCommission);
             transaction.setValue(byteArrayToHex(transactionHex));
         } catch (JniException e) {
@@ -198,10 +198,9 @@ public class AssetSendViewModel extends BaseViewModel {
     }
 
     /**
-     * this methohd will be called from JNI while makeTransaction is processing
+     * this methohd will be called from JNI automatically while makeTransaction is processing
      *
-     * @param amount transactionPrice. If we know all wallet amount and change amount we can calculate
-     *               accurate transaction price.
+     * @param amount transactionPrice.
      */
     public static void setTransactionPrice(String amount) {
         long changeAmountSatoshi = Long.valueOf(amount);
@@ -213,7 +212,8 @@ public class AssetSendViewModel extends BaseViewModel {
         for (byte b : a)
             sb.append(String.format("%02x", b));
         return sb.toString();
-      
+    }
+
     public int getChainId() {
         return 1;
     }

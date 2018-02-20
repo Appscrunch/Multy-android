@@ -17,7 +17,6 @@ import android.support.v7.widget.SwitchCompat;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,10 +25,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import org.w3c.dom.Text;
-import butterknife.BindDimen;
-import butterknife.BindInt;
-import butterknife.BindString;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -359,7 +355,6 @@ public class AmountChooserFragment extends BaseFragment {
 
     private void setupSwitcher() {
         switcher.setOnCheckedChangeListener((compoundButton, isChecked) -> {
-            isPayForCommissionChanged = true;
             viewModel.setPayForCommission(isChecked);
             if (isChecked) {
                 checkCommas();
@@ -533,11 +528,4 @@ public class AmountChooserFragment extends BaseFragment {
             }
         }
     }
-
-    public static void updateTransactionPrice(String changeAmountString) {
-        long changeAmount = Long.valueOf(changeAmountString);
-        Log.i("wise", "price " + changeAmount);
-
-    }
-
 }
