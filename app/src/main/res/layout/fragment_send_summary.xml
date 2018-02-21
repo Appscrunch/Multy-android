@@ -241,6 +241,7 @@
             android:id="@+id/button_next"
             style="@style/ButtonNext"
             android:text="@string/send"
+            android:textColor="@color/white_transparent"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -262,6 +263,21 @@
             app:layout_constraintStart_toStartOf="@+id/button_next"
             app:layout_constraintTop_toTopOf="@+id/button_next"
             app:srcCompat="@drawable/ic_slide_to_send" />
+
+        <ImageView
+            android:id="@+id/image_slider_finish"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:clickable="true"
+            android:elevation="10dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:paddingEnd="24dp"
+            android:paddingStart="24dp"
+            app:layout_constraintBottom_toBottomOf="@+id/button_next"
+            app:layout_constraintEnd_toEndOf="@+id/button_next"
+            app:layout_constraintTop_toTopOf="@+id/button_next"
+            app:srcCompat="@drawable/ic_slide_to_send_finish" />
     </android.support.constraint.ConstraintLayout>
 
 </ScrollView>
