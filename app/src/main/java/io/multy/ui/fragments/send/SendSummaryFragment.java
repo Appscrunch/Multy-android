@@ -6,17 +6,22 @@
 
 package io.multy.ui.fragments.send;
 
+import android.animation.ValueAnimator;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.graphics.drawable.Animatable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.ColorUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -70,11 +75,13 @@ public class SendSummaryFragment extends BaseFragment {
     @BindView(R.id.text_fee_speed_label)
     TextView textFeeSpeedLabel;
     @BindView(R.id.button_next)
-    View buttonNext;
+    TextView buttonNext;
     @BindView(R.id.input_note)
     View inputNote;
     @BindView(R.id.image_slider)
-    View slider;
+    ImageView slider;
+    @BindView(R.id.image_slider_finish)
+    ImageView sliderFinish;
     @BindView(R.id.scrollview)
     ScrollView scrollView;
 
@@ -84,6 +91,10 @@ public class SendSummaryFragment extends BaseFragment {
     String formatPatternBitcoin;
 
     private AssetSendViewModel viewModel;
+    private boolean isSending = false;
+    private ValueAnimator textLarger;
+    private ValueAnimator textSmaller;
+    private ValueAnimator textAlpha;
 
     public static SendSummaryFragment newInstance() {
         return new SendSummaryFragment();
@@ -105,6 +116,7 @@ public class SendSummaryFragment extends BaseFragment {
             }
         });
         Analytics.getInstance(getActivity()).logSendSummaryLaunch(viewModel.getChainId());
+        initAnimations();
         return view;
     }
 
@@ -132,6 +144,33 @@ public class SendSummaryFragment extends BaseFragment {
         super.onPause();
     }
 
+    private void initAnimations() {
+        final float startSize = buttonNext.getTextSize();
+        final float endSize = startSize * 1.1f;
+        textLarger = ValueAnimator.ofFloat(startSize, endSize);
+        textLarger.setStartDelay(300);
+        textLarger.setDuration(100);
+        textLarger.addUpdateListener(valueAnimator -> {
+            float animatedValue = (float) valueAnimator.getAnimatedValue();
+            buttonNext.setTextSize(TypedValue.COMPLEX_UNIT_PX, animatedValue);
+        });
+        textSmaller = ValueAnimator.ofFloat(endSize, startSize);
+        textSmaller.setStartDelay(400);
+        textSmaller.setDuration(100);
+        textSmaller.addUpdateListener(valueAnimator -> {
+            float animatedValue = (float) valueAnimator.getAnimatedValue();
+            buttonNext.setTextSize(TypedValue.COMPLEX_UNIT_PX, animatedValue);
+        });
+        textAlpha = ValueAnimator.ofInt(76, 200);
+        textAlpha.setStartDelay(200);
+        textAlpha.setDuration(200);
+        textAlpha.setRepeatCount(1);
+        textAlpha.setRepeatMode(ValueAnimator.REVERSE);
+        textAlpha.addUpdateListener(valueAnimator -> {
+            int animatedValue = (int) valueAnimator.getAnimatedValue();
+            setButtonAlpha(animatedValue);
+        });
+    }
 
     private void send() {
         viewModel.isLoading.setValue(true);
@@ -197,28 +236,40 @@ public class SendSummaryFragment extends BaseFragment {
     private void showError() {
         viewModel.isLoading.postValue(false);
         viewModel.errorMessage.postValue(getString(R.string.error_sending_tx));
+        slider.postDelayed(() -> {
+            isSending = false;
+            sliderFinish.setVisibility(View.VISIBLE);
+            returnSliderOnStart();
+        }, 1000);
     }
 
     private void startSlideAnimation() {
         slider.animate().cancel();
-        slider.animate().setStartDelay(2000).withEndAction(() ->
-                slider.animate().setStartDelay(0).withEndAction(this::slideAnimation).start())
-                .start();
+        if (slider.getDrawable() != null && slider.getDrawable() instanceof Animatable &&
+                sliderFinish.getDrawable() != null && sliderFinish.getDrawable() instanceof Animatable) {
+            slider.animate().setStartDelay(2000).withEndAction(() ->
+                    slider.animate().setStartDelay(3000).withEndAction(() ->
+                            slideAnimation((Animatable) slider.getDrawable(), (Animatable) sliderFinish.getDrawable())).start())
+                    .start();
+        }
     }
 
-    private void slideAnimation() {
-        float dragRange = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
-        int dragDuration = 700;
-        slider.animate()
-                .translationX(dragRange)
-                .setDuration(dragDuration)
-                .setInterpolator(new AccelerateDecelerateInterpolator())
-                .withEndAction(() ->
-                        slider.animate()
-                                .translationX(0)
-                                .setDuration(dragDuration)
-                                .setInterpolator(new AccelerateDecelerateInterpolator())
-                                .withEndAction(this::slideAnimation));
+    private void slideAnimation(Animatable animatableSlider, Animatable animatableFinish) {
+        animatableSlider.start();
+        animatableFinish.start();
+        textLarger.start();
+        textAlpha.start();
+        textSmaller.start();
+        slider.animate().withEndAction(() -> slideAnimation(animatableSlider, animatableFinish)).start();
+    }
+
+    private void goOutAnimation() {
+        slider.animate().cancel();
+        slider.animate().setStartDelay(0)
+                .translationX(buttonNext.getX() + buttonNext.getWidth())
+                .setDuration(200)
+                .withStartAction(() -> sliderFinish.setVisibility(View.GONE))
+                .withEndAction(this::send).start();
     }
 
     private void stopSlideAnimation() {
@@ -227,15 +278,29 @@ public class SendSummaryFragment extends BaseFragment {
 
     private void moveSliderToNextPoint(float rawX) {
         rawX -= slider.getWidth() / 2;
-        slider.setTranslationX(rawX);
-        if (slider.getX() + slider.getWidth() > buttonNext.getX() + buttonNext.getWidth()) {
-            send();
+        if (rawX > 0) {
+            slider.setTranslationX(rawX);
+        }
+        float sliderPosition = slider.getX() + slider.getWidth();
+        float endPosition = buttonNext.getX() + buttonNext.getWidth();
+        if (sliderPosition > endPosition) {
+            isSending = true;
+            slider.clearFocus();
+            goOutAnimation();
         }
     }
 
     private void returnSliderOnStart() {
         slider.setTranslationX(0f);
+        setButtonAlpha(76);
         startSlideAnimation();
+    }
+
+    private void setButtonAlpha(int alpha) {
+        if (getContext() != null) {
+            int textColor = ColorUtils.setAlphaComponent(ContextCompat.getColor(getContext(), R.color.white), alpha);
+            buttonNext.setTextColor(textColor);
+        }
     }
 
     public static String byteArrayToHex(byte[] a) {
@@ -247,6 +312,10 @@ public class SendSummaryFragment extends BaseFragment {
 
     @OnTouch(R.id.image_slider)
     boolean OnSliderTouch(View v, MotionEvent ev) {
+        if (isSending) {
+            v.clearFocus();
+            return false;
+        }
         scrollView.requestDisallowInterceptTouchEvent(true);
         stopSlideAnimation();
         switch (ev.getAction()) {

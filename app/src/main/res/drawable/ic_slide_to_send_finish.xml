@@ -17,6 +17,7 @@
             <path
                 android:name="path_1"
                 android:strokeColor="#FFF"
+                android:strokeAlpha=".2"
                 android:strokeWidth="4"
                 android:strokeLineJoin="round"
                 android:strokeLineCap="round"
@@ -24,7 +25,7 @@
             <path
                 android:name="path_2"
                 android:strokeColor="#FFF"
-                android:strokeAlpha=".5"
+                android:strokeAlpha=".2"
                 android:strokeWidth="4"
                 android:strokeLineJoin="round"
                 android:strokeLineCap="round"
@@ -44,16 +45,17 @@
             <set>
                 <objectAnimator
                     android:propertyName="strokeAlpha"
+                    android:startOffset="500"
                     android:duration="100"
-                    android:valueFrom="1"
-                    android:valueTo=".5"
+                    android:valueFrom=".2"
+                    android:valueTo="1"
                     android:valueType="floatType"/>
                 <objectAnimator
                     android:propertyName="strokeAlpha"
-                    android:startOffset="1000"
-                    android:duration="300"
-                    android:valueFrom=".5"
-                    android:valueTo="1"
+                    android:startOffset="600"
+                    android:duration="100"
+                    android:valueFrom="1"
+                    android:valueTo=".2"
                     android:valueType="floatType"/>
             </set>
         </aapt:attr>
@@ -63,16 +65,17 @@
             <set>
                 <objectAnimator
                     android:propertyName="strokeAlpha"
+                    android:startOffset="600"
                     android:duration="100"
-                    android:valueFrom=".5"
+                    android:valueFrom=".2"
                     android:valueTo="1"
                     android:valueType="floatType"/>
                 <objectAnimator
                     android:propertyName="strokeAlpha"
-                    android:startOffset="100"
+                    android:startOffset="700"
                     android:duration="100"
                     android:valueFrom="1"
-                    android:valueTo=".5"
+                    android:valueTo=".2"
                     android:valueType="floatType"/>
             </set>
         </aapt:attr>
@@ -82,14 +85,14 @@
             <set>
                 <objectAnimator
                     android:propertyName="strokeAlpha"
-                    android:startOffset="100"
+                    android:startOffset="700"
                     android:duration="100"
                     android:valueFrom=".2"
                     android:valueTo="1"
                     android:valueType="floatType"/>
                 <objectAnimator
                     android:propertyName="strokeAlpha"
-                    android:startOffset="200"
+                    android:startOffset="800"
                     android:duration="100"
                     android:valueFrom="1"
                     android:valueTo=".2"
