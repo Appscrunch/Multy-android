@@ -46,8 +46,10 @@ public class AssetSettingAddressesAdapter extends RecyclerView.Adapter<AssetSett
             WalletAddress address = addresses.get(position);
             holder.textAddress.setText(address.getAddress());
             holder.textBalance.setText(String.format("%s BTC", CryptoFormatUtils.satoshiToBtc(address.getAmount())));
-            holder.itemView.setOnClickListener(view ->
-                    new PrivateKeyDialogFragment().show(fragmentManager, PrivateKeyDialogFragment.TAG));
+            holder.itemView.setOnClickListener(view -> {
+                PrivateKeyDialogFragment dialog = PrivateKeyDialogFragment.getInstance(address);
+                dialog.show(fragmentManager, dialog.getTag());
+            });
         } catch (Throwable t) {
             t.printStackTrace();
         }
