@@ -145,7 +145,7 @@
         android:foreground="?attr/selectableItemBackground"
         android:gravity="center_vertical"
         android:paddingStart="16dp"
-        android:text="@string/share"
+        android:text="@string/share_key"
         android:textColor="@color/black"
         android:textSize="16sp"
         android:textStyle="bold"
