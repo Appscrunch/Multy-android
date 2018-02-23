@@ -8,19 +8,22 @@ package io.multy.ui.fragments.dialogs;
 
 import android.app.Dialog;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.BottomSheetDialogFragment;
-import android.text.TextUtils;
+import android.support.v4.app.DialogFragment;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.multy.Multy;
 import butterknife.OnClick;
+import io.multy.Multy;
 import io.multy.R;
 import io.multy.model.entities.wallet.WalletAddress;
 import io.multy.storage.RealmManager;
@@ -31,7 +34,7 @@ import io.multy.viewmodels.WalletViewModel;
  * Created by anschutz1927@gmail.com on 23.02.18.
  */
 
-public class PrivateKeyDialogFragment extends BottomSheetDialogFragment {
+public class PrivateKeyDialogFragment extends BottomSheetDialogFragment implements DialogInterface.OnShowListener {
 
     public static PrivateKeyDialogFragment getInstance(WalletAddress address) {
         PrivateKeyDialogFragment fragment = new PrivateKeyDialogFragment();
@@ -44,39 +47,45 @@ public class PrivateKeyDialogFragment extends BottomSheetDialogFragment {
 
     private WalletAddress address;
     private WalletViewModel viewModel;
+    private Listener listener;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setStyle(DialogFragment.STYLE_NO_TITLE, R.style.BottomSheetDialog);
+    }
 
     @Override
     public void setupDialog(Dialog dialog, int style) {
         View view = View.inflate(getContext(), R.layout.bottom_sheet_private_key, null);
         ButterKnife.bind(this, view);
         dialog.setContentView(view);
-
+        dialog.setOnShowListener(this);
         viewModel = ViewModelProviders.of(getActivity()).get(WalletViewModel.class);
-
-        if (!TextUtils.isEmpty(getPrivateKey())) {
+        String key = getPrivateKey();
+        if (key != null && !key.isEmpty()) {
             textKey.setText(getPrivateKey());
         } else {
             dismiss();
         }
     }
 
-    @OnClick(R.id.button_copy)
-    public void onClickCopy() {
-        if (!TextUtils.isEmpty(getPrivateKey())) {
-            viewModel.copyToClipboard(getActivity(), getPrivateKey());
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        if (listener != null) {
+            listener.onDismiss();
         }
+        super.onDismiss(dialog);
     }
 
-    @OnClick(R.id.button_share)
-    public void onClickShare() {
-        if (!TextUtils.isEmpty(getPrivateKey())) {
-            viewModel.share(getActivity(), getPrivateKey());
+    @Override
+    public void onShow(DialogInterface dialogInterface) {
+        BottomSheetDialog d = (BottomSheetDialog) dialogInterface;
+        FrameLayout bottomSheet = d.findViewById(android.support.design.R.id.design_bottom_sheet);
+        if (bottomSheet != null) {
+            BottomSheetBehavior.from(bottomSheet).setState(BottomSheetBehavior.STATE_EXPANDED);
+            bottomSheet.setBackground(null);
         }
-    }
-
-    @OnClick(R.id.button_cancel)
-    public void onClickCancel() {
-        dismiss();
     }
 
     private void setAddress(WalletAddress address) {
@@ -95,5 +104,39 @@ public class PrivateKeyDialogFragment extends BottomSheetDialogFragment {
             Toast.makeText(Multy.getContext(), "Error while build private key ;(", Toast.LENGTH_SHORT).show();
             return null;
         }
+    }
+
+    public void setListener (Listener listener) {
+        this.listener = listener;
+    }
+
+    @OnClick(R.id.button_copy)
+    public void onClickCopy(View view) {
+        view.setEnabled(false);
+        String key = getPrivateKey();
+        if (key != null && !key.isEmpty()) {
+            viewModel.copyToClipboard(getActivity(), getPrivateKey());
+        }
+        dismiss();
+    }
+
+    @OnClick(R.id.button_share)
+    public void onClickShare(View view) {
+        view.setEnabled(false);
+        String key = getPrivateKey();
+        if (key != null && !key.isEmpty()) {
+            viewModel.share(getActivity(), getPrivateKey());
+        }
+        dismiss();
+    }
+
+    @OnClick(R.id.button_cancel)
+    public void onClickCancel(View view) {
+        view.setEnabled(false);
+        dismiss();
+    }
+
+    public interface Listener {
+        void onDismiss();
     }
 }

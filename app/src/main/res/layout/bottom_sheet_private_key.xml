@@ -9,8 +9,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/white_and_light_green">
+    android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/image_notification"
@@ -30,17 +29,19 @@
         android:id="@+id/text_currency"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="27dp"
         android:background="@color/red_warn"
         android:gravity="center_horizontal"
         android:paddingBottom="8dp"
         android:paddingTop="41dp"
-        android:text="BTC Address"
+        android:text="@string/btc_adddress"
         android:textColor="@color/white"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/notification_warning"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/notification_warning"
@@ -53,7 +54,7 @@
         android:paddingBottom="24dp"
         android:paddingEnd="16dp"
         android:paddingStart="16dp"
-        android:text="Your extended private keys are all that is needed to access your bitcoin funds. Be sure to protect your private keys and store them only on secure devices."
+        android:text="@string/private_key_notification"
         android:textColor="@color/white"
         android:textSize="12sp"
         app:layout_constraintBottom_toTopOf="@+id/text_notification"
@@ -67,7 +68,7 @@
         android:background="@color/white"
         android:paddingBottom="6dp"
         android:paddingTop="20dp"
-        android:text="My private key:"
+        android:text="@string/my_private_key_title"
         android:textAlignment="center"
         android:textAllCaps="true"
         android:textColor="@color/blue_light"
@@ -100,35 +101,51 @@
         android:background="@color/blue_light_divider"
         app:layout_constraintBottom_toTopOf="@+id/button_copy" />
 
+    <View
+        android:id="@+id/control_background"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/white_and_light_green"
+        android:elevation="-1dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/divider" />
+
     <TextView
         android:id="@+id/button_copy"
         android:layout_width="0dp"
         android:layout_height="48dp"
+        android:clickable="true"
         android:drawablePadding="32dp"
         android:drawableStart="@drawable/ic_copy_to_clipboard"
+        android:focusable="true"
         android:foreground="?attr/selectableItemBackground"
         android:gravity="center_vertical"
         android:paddingStart="16dp"
-        android:text="Copy to clipboard"
+        android:text="@string/copy_to_clipboard"
         android:textColor="@color/black"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/button_share"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="RtlSymmetry" />
 
     <TextView
         android:id="@+id/button_share"
         android:layout_width="0dp"
         android:layout_height="48dp"
+        android:clickable="true"
         android:drawablePadding="32dp"
         android:drawableStart="@drawable/ic_share_white"
         android:drawableTint="@color/blue"
         android:drawableTintMode="src_in"
+        android:focusable="true"
         android:foreground="?attr/selectableItemBackground"
         android:gravity="center_vertical"
         android:paddingStart="16dp"
-        android:text="Share"
+        android:text="@string/share"
         android:textColor="@color/black"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -141,12 +158,14 @@
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:layout_marginBottom="8dp"
+        android:clickable="true"
         android:drawablePadding="32dp"
         android:drawableStart="@drawable/ic_cancel_blue"
+        android:focusable="true"
         android:foreground="?attr/selectableItemBackground"
         android:gravity="center_vertical"
         android:paddingStart="16dp"
-        android:text="Cancel"
+        android:text="@string/cancel"
         android:textColor="@color/black"
         android:textSize="16sp"
         android:textStyle="bold"

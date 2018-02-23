@@ -27,6 +27,7 @@ import io.realm.RealmList;
 
 public class AssetSettingAddressesAdapter extends RecyclerView.Adapter<AssetSettingAddressesAdapter.Holder> {
 
+    private boolean isItemSelected = false;
     private FragmentManager fragmentManager;
     private RealmList<WalletAddress> addresses;
 
@@ -47,8 +48,12 @@ public class AssetSettingAddressesAdapter extends RecyclerView.Adapter<AssetSett
             holder.textAddress.setText(address.getAddress());
             holder.textBalance.setText(String.format("%s BTC", CryptoFormatUtils.satoshiToBtc(address.getAmount())));
             holder.itemView.setOnClickListener(view -> {
-                PrivateKeyDialogFragment dialog = PrivateKeyDialogFragment.getInstance(address);
-                dialog.show(fragmentManager, dialog.getTag());
+                if (!isItemSelected) {
+                    isItemSelected = true;
+                    PrivateKeyDialogFragment dialog = PrivateKeyDialogFragment.getInstance(address);
+                    dialog.show(fragmentManager, dialog.getTag());
+                    dialog.setListener(() -> isItemSelected = false);
+                }
             });
         } catch (Throwable t) {
             t.printStackTrace();

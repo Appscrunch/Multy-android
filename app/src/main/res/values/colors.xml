@@ -23,6 +23,7 @@
     <color name="blue">#007aff</color>
     <color name="white_and_light_green">#FFECEEED</color>
     <color name="red_warn">#eb153b</color>
+    <color name="red_transparent">#9a39292d</color>
     <color name="color_gray_status">#515a67</color>
 
     <color name="disabled">#D1D1D6</color>
