@@ -587,10 +587,13 @@ Java_io_multy_util_NativeDataHelper_isValidAddress(JNIEnv *env, jclass type_, js
 }
 
 JNIEXPORT jbyteArray
-Java_io_multy_util_NativeDataHelper_makeTransactionETH(JNIEnv *env, jclass type, jbyteArray jSeed, jint jWalletIndex,
-                   jint jAddressIndex, jint jChainId,
-                   jint blockchain, jstring jBalance, jstring jAmount, jstring jDestinationAddress,
-                   jstring jGasLimit, jstring jGasPrice, jstring jNonce) {
+Java_io_multy_util_NativeDataHelper_makeTransactionETH(JNIEnv *env, jclass type, jbyteArray jSeed,
+                                                       jint jWalletIndex,
+                                                       jint jAddressIndex, jint jChainId,
+                                                       jint jNetType, jstring jBalance,
+                                                       jstring jAmount, jstring jDestinationAddress,
+                                                       jstring jGasLimit, jstring jGasPrice,
+                                                       jstring jNonce) {
 
     using namespace multy_core::internal;
     const jbyteArray defaultResult{};
@@ -615,13 +618,15 @@ Java_io_multy_util_NativeDataHelper_makeTransactionETH(JNIEnv *env, jclass type,
 
         HDAccountPtr hdAccount;
         HANDLE_ERROR(make_hd_account(rootKey.get(),
-                                     BlockchainType{(Blockchain) blockchain, (BlockchainNetType) jChainId},
+                                     BlockchainType{(Blockchain) jChainId,
+                                                    (BlockchainNetType) jNetType},
                                      jWalletIndex,
                                      reset_sp(hdAccount)));
 
         AccountPtr account;
         HANDLE_ERROR(
-                make_hd_leaf_account(hdAccount.get(), ADDRESS_EXTERNAL, jAddressIndex, reset_sp(account)));
+                make_hd_leaf_account(hdAccount.get(), ADDRESS_EXTERNAL, jAddressIndex,
+                                     reset_sp(account)));
 
 
         TransactionPtr transaction;
@@ -645,7 +650,6 @@ Java_io_multy_util_NativeDataHelper_makeTransactionETH(JNIEnv *env, jclass type,
             // Address balance
             BigIntPtr balance;
             HANDLE_ERROR(make_big_int(balanceStr, reset_sp(balance)));
-
             HANDLE_ERROR(properties_set_big_int_value(source, "amount", balance.get()));
         }
 
