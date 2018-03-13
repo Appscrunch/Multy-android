@@ -18,16 +18,22 @@ import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.multy.R;
+import io.multy.api.MultyApi;
 import io.multy.model.entities.wallet.WalletRealmObject;
+import io.multy.model.responses.SingleWalletResponse;
 import io.multy.storage.RealmManager;
 import io.multy.ui.activities.AssetSendActivity;
 import io.multy.ui.adapters.WalletsAdapter;
 import io.multy.ui.fragments.BaseFragment;
 import io.multy.util.Constants;
 import io.multy.util.CryptoFormatUtils;
+import io.multy.util.NativeDataHelper;
 import io.multy.util.analytics.Analytics;
 import io.multy.util.analytics.AnalyticsConstants;
 import io.multy.viewmodels.AssetSendViewModel;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import timber.log.Timber;
 
 
@@ -57,6 +63,32 @@ public class WalletChooserFragment extends BaseFragment implements WalletsAdapte
 
     @Override
     public void onWalletClick(WalletRealmObject wallet) {
+        viewModel.isLoading.setValue(true);
+        MultyApi.INSTANCE.getWalletVerbose(wallet.getCurrency(), wallet.getWalletIndex()).enqueue(new Callback<SingleWalletResponse>() {
+            @Override
+            public void onResponse(Call<SingleWalletResponse> call, Response<SingleWalletResponse> response) {
+                viewModel.isLoading.setValue(false);
+                if (response.isSuccessful() && response.body().getWallets() != null && response.body().getWallets().size() > 0) {
+                    WalletRealmObject wallet = response.body().getWallets().get(0);
+                    RealmManager.getAssetsDao().saveWallet(wallet);
+                    viewModel.setWallet(wallet);
+                    proceed(wallet);
+                } else {
+                    proceed(wallet);
+                }
+
+                viewModel.isLoading.postValue(false);
+            }
+
+            @Override
+            public void onFailure(Call<SingleWalletResponse> call, Throwable t) {
+                viewModel.isLoading.postValue(false);
+                proceed(wallet);
+            }
+        });
+    }
+
+    private void proceed(WalletRealmObject wallet) {
         if (viewModel.isAmountScanned()) {
             if (Double.parseDouble(CryptoFormatUtils.satoshiToBtc(wallet.calculateBalance())) >= viewModel.getAmount()) {
                 launchTransactionFee(wallet);
