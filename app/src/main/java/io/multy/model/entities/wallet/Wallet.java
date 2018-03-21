@@ -21,6 +21,7 @@ import javax.annotation.Nullable;
 import io.multy.R;
 import io.multy.api.socket.CurrenciesRate;
 import io.multy.storage.RealmManager;
+import io.multy.util.NativeDataHelper;
 import io.realm.RealmList;
 import io.realm.RealmObject;
 
@@ -64,11 +65,11 @@ public class Wallet extends RealmObject implements WalletBalanceInterface {
 
     public WalletAddress getActiveAddress() {
         RealmList<WalletAddress> addresses = new RealmList<>();
-        switch (currencyId) {
-            case 0:
+        switch (NativeDataHelper.Blockchain.valueOf(currencyId)) {
+            case BTC:
                 addresses = getBtcWallet().getAddresses();
                 break;
-            case 60:
+            case ETH:
                 addresses = getEthWallet().getAddresses();
                 break;
         }
@@ -78,10 +79,10 @@ public class Wallet extends RealmObject implements WalletBalanceInterface {
 
     @Override
     public String getBalanceLabel() {
-        switch (currencyId) {
-            case 0:
+        switch (NativeDataHelper.Blockchain.valueOf(currencyId)) {
+            case BTC:
                 return convertBalance(BtcWallet.DIVISOR) + " BTC"; // not sure this is good decision //TODO investigate
-            case 60:
+            case ETH:
                 return convertBalance(EthWallet.DIVISOR) + " ETH";
             default:
                 return "unsupported";
@@ -92,10 +93,10 @@ public class Wallet extends RealmObject implements WalletBalanceInterface {
     public String getFiatBalanceLabel() {
         CurrenciesRate currenciesRate = RealmManager.getSettingsDao().getCurrenciesRate();
         //TODO support different fiat currencies here
-        switch (currencyId) {
-            case 0:
+        switch (NativeDataHelper.Blockchain.valueOf(currencyId)) {
+            case BTC:
                 return String.valueOf(convertBalance(BtcWallet.DIVISOR).doubleValue() * currenciesRate.getBtcToUsd()); //convert from satoshi
-            case 60:
+            case ETH:
                 return String.valueOf(convertBalance(EthWallet.DIVISOR).doubleValue() * currenciesRate.getEthToUsd()); //convert from wev
             default:
                 return "unsupported";
@@ -104,10 +105,10 @@ public class Wallet extends RealmObject implements WalletBalanceInterface {
 
     @Override
     public int getIconResourceId() {
-        switch (currencyId) {
-            case 0:
+        switch (NativeDataHelper.Blockchain.valueOf(currencyId)) {
+            case BTC:
                 return R.drawable.ic_btc;
-            case 60:
+            case ETH:
                 return R.drawable.ic_eth_medium_icon;
             default:
                 return 0;
@@ -115,10 +116,10 @@ public class Wallet extends RealmObject implements WalletBalanceInterface {
     }
 
     public boolean isPayable() {
-        switch (currencyId) {
-            case 0:
+        switch (NativeDataHelper.Blockchain.valueOf(currencyId)) {
+            case BTC:
                 return getAvailableBalanceNumeric().longValue() > 150;
-            case 60:
+            case ETH:
                 return true; //TODO change for positive balance ETH
         }
         return false;

@@ -34,6 +34,8 @@ import io.multy.model.responses.TestWalletResponse;
 import io.multy.model.responses.TransactionHistoryResponse;
 import io.multy.model.responses.UserAssetsResponse;
 import io.multy.model.responses.WalletsResponse;
+import io.multy.storage.RealmManager;
+import io.multy.storage.SettingsDao;
 import io.multy.util.Constants;
 import io.reactivex.Observable;
 import okhttp3.Authenticator;
@@ -49,12 +51,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public enum MultyApi implements MultyApiInterface {
 
     INSTANCE {
-
-        //        static final String BASE_URL = "http://192.168.0.121:7778/";  // local
-//        static final String BASE_URL = "http://88.198.47.112:7778/";  // remote
-//        static final String BASE_URL = "https://api.multy.io/";  // Special for Jack Bolt!
-        static final String BASE_URL = "https://stage.multy.io/";  // Special for Jack Bolt!
-
         private ApiServiceInterface api = new Retrofit.Builder()
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
@@ -78,8 +74,7 @@ public enum MultyApi implements MultyApiInterface {
                             @Nullable
                             @Override
                             public Request authenticate(Route route, okhttp3.Response response) throws IOException {
-                                DataManager dataManager = DataManager.getInstance();
-                                final UserId userIdEntity = dataManager.getUserId();
+                                final UserId userIdEntity = RealmManager.getSettingsDao().getUserId();
                                 final String userId = userIdEntity == null ? "" : userIdEntity.getUserId();
                                 final String pushToken = FirebaseInstanceId.getInstance().getToken() == null ? "noPushToken" : FirebaseInstanceId.getInstance().getToken();
 

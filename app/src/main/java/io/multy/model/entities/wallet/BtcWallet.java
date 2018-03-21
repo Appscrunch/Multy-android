@@ -100,7 +100,6 @@ public class BtcWallet extends RealmObject {
             }
         }
 
-
         return availableBalance;
     }
 
