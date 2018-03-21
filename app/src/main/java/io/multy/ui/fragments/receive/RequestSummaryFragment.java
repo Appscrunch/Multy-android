@@ -30,11 +30,14 @@ import android.widget.Toast;
 
 import com.google.zxing.WriterException;
 
+import java.math.BigInteger;
+
 import butterknife.BindInt;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.multy.R;
+import io.multy.model.entities.wallet.BtcWallet;
 import io.multy.model.entities.wallet.CurrencyCode;
 import io.multy.ui.activities.AmountChooserActivity;
 import io.multy.ui.activities.AssetRequestActivity;
@@ -58,7 +61,7 @@ public class RequestSummaryFragment extends BaseFragment {
 
     public static final int AMOUNT_CHOOSE_REQUEST = 729;
 
-    public static RequestSummaryFragment newInstance(){
+    public static RequestSummaryFragment newInstance() {
         return new RequestSummaryFragment();
     }
 
@@ -114,11 +117,10 @@ public class RequestSummaryFragment extends BaseFragment {
         }
 
         textAddress.setText(viewModel.getWalletAddress());
-        textWalletName.setText(viewModel.getWallet().getName());
+        textWalletName.setText(viewModel.getWallet().getWalletName());
 
-        double balance = viewModel.getWallet().calculateBalance();
-        double pending = viewModel.getWallet().getPendingBalance() + balance;
-
+        BigInteger balance = viewModel.getWallet().getBalanceNumeric();
+        long pending = viewModel.getWallet().getPendingBalance().longValue();
         final double pendingBalance = pending / Math.pow(10, 8);
 
         textBalanceCurrency.setText(pending == 0 ? "0.0$" : NumberFormatter.getFiatInstance().format(viewModel.getExchangePrice() * pendingBalance) + " USD");
@@ -126,7 +128,7 @@ public class RequestSummaryFragment extends BaseFragment {
         textBalanceOriginal.append(Constants.SPACE);
         textBalanceOriginal.append(CurrencyCode.BTC.name());
 
-        if (viewModel.getAmount() != zero){
+        if (viewModel.getAmount() != zero) {
             setBalance();
         }
 
@@ -160,7 +162,7 @@ public class RequestSummaryFragment extends BaseFragment {
     void onClickAddress() {
         Analytics.getInstance(getActivity()).logReceiveSummary(AnalyticsConstants.RECEIVE_SUMMARY_ADDRESS, viewModel.getChainId());
         ((AssetRequestActivity) getActivity()).setFragment(R.string.all_addresses,
-                AddressesFragment.newInstance(viewModel.getWallet().getWalletIndex()));
+                AddressesFragment.newInstance(viewModel.getWallet().getIndex()));
     }
 
     @OnClick(R.id.container_summ)
@@ -178,7 +180,7 @@ public class RequestSummaryFragment extends BaseFragment {
 
     @OnClick(R.id.button_generate_address)
     void onClickGenerateAddress() {
-        viewModel.addAddress();
+        viewModel.getBtcAddresses();
         viewModel.getAddress().observe(this, address -> {
             textAddress.setText(address);
             generateQR();
@@ -189,7 +191,7 @@ public class RequestSummaryFragment extends BaseFragment {
     void onClickAddressBook(View v) {
         Analytics.getInstance(getActivity()).logReceiveSummary(AnalyticsConstants.RECEIVE_SUMMARY_ADDRESS_BOOK, viewModel.getChainId());
 //        Toast.makeText(getActivity(), R.string.not_implemented, Toast.LENGTH_SHORT).show();
-//        viewModel.addAddress();
+//        viewModel.getBtcAddresses();
 //        viewModel.getAddress().observe(this, address -> {
 //            textAddress.setText(address);
 //            generateQR();
@@ -241,8 +243,8 @@ public class RequestSummaryFragment extends BaseFragment {
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(bitmap -> {
-            imageQr.setImageBitmap(bitmap);
-        }, Throwable::printStackTrace);
+                    imageQr.setImageBitmap(bitmap);
+                }, Throwable::printStackTrace);
 
     }
 

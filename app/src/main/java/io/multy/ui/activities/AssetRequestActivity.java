@@ -105,7 +105,7 @@ public class AssetRequestActivity extends BaseActivity {
         if (getIntent().hasExtra(Constants.EXTRA_WALLET_ID)) {
             if (getIntent().getIntExtra(Constants.EXTRA_WALLET_ID, oneNegative) != oneNegative) {
                 AssetRequestViewModel viewModel = ViewModelProviders.of(this).get(AssetRequestViewModel.class);
-                viewModel.setContext(this);
+//                viewModel.setContext(this);
                 viewModel.getWallet(getIntent().getIntExtra(Constants.EXTRA_WALLET_ID, oneNegative));
                 viewModel.getWalletLive().observe(this, walletRealmObject -> setFragment(R.string.receive_summary, RequestSummaryFragment.newInstance()));
             } else {

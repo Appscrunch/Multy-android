@@ -27,12 +27,14 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.multy.R;
 import io.multy.api.MultyApi;
+import io.multy.model.entities.wallet.Wallet;
 import io.multy.model.entities.wallet.WalletRealmObject;
 import io.multy.storage.RealmManager;
 import io.multy.ui.activities.AssetActivity;
 import io.multy.ui.activities.CreateAssetActivity;
 import io.multy.ui.fragments.BaseFragment;
 import io.multy.util.Constants;
+import io.multy.util.NativeDataHelper;
 import io.multy.util.analytics.Analytics;
 import io.multy.viewmodels.WalletViewModel;
 import okhttp3.ResponseBody;
@@ -129,10 +131,10 @@ public class CreateAssetFragment extends BaseFragment {
         };
     }
 
-    private void showWalletInfoActivity(WalletRealmObject walletRealmObject) {
+    private void showWalletInfoActivity(Wallet walletRealmObject) {
         Intent intent = new Intent(getActivity(), AssetActivity.class);
         if (walletRealmObject != null) {
-            intent.putExtra(Constants.EXTRA_WALLET_ID, walletRealmObject.getWalletIndex());
+            intent.putExtra(Constants.EXTRA_WALLET_ID, walletRealmObject.getIndex());
         }
 
         getActivity().startActivity(intent);
@@ -181,7 +183,7 @@ public class CreateAssetFragment extends BaseFragment {
     @OnClick(R.id.text_create)
     public void onClickCreate() {
         Analytics.getInstance(getActivity()).logCreateWallet();
-        WalletRealmObject walletRealmObject = walletViewModel.createWallet(editTextWalletName.getText().toString());
+        Wallet walletRealmObject = walletViewModel.createWallet(editTextWalletName.getText().toString(), NativeDataHelper.Blockchain.BTC.getValue(), NativeDataHelper.NetworkId.TEST_NET.getValue()); //TODO choose from UI
         MultyApi.INSTANCE.addWallet(getActivity(), walletRealmObject).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

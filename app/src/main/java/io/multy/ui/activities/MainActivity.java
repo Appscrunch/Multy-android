@@ -28,6 +28,7 @@ import android.widget.TextView;
 
 import com.samwolfand.oneprefs.Prefs;
 
+
 import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;

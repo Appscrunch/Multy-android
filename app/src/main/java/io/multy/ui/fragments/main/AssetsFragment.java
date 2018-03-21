@@ -39,8 +39,9 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.multy.R;
 import io.multy.api.MultyApi;
-import io.multy.model.entities.wallet.WalletRealmObject;
+import io.multy.model.entities.wallet.Wallet;
 import io.multy.model.events.TransactionUpdateEvent;
+import io.multy.model.responses.TestWalletResponse;
 import io.multy.model.responses.WalletsResponse;
 import io.multy.storage.AssetsDao;
 import io.multy.storage.RealmManager;
@@ -48,8 +49,8 @@ import io.multy.ui.activities.AssetActivity;
 import io.multy.ui.activities.BaseActivity;
 import io.multy.ui.activities.CreateAssetActivity;
 import io.multy.ui.activities.SeedActivity;
+import io.multy.ui.adapters.MyWalletsAdapter;
 import io.multy.ui.adapters.PortfoliosAdapter;
-import io.multy.ui.adapters.WalletsAdapter;
 import io.multy.ui.fragments.BaseFragment;
 import io.multy.ui.fragments.dialogs.AssetActionsDialogFragment;
 import io.multy.util.Constants;
@@ -61,7 +62,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class AssetsFragment extends BaseFragment implements WalletsAdapter.OnWalletClickListener {
+public class AssetsFragment extends BaseFragment implements MyWalletsAdapter.OnWalletClickListener {
 
     public static final String TAG = AssetsFragment.class.getSimpleName();
 
@@ -91,7 +92,7 @@ public class AssetsFragment extends BaseFragment implements WalletsAdapter.OnWal
     ImageView imageDotChart;
 
     private AssetsViewModel viewModel;
-    private WalletsAdapter walletsAdapter;
+    private MyWalletsAdapter walletsAdapter;
 
     public static AssetsFragment newInstance() {
         return new AssetsFragment();
@@ -178,6 +179,25 @@ public class AssetsFragment extends BaseFragment implements WalletsAdapter.OnWal
     }
 
     private void updateWallets() {
+//        MultyApi.INSTANCE.testWalletVerbose().enqueue(new Callback<TestWalletResponse>() {
+//            @Override
+//            public void onResponse(Call<TestWalletResponse> call, Response<TestWalletResponse> response) {
+//                if (response.isSuccessful()) {
+//                    for (Wallet wallet : response.body().getWallets()) {
+//                        recyclerView.setVisibility(View.VISIBLE);
+//                        recyclerView.setAdapter(new MyWalletsAdapter(response.body().getWallets()));
+//                        Log.i("wise", "wallet " + wallet.getCurrencyId() + " " + wallet.getBalanceLabel() + " " + wallet.getFiatBalanceLabel());
+//                    }
+//                }
+//                Log.i("wise", "success");
+//            }
+//
+//            @Override
+//            public void onFailure(Call<TestWalletResponse> call, Throwable t) {
+//                t.printStackTrace();
+//                Log.i("wise", "failure");
+//            }
+//        });
         MultyApi.INSTANCE.getWalletsVerbose().enqueue(new Callback<WalletsResponse>() {
             @Override
             public void onResponse(@NonNull Call<WalletsResponse> call, @NonNull Response<WalletsResponse> response) {
@@ -188,7 +208,7 @@ public class AssetsFragment extends BaseFragment implements WalletsAdapter.OnWal
                     if (response.body().getWallets() != null && response.body().getWallets().size() != 0) {
                         assetsDao.deleteAll();
                         assetsDao.saveWallets(response.body().getWallets());
-                        walletsAdapter.setData(assetsDao.getWallets());
+                        walletsAdapter.setData(response.body().getWallets());
                     } else {
                         RealmResults realmResults = assetsDao.getWallets();
                         if (realmResults != null && realmResults.size() > 0) {
@@ -248,7 +268,7 @@ public class AssetsFragment extends BaseFragment implements WalletsAdapter.OnWal
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setAutoMeasureEnabled(true);
 
-        walletsAdapter = new WalletsAdapter(this, null);
+        walletsAdapter = new MyWalletsAdapter(this, null);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(walletsAdapter);
         walletsAdapter.setData(viewModel.getWalletsFromDB());
@@ -325,10 +345,10 @@ public class AssetsFragment extends BaseFragment implements WalletsAdapter.OnWal
     }
 
     @Override
-    public void onWalletClick(WalletRealmObject wallet) {
+    public void onWalletClick(Wallet wallet) {
         Analytics.getInstance(getActivity()).logMainWalletOpen(viewModel.getChainId());
         Intent intent = new Intent(getActivity(), AssetActivity.class);
-        intent.putExtra(Constants.EXTRA_WALLET_ID, wallet.getWalletIndex());
+        intent.putExtra(Constants.EXTRA_WALLET_ID, wallet.getIndex());
         startActivity(intent);
     }
 }

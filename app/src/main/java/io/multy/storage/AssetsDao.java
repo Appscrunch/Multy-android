@@ -8,9 +8,12 @@ package io.multy.storage;
 
 import java.util.List;
 
+import io.multy.model.entities.wallet.BtcWallet;
 import io.multy.model.entities.wallet.RecentAddress;
+import io.multy.model.entities.wallet.Wallet;
 import io.multy.model.entities.wallet.WalletAddress;
 import io.multy.model.entities.wallet.WalletRealmObject;
+import io.multy.util.NativeDataHelper;
 import io.reactivex.annotations.NonNull;
 import io.realm.Realm;
 import io.realm.RealmList;
@@ -25,49 +28,51 @@ public class AssetsDao {
         this.realm = realm;
     }
 
-    public void saveWallet(WalletRealmObject wallet) {
+    public void saveWallet(Wallet wallet) {
         realm.executeTransaction(realm -> saveSingleWallet(wallet));
     }
 
-    public void saveWallets(List<WalletRealmObject> wallets) {
+    public void saveWallets(List<Wallet> wallets) {
         realm.executeTransaction(realm -> {
-            for (WalletRealmObject wallet : wallets) {
+            for (Wallet wallet : wallets) {
                 saveSingleWallet(wallet);
             }
         });
     }
 
-    private void saveSingleWallet(WalletRealmObject wallet) {
-        final int index = wallet.getWalletIndex();
-        final String name = wallet.getName();
-        final double balance = wallet.calculateBalance();
-        final double pendingBalance = wallet.calculatePendingBalance();
+    private void saveSingleWallet(Wallet wallet) {
+        final int index = wallet.getIndex();
+        final String name = wallet.getWalletName();
+        final String balance = wallet.getBalance();
 
-
-        WalletRealmObject savedWallet = getWalletById(index);
+        Wallet savedWallet = getWalletById(index);
         if (savedWallet == null) {
-            savedWallet = new WalletRealmObject();
-            savedWallet.setWalletIndex(index);
+            savedWallet = new Wallet();
         }
-        savedWallet.setName(name);
-        savedWallet.setAddresses(new RealmList<>());
-        for (WalletAddress walletAddress : wallet.getAddresses()) {
-            savedWallet.getAddresses().add(realm.copyToRealm(walletAddress));
+
+        if (wallet.getCurrencyId() == NativeDataHelper.Blockchain.BTC.getValue()) {
+            savedWallet.setIndex(index);
+            savedWallet.setWalletName(name);
+            savedWallet.setBalance(balance);
+            savedWallet.setBtcWallet(wallet.getBtcWallet().asRealmObject(realm));
         }
-        savedWallet.setBalance(balance);
-        savedWallet.setPendingBalance(pendingBalance);
+
         realm.insertOrUpdate(savedWallet);
     }
 
-    public RealmResults<WalletRealmObject> getWallets() {
-        return realm.where(WalletRealmObject.class).findAll();
+    public RealmResults<Wallet> getWallets() {
+        return realm.where(Wallet.class).findAll();
     }
 
-    public void saveAddress(int walletIndex, WalletAddress address) {
+    public RealmResults<Wallet> getWaleltByBlockchain(int blockChainId) {
+        return realm.where(Wallet.class).equalTo("currencyid", blockChainId).findAll();
+    }
+
+    public void saveBtcAddress(int walletIndex, WalletAddress address) {
         realm.executeTransaction(realm -> {
-            WalletRealmObject walletRealmObject = getWalletById(walletIndex);
-            walletRealmObject.getAddresses().add(realm.copyToRealm(address));
-            realm.insertOrUpdate(walletRealmObject);
+            Wallet wallet = getWalletById(walletIndex);
+            wallet.getBtcWallet().getAddresses().add(realm.copyToRealm(address));
+            realm.insertOrUpdate(wallet);
         });
     }
 
@@ -76,24 +81,24 @@ public class AssetsDao {
     }
 
     public void deleteAll() {
-        realm.executeTransaction(realm -> realm.where(WalletRealmObject.class).findAll().deleteAllFromRealm());
+        realm.executeTransaction(realm -> realm.where(Wallet.class).findAll().deleteAllFromRealm());
     }
 
-    public WalletRealmObject getWalletById(int id) {
-        return realm.where(WalletRealmObject.class).equalTo("walletIndex", id).findFirst();
+    public Wallet getWalletById(int id) {
+        return realm.where(Wallet.class).equalTo("index", id).findFirst();
     }
 
     public void updateWalletName(int id, String newName) {
         realm.executeTransaction(realm1 -> {
-            WalletRealmObject wallet = getWalletById(id);
-            wallet.setName(newName);
+            Wallet wallet = getWalletById(id);
+            wallet.setWalletName(newName);
             realm1.insertOrUpdate(wallet);
         });
     }
 
     public void removeWallet(int id) {
         realm.executeTransaction(realm -> {
-            WalletRealmObject wallet = getWalletById(id);
+            Wallet wallet = getWalletById(id);
             wallet.deleteFromRealm();
         });
     }

@@ -16,7 +16,7 @@ import io.multy.R;
 import io.multy.api.MultyApi;
 import io.multy.api.socket.CurrenciesRate;
 import io.multy.model.entities.Fee;
-import io.multy.model.entities.wallet.WalletRealmObject;
+import io.multy.model.entities.wallet.Wallet;
 import io.multy.model.responses.FeeRateResponse;
 import io.multy.storage.RealmManager;
 import io.multy.util.Constants;
@@ -30,7 +30,7 @@ import retrofit2.Response;
 
 public class AssetSendViewModel extends BaseViewModel {
 
-    public MutableLiveData<WalletRealmObject> wallet = new MutableLiveData<>();
+    public MutableLiveData<Wallet> wallet = new MutableLiveData<>();
     public MutableLiveData<FeeRateResponse.Speeds> speeds = new MutableLiveData<>();
     public MutableLiveData<Fee> fee = new MutableLiveData<>();
     private MutableLiveData<String> receiverAddress = new MutableLiveData<>();
@@ -61,11 +61,11 @@ public class AssetSendViewModel extends BaseViewModel {
         return currenciesRate;
     }
 
-    public void setWallet(WalletRealmObject wallet) {
+    public void setWallet(Wallet wallet) {
         this.wallet.setValue(wallet);
     }
 
-    public WalletRealmObject getWallet() {
+    public Wallet getWallet() {
         return this.wallet.getValue();
     }
 
@@ -148,7 +148,7 @@ public class AssetSendViewModel extends BaseViewModel {
     }
 
     public void scheduleUpdateTransactionPrice(long amount) {
-        final int walletIndex = getWallet().getWalletIndex();
+        final int walletIndex = getWallet().getIndex();
         final long feePerByte = getFee().getAmount();
 
         if (handler != null) {
@@ -161,9 +161,9 @@ public class AssetSendViewModel extends BaseViewModel {
 
         if (changeAddress == null) {
             try {
-                changeAddress = NativeDataHelper.makeAccountAddress(seed, walletIndex, getWallet().getAddresses().size(),
-                        NativeDataHelper.Blockchain.BLOCKCHAIN_BITCOIN.getValue(),
-                        NativeDataHelper.BlockchainNetType.BLOCKCHAIN_NET_TYPE_TESTNET.getValue());
+                changeAddress = NativeDataHelper.makeAccountAddress(seed, walletIndex, getWallet().getBtcWallet().getAddresses().size(),
+                        NativeDataHelper.Blockchain.BTC.getValue(),
+                        NativeDataHelper.NetworkId.TEST_NET.getValue());
             } catch (JniException e) {
                 e.printStackTrace();
                 errorMessage.setValue("Error creating change address " + e.getMessage());
@@ -191,7 +191,7 @@ public class AssetSendViewModel extends BaseViewModel {
     public void signTransaction() {
         try {
             byte[] transactionHex = NativeDataHelper.makeTransaction(
-                    seed, getWallet().getWalletIndex(), String.valueOf(CryptoFormatUtils.btcToSatoshi(String.valueOf(String.valueOf(amount)))),
+                    seed, getWallet().getIndex(), String.valueOf(CryptoFormatUtils.btcToSatoshi(String.valueOf(String.valueOf(amount)))),
                     String.valueOf(getFee().getAmount()), getDonationSatoshi(),
                     getReceiverAddress().getValue(), changeAddress, donationAddress, isPayForCommission);
             transaction.setValue(byteArrayToHex(transactionHex));

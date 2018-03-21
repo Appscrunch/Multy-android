@@ -20,6 +20,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.multy.R;
+import io.multy.model.entities.wallet.Wallet;
 import io.multy.model.entities.wallet.WalletRealmObject;
 import io.multy.storage.RealmManager;
 import io.multy.ui.activities.AssetRequestActivity;
@@ -65,9 +66,9 @@ public class AddressesFragment extends BaseFragment {
     public void onStart() {
         super.onStart();
         if (getArguments().getInt(Constants.EXTRA_WALLET_ID) != -1) {
-            WalletRealmObject wallet = RealmManager.getAssetsDao().getWalletById(getArguments().getInt(Constants.EXTRA_WALLET_ID, -1));
-            textViewTitle.setText(wallet.getName());
-            recyclerView.setAdapter(new AddressesAdapter(wallet.getAddresses()));
+            Wallet wallet = RealmManager.getAssetsDao().getWalletById(getArguments().getInt(Constants.EXTRA_WALLET_ID, -1));
+            textViewTitle.setText(wallet.getWalletName());
+            recyclerView.setAdapter(new AddressesAdapter(wallet.getBtcWallet().getAddresses()));
         } else {
             Toast.makeText(getActivity(), R.string.addresses_empty, Toast.LENGTH_SHORT).show();
         }

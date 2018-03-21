@@ -179,20 +179,20 @@ public class SendSummaryFragment extends BaseFragment {
         try {
             viewModel.isLoading.setValue(true);
             byte[] seed = RealmManager.getSettingsDao().getSeed().getSeed();
-            final int addressesSize = viewModel.getWallet().getAddresses().size();
-            final String changeAddress = NativeDataHelper.makeAccountAddress(seed, viewModel.getWallet().getWalletIndex(),
-                    addressesSize, NativeDataHelper.Blockchain.BLOCKCHAIN_BITCOIN.getValue(),
-                    NativeDataHelper.BlockchainNetType.BLOCKCHAIN_NET_TYPE_TESTNET.getValue());
+            final int addressesSize = viewModel.getWallet().getBtcWallet().getAddresses().size();
+            final String changeAddress = NativeDataHelper.makeAccountAddress(seed, viewModel.getWallet().getIndex(),
+                    addressesSize, NativeDataHelper.Blockchain.BTC.getValue(),
+                    NativeDataHelper.NetworkId.TEST_NET.getValue());
             final String hex = viewModel.transaction.getValue();
             Timber.i("hex=%s", hex);
             MultyApi.INSTANCE.sendHdTransaction(new HdTransactionRequestEntity(
-                    NativeDataHelper.Currency.BTC.getValue(),
-                    new HdTransactionRequestEntity.Payload(changeAddress, addressesSize, viewModel.getWallet().getWalletIndex(), hex))).enqueue(new Callback<ResponseBody>() {
+                    NativeDataHelper.Blockchain.BTC.getValue(),
+                    new HdTransactionRequestEntity.Payload(changeAddress, addressesSize, viewModel.getWallet().getIndex(), hex))).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     if (response.isSuccessful()) {
                         viewModel.isLoading.postValue(false);
-                        RealmManager.getAssetsDao().saveRecentAddress(new RecentAddress(NativeDataHelper.Currency.BTC.getValue(), addressTo));
+                        RealmManager.getAssetsDao().saveRecentAddress(new RecentAddress(NativeDataHelper.Blockchain.BTC.getValue(), addressTo));
                         CompleteDialogFragment.newInstance(viewModel.getChainId()).show(getActivity().getSupportFragmentManager(), TAG_SEND_SUCCESS);
                     } else {
                         Analytics.getInstance(getActivity()).logError(AnalyticsConstants.ERROR_TRANSACTION_API);
@@ -222,8 +222,8 @@ public class SendSummaryFragment extends BaseFragment {
         textReceiverBalanceCurrency.append(CurrencyCode.USD.name());
 //        textReceiverAddress.setText(viewModel.getReceiverAddress().getValue());
         textReceiverAddress.setText(viewModel.thoseAddress.getValue());
-        textWalletName.setText(viewModel.getWallet().getName());
-        double balance = viewModel.getWallet().getBalance();
+        textWalletName.setText(viewModel.getWallet().getWalletName());
+        double balance = viewModel.getWallet().getBalanceNumeric().longValue();
         textSenderBalanceOriginal.setText(balance != 0 ? CryptoFormatUtils.satoshiToBtc(balance) + " BTC" : String.valueOf(balance));
         textSenderBalanceCurrency.setText(String.format("%s USD", NumberFormatter.getFiatInstance().format(viewModel.getAmount() * currenciesRate.getBtcToUsd())));
         textFeeSpeed.setText(viewModel.getFee().getName());

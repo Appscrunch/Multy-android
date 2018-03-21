@@ -25,9 +25,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.multy.R;
-import io.multy.model.entities.wallet.WalletRealmObject;
+import io.multy.model.entities.wallet.Wallet;
 import io.multy.storage.RealmManager;
-import io.multy.ui.adapters.WalletsAdapter;
+import io.multy.ui.adapters.MyWalletsAdapter;
 import io.multy.util.Constants;
 import io.multy.util.analytics.Analytics;
 
@@ -41,7 +41,7 @@ public class WalletChooserDialogFragment extends DialogFragment {
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
 
-    private WalletsAdapter.OnWalletClickListener listener;
+    private MyWalletsAdapter.OnWalletClickListener listener;
 
     @Override
     public void onStart() {
@@ -73,21 +73,21 @@ public class WalletChooserDialogFragment extends DialogFragment {
         return view;
     }
 
-    public void setOnWalletClickListener(WalletsAdapter.OnWalletClickListener listener) {
+    public void setOnWalletClickListener(MyWalletsAdapter.OnWalletClickListener listener) {
         this.listener = listener;
     }
 
     public void setupAdapter() {
-        recyclerView.setAdapter(new WalletsAdapter(wallet -> {
+        recyclerView.setAdapter(new MyWalletsAdapter(wallet -> {
             listener.onWalletClick(wallet);
-            dismiss();
+            WalletChooserDialogFragment.this.dismiss();
         }, getAvailableWallets()));
     }
 
-    public ArrayList<WalletRealmObject> getAvailableWallets() {
-        ArrayList<WalletRealmObject> wallets = new ArrayList<>();
-        for (WalletRealmObject walletRealmObject : RealmManager.getAssetsDao().getWallets()) {
-            if (walletRealmObject.getAvailableBalance() > 150) {
+    public ArrayList<Wallet> getAvailableWallets() {
+        ArrayList<Wallet> wallets = new ArrayList<>();
+        for (Wallet walletRealmObject : RealmManager.getAssetsDao().getWallets()) {
+            if (Long.valueOf(walletRealmObject.getAvailableBalance()) > 150) {
                 wallets.add(walletRealmObject);
             }
         }

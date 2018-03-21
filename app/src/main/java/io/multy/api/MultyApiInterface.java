@@ -3,7 +3,7 @@ package io.multy.api;
 
 import android.content.Context;
 
-import io.multy.model.entities.wallet.WalletRealmObject;
+import io.multy.model.entities.wallet.Wallet;
 import io.multy.model.requests.AddWalletAddressRequest;
 import io.multy.model.requests.HdTransactionRequestEntity;
 import io.multy.model.requests.UpdateWalletNameRequest;
@@ -11,6 +11,7 @@ import io.multy.model.responses.AuthResponse;
 import io.multy.model.responses.FeeRateResponse;
 import io.multy.model.responses.ServerConfigResponse;
 import io.multy.model.responses.SingleWalletResponse;
+import io.multy.model.responses.TestWalletResponse;
 import io.multy.model.responses.TransactionHistoryResponse;
 import io.multy.model.responses.UserAssetsResponse;
 import io.multy.model.responses.WalletsResponse;
@@ -22,7 +23,7 @@ public interface MultyApiInterface {
 
     Call<AuthResponse> auth(String userId);
 
-    Call<ResponseBody> addWallet(Context context, WalletRealmObject wallet);
+    Call<ResponseBody> addWallet(Context context, Wallet wallet);
 
     void getTransactionInfo(String transactionId);
 
@@ -47,5 +48,7 @@ public interface MultyApiInterface {
     Call<FeeRateResponse> getFeeRates(int currencyId);
 
     Call<ResponseBody> sendHdTransaction(HdTransactionRequestEntity transactionRequestEntity);
+
+    Call<TestWalletResponse> testWalletVerbose();
 
 }

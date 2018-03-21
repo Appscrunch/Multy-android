@@ -80,7 +80,7 @@ public class AssetSendFragment extends BaseFragment {
         super.onDestroyView();
     }
 
-    private void setupInputAddress(){
+    private void setupInputAddress() {
         inputAddress.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -91,8 +91,8 @@ public class AssetSendFragment extends BaseFragment {
                 boolean isValidAddress = false;
                 try {
                     NativeDataHelper.isValidAddress(charSequence.toString(),
-                            NativeDataHelper.Blockchain.BLOCKCHAIN_BITCOIN.getValue(),
-                            NativeDataHelper.BlockchainNetType.BLOCKCHAIN_NET_TYPE_TESTNET.getValue());
+                            NativeDataHelper.Blockchain.BTC.getValue(),
+                            NativeDataHelper.NetworkId.TEST_NET.getValue());
                     isValidAddress = true;
                 } catch (JniException e) {
                     //TODO replace these lines with boolean isValidAddress = NativeDataHelper.isAddressValid(address); instead of try catch and code spaming.

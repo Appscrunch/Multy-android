@@ -24,9 +24,9 @@ public class WalletAddressesAdapter extends RecyclerView.Adapter<WalletAddresses
     private RealmList<WalletAddress> data;
     private String currency;
 
-    public WalletAddressesAdapter(RealmList<WalletAddress> data, NativeDataHelper.Currency currency) {
+    public WalletAddressesAdapter(RealmList<WalletAddress> data, NativeDataHelper.Blockchain currency) {
         this.data = data;
-        if (currency == NativeDataHelper.Currency.BTC) {
+        if (currency == NativeDataHelper.Blockchain.BTC) {
             this.currency = "BTC";
         } else {
             this.currency = "ETH";

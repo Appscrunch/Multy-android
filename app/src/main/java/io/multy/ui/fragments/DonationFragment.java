@@ -37,6 +37,7 @@ import io.multy.api.MultyApi;
 import io.multy.api.socket.CurrenciesRate;
 import io.multy.model.entities.Fee;
 import io.multy.model.entities.wallet.CurrencyCode;
+import io.multy.model.entities.wallet.Wallet;
 import io.multy.model.entities.wallet.WalletRealmObject;
 import io.multy.model.requests.HdTransactionRequestEntity;
 import io.multy.model.responses.FeeRateResponse;
@@ -78,7 +79,7 @@ public class DonationFragment extends BaseFragment {
     String formatPattern;
 
     private BaseViewModel viewModel;
-    private WalletRealmObject wallet;
+    private Wallet wallet;
     private long maxValue;
 
     public static DonationFragment newInstance(int walletIndex, int donationCode) {
@@ -123,9 +124,9 @@ public class DonationFragment extends BaseFragment {
 
     private void pickWallet(int walletIndex) {
         wallet = RealmManager.getAssetsDao().getWalletById(walletIndex);
-        maxValue = wallet.getAvailableBalance();
-        textWalletName.setText(wallet.getName());
-        inputDonation.setText(CryptoFormatUtils.satoshiToBtc((wallet.getAvailableBalance() / 100) * 3));
+        maxValue = wallet.getAvailableBalanceNumeric().longValue();
+        textWalletName.setText(wallet.getWalletName());
+        inputDonation.setText(CryptoFormatUtils.satoshiToBtc((wallet.getAvailableBalanceNumeric().longValue() / 100) * 3));
     }
 
     private void setAdapter(ArrayList<Fee> rates) {
@@ -166,7 +167,7 @@ public class DonationFragment extends BaseFragment {
 
     private void requestRates() {
         viewModel.isLoading.postValue(true);
-        MultyApi.INSTANCE.getFeeRates(NativeDataHelper.Currency.BTC.getValue()).enqueue(new Callback<FeeRateResponse>() {
+        MultyApi.INSTANCE.getFeeRates(NativeDataHelper.Blockchain.BTC.getValue()).enqueue(new Callback<FeeRateResponse>() {
             @Override
             public void onResponse(Call<FeeRateResponse> call, Response<FeeRateResponse> response) {
                 if (response.isSuccessful()) {
@@ -227,20 +228,20 @@ public class DonationFragment extends BaseFragment {
 
 
         final byte[] seed = RealmManager.getSettingsDao().getSeed().getSeed();
-        final int addressesSize = wallet.getAddresses().size();
+        final int addressesSize = wallet.getBtcWallet().getAddresses().size();
         final String fee = String.valueOf(((MyFeeAdapter) recyclerView.getAdapter()).getSelectedFee().getAmount());
         final String donationAddress = "";
         final String amount = String.valueOf(CryptoFormatUtils.btcToSatoshi(inputDonation.getText().toString()));
 
         try {
-            final String changeAddress = NativeDataHelper.makeAccountAddress(seed, wallet.getWalletIndex(), addressesSize,
-                    NativeDataHelper.Blockchain.BLOCKCHAIN_BITCOIN.getValue(),
-                    NativeDataHelper.BlockchainNetType.BLOCKCHAIN_NET_TYPE_TESTNET.getValue());
-            byte[] transactionHex = NativeDataHelper.makeTransaction(seed, wallet.getWalletIndex(), amount,
+            final String changeAddress = NativeDataHelper.makeAccountAddress(seed, wallet.getIndex(), addressesSize,
+                    NativeDataHelper.Blockchain.BTC.getValue(),
+                    NativeDataHelper.NetworkId.TEST_NET.getValue());
+            byte[] transactionHex = NativeDataHelper.makeTransaction(seed, wallet.getIndex(), amount,
                     fee, "0", receiverAddress, changeAddress, donationAddress, false);
 
-            MultyApi.INSTANCE.sendHdTransaction(new HdTransactionRequestEntity(NativeDataHelper.Currency.BTC.getValue(),
-                    new HdTransactionRequestEntity.Payload(changeAddress, addressesSize, wallet.getWalletIndex(), byteArrayToHex(transactionHex)))).enqueue(new Callback<ResponseBody>() {
+            MultyApi.INSTANCE.sendHdTransaction(new HdTransactionRequestEntity(NativeDataHelper.Blockchain.BTC.getValue(),
+                    new HdTransactionRequestEntity.Payload(changeAddress, addressesSize, wallet.getIndex(), byteArrayToHex(transactionHex)))).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     if (response.isSuccessful()) {
@@ -290,7 +291,7 @@ public class DonationFragment extends BaseFragment {
     @OnClick(R.id.button_wallet)
     void onClickWallet() {
         WalletChooserDialogFragment walletChooser = WalletChooserDialogFragment.newInstance();
-        walletChooser.setOnWalletClickListener(wallet -> pickWallet(wallet.getWalletIndex()));
+        walletChooser.setOnWalletClickListener(wallet -> pickWallet(wallet.getIndex()));
         walletChooser.show(getFragmentManager(), "");
     }
 }

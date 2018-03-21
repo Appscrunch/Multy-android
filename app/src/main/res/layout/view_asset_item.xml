@@ -44,7 +44,7 @@
             android:layout_marginBottom="8dp"
             android:layout_marginStart="7dp"
             android:src="@drawable/ic_btc_huge"
-            app:layout_constraintBottom_toBottomOf="@+id/text_equals"
+            app:layout_constraintBottom_toBottomOf="@+id/text_amount_fiat"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/text_name" />
 
@@ -81,7 +81,7 @@
             app:layout_constraintLeft_toRightOf="@id/text_amount" />
 
         <TextView
-            android:id="@+id/text_equals"
+            android:id="@+id/text_amount_fiat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"

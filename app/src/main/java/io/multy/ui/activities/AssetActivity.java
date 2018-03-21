@@ -19,6 +19,7 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.multy.R;
+import io.multy.model.entities.wallet.Wallet;
 import io.multy.model.entities.wallet.WalletRealmObject;
 import io.multy.storage.RealmManager;
 import io.multy.ui.fragments.AddressesFragment;
@@ -34,7 +35,6 @@ public class AssetActivity extends BaseActivity {
 
     private boolean isFirstFragmentCreation;
 
-    private WalletRealmObject wallet;
     private WalletViewModel viewModel;
 
     @Override
@@ -45,12 +45,10 @@ public class AssetActivity extends BaseActivity {
         isFirstFragmentCreation = true;
 
         viewModel = ViewModelProviders.of(this).get(WalletViewModel.class);
-        wallet = RealmManager.getAssetsDao().getWalletById(getIntent().getExtras().getInt(Constants.EXTRA_WALLET_ID, 0));
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
-
         setFragment(R.id.frame_container, AssetInfoFragment.newInstance());
     }
 

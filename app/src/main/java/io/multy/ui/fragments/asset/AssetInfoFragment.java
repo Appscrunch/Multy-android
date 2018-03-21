@@ -34,6 +34,7 @@ import butterknife.OnClick;
 import io.multy.R;
 import io.multy.api.MultyApi;
 import io.multy.api.socket.CurrenciesRate;
+import io.multy.model.entities.wallet.Wallet;
 import io.multy.model.entities.wallet.WalletAddress;
 import io.multy.model.entities.wallet.WalletRealmObject;
 import io.multy.model.events.TransactionUpdateEvent;
@@ -116,14 +117,14 @@ public class AssetInfoFragment extends BaseFragment implements AppBarLayout.OnOf
         receiver = new SharingBroadcastReceiver();
         viewModel.rates.observe(this, currenciesRate -> updateBalanceViews());
         viewModel.transactionUpdate.observe(this, transactionUpdateEntity -> {
-            new Handler().postDelayed(() -> refreshWallet(), 300);
+            new Handler().postDelayed(this::refreshWallet, 300);
         });
         swipeRefreshLayout.setOnRefreshListener(() -> {
             Analytics.getInstance(getActivity()).logWallet(AnalyticsConstants.WALLET_PULL, viewModel.getChainId());
             refreshWallet();
         });
 
-        WalletRealmObject wallet = viewModel.getWallet(getActivity().getIntent().getIntExtra(Constants.EXTRA_WALLET_ID, 0));
+        Wallet wallet = viewModel.getWallet(getActivity().getIntent().getIntExtra(Constants.EXTRA_WALLET_ID, 0));
         viewModel.getWalletLive().observe(this, this::setupWalletInfo);
         viewModel.getWalletLive().setValue(wallet);
         Analytics.getInstance(getActivity()).logWalletLaunch(AnalyticsConstants.WALLET_SCREEN, viewModel.getChainId());
@@ -134,8 +135,8 @@ public class AssetInfoFragment extends BaseFragment implements AppBarLayout.OnOf
         swipeRefreshLayout.setRefreshing(false);
         viewModel.isLoading.postValue(true);
 
-        final int walletIndex = viewModel.getWalletLive().getValue().getWalletIndex();
-        final int currencyId = viewModel.getWalletLive().getValue().getCurrency();
+        final int walletIndex = viewModel.getWalletLive().getValue().getIndex();
+        final int currencyId = viewModel.getWalletLive().getValue().getCurrencyId();
         MultyApi.INSTANCE.getWalletVerbose(currencyId, walletIndex).enqueue(new Callback<SingleWalletResponse>() {
             @Override
             public void onResponse(Call<SingleWalletResponse> call, Response<SingleWalletResponse> response) {
@@ -230,35 +231,26 @@ public class AssetInfoFragment extends BaseFragment implements AppBarLayout.OnOf
         }
     }
 
-    private void setupWalletInfo(WalletRealmObject wallet) {
+    private void setupWalletInfo(Wallet wallet) {
         initialize();
         requestTransactions();
 
-        Timber.i("wallet %s", wallet.toString());
-        if (wallet.getAddresses() != null && !wallet.getAddresses().isEmpty()) {
-            for (WalletAddress address : wallet.getAddresses()) {
-                Timber.i("address %s", address.getAddress());
-            }
-        } else {
-            Timber.i("addresses empty ");
-        }
-        textWalletName.setText(wallet.getName());
-        if (wallet.getAddresses() != null && !wallet.getAddresses().isEmpty()) {
-            textAddress.setText(wallet.getAddresses().get(wallet.getAddresses().size() - 1).getAddress());
-        } else {
-            textAddress.setText(wallet.getCreationAddress());
-        }
+        textWalletName.setText(wallet.getWalletName());
+        textAddress.setText(wallet.getActiveAddress().getAddress()); //need test this so don't remove commented code below
+
+//        if (wallet.getAddresses() != null && !wallet.getAddresses().isEmpty()) {
+//            textAddress.setText(wallet.getAddresses().get(wallet.getAddresses().size() - 1).getAddress());
+//        } else {
+//            textAddress.setText(wallet.getCreationAddress());
+//        }
 
         updateBalanceViews();
     }
 
     private void updateBalanceViews() {
-        WalletRealmObject wallet = viewModel.getWalletLive().getValue();
-        double balance = wallet.getBalance();
-        double pending = wallet.getPendingBalance() + balance;
-
-        Log.i(TAG, "balance = " + wallet.getBalance());
-        Log.i(TAG, "pending = " + wallet.getPendingBalance());
+        Wallet wallet = viewModel.getWalletLive().getValue();
+        final long balance = wallet.getBalanceNumeric().longValue();
+        final long pending = wallet.getPendingBalance().longValue();
 
         if (pending == 0 || balance == pending) {
             hideAvailableAmount();
@@ -292,7 +284,7 @@ public class AssetInfoFragment extends BaseFragment implements AppBarLayout.OnOf
             if (transactions != null && !transactions.isEmpty()) {
                 try {
                     transactionsAdapter.setTransactions(transactions);
-                    recyclerView.setAdapter(new AssetTransactionsAdapter(transactions, viewModel.wallet.getValue().getWalletIndex()));
+                    recyclerView.setAdapter(new AssetTransactionsAdapter(transactions, viewModel.wallet.getValue().getIndex()));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -307,7 +299,7 @@ public class AssetInfoFragment extends BaseFragment implements AppBarLayout.OnOf
     }
 
     private String getAddressToShare() {
-        RealmList<WalletAddress> addresses = viewModel.wallet.getValue().getAddresses();
+        RealmList<WalletAddress> addresses = viewModel.wallet.getValue().getBtcWallet().getAddresses();
         return addresses.get(addresses.size() - 1).getAddress();
     }
 
@@ -322,11 +314,11 @@ public class AssetInfoFragment extends BaseFragment implements AppBarLayout.OnOf
         Analytics.getInstance(getActivity()).logWallet(AnalyticsConstants.WALLET_ADDRESSES, viewModel.getChainId());
         if (viewModel.getWalletLive().getValue() != null) {
             ((AssetActivity) getActivity()).setFragment(R.id.container_full,
-                    AddressesFragment.newInstance(viewModel.getWalletLive().getValue().getWalletIndex()));
+                    AddressesFragment.newInstance(viewModel.getWalletLive().getValue().getIndex()));
         } else {
-            WalletRealmObject wallet = viewModel.getWallet(getActivity().getIntent().getIntExtra(Constants.EXTRA_WALLET_ID, 0));
+            Wallet wallet = viewModel.getWallet(getActivity().getIntent().getIntExtra(Constants.EXTRA_WALLET_ID, 0));
             ((AssetActivity) getActivity()).setFragment(R.id.container_full,
-                    AddressesFragment.newInstance(wallet.getWalletIndex()));
+                    AddressesFragment.newInstance(wallet.getIndex()));
         }
     }
 

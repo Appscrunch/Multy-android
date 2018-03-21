@@ -21,6 +21,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.multy.R;
+import io.multy.model.entities.wallet.Wallet;
 import io.multy.model.entities.wallet.WalletRealmObject;
 import io.multy.storage.RealmManager;
 import io.multy.ui.activities.AssetRequestActivity;
@@ -97,7 +98,7 @@ public class FastOperationsFragment extends BaseFragment {
     }
 
     private boolean isWalletsAvailable() {
-        RealmResults<WalletRealmObject> wallets = RealmManager.getAssetsDao().getWallets();
+        RealmResults<Wallet> wallets = RealmManager.getAssetsDao().getWallets();
         return wallets != null && wallets.size() > 0;
     }
 

@@ -168,7 +168,7 @@ public class AmountChooserFragment extends BaseFragment implements BaseActivity.
 
         spendableSatoshi = 0;
 
-        for (WalletAddress walletAddress : viewModel.getWallet().getAddresses()) {
+        for (WalletAddress walletAddress : viewModel.getWallet().getBtcWallet().getAddresses()) {
             for (Output output : walletAddress.getOutputs()) {
                 if (output.getStatus() == Constants.TX_IN_BLOCK_INCOMING || output.getStatus() == Constants.TX_CONFIRMED_INCOMING) {
                     spendableSatoshi += Long.valueOf(output.getTxOutAmount());
@@ -424,7 +424,7 @@ public class AmountChooserFragment extends BaseFragment implements BaseActivity.
      */
     private void setTotalAmountWithWallet() {
         if (isAmountSwapped) {
-            textTotal.setText(NumberFormatter.getFiatInstance().format(String.valueOf(viewModel.getWallet().getBalance() * currenciesRate.getBtcToUsd())));
+            textTotal.setText(NumberFormatter.getFiatInstance().format(String.valueOf(viewModel.getWallet().getBalanceNumeric().longValue() * currenciesRate.getBtcToUsd())));
             textTotal.append(Constants.SPACE);
             textTotal.append(CurrencyCode.USD.name());
         } else {

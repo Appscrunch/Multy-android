@@ -25,6 +25,7 @@
 #include "multy_core/src/transaction_base.h"
 #include "multy_core/properties.h"
 #include "multy_core/src/api/account_impl.h"
+#include "multy_core/ethereum.h"
 
 
 JavaVM *gJvm = nullptr;
@@ -586,7 +587,7 @@ Java_io_multy_util_NativeDataHelper_isValidAddress(JNIEnv *env, jclass type_, js
     return;
 }
 
-JNIEXPORT jbyteArray
+JNIEXPORT jbyteArray JNICALL
 Java_io_multy_util_NativeDataHelper_makeTransactionETH(JNIEnv *env, jclass type, jbyteArray jSeed,
                                                        jint jWalletIndex,
                                                        jint jAddressIndex, jint jChainId,

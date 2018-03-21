@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.widget.Toast;
 
 import io.multy.R;
+import io.multy.model.entities.wallet.Wallet;
 import io.multy.model.entities.wallet.WalletRealmObject;
 import io.multy.storage.RealmManager;
 import io.multy.ui.fragments.DonationFragment;
@@ -32,12 +33,12 @@ public class DonationActivity extends BaseActivity {
     }
 
     public static void showDonation(Context context, int donationCode) {
-        RealmResults<WalletRealmObject> wallets = RealmManager.getAssetsDao().getWallets();
+        RealmResults<Wallet> wallets = RealmManager.getAssetsDao().getWallets();
 
-        for (WalletRealmObject wallet : wallets) {
-            if (wallet.getAvailableBalance() > 150) {
+        for (Wallet wallet : wallets) {
+            if (wallet.isPayable()) {
                 context.startActivity(new Intent(context, DonationActivity.class)
-                        .putExtra(Constants.EXTRA_WALLET_ID, wallet.getWalletIndex())
+                        .putExtra(Constants.EXTRA_WALLET_ID, wallet.getIndex())
                         .putExtra(Constants.EXTRA_DONATION_CODE, donationCode));
                 return;
             }

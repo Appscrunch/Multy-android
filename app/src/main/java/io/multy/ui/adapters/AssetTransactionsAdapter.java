@@ -136,7 +136,7 @@ public class AssetTransactionsAdapter extends RecyclerView.Adapter<RecyclerView.
             holder.fiatLocked.setText(String.format("(%s USD)", lockedFiat));
         } else {
             //TODO REMOVE DRY AND OPTIMIZE
-            RealmList<WalletAddress> addresses = RealmManager.getAssetsDao().getWalletById(walletIndex).getAddresses();
+            RealmList<WalletAddress> addresses = RealmManager.getAssetsDao().getWalletById(walletIndex).getBtcWallet().getAddresses();
 //            List<WalletAddress> inputs = transactionHistory.getInputs();
 
             List<WalletAddress> outputs = transactionHistory.getOutputs();
@@ -210,7 +210,7 @@ public class AssetTransactionsAdapter extends RecyclerView.Adapter<RecyclerView.
             holder.fiat.setText(stockFiat.equals("") ? "" : String.format("%s USD", stockFiat));
         } else {
             //TODO REMOVE DRY AND OPTIMIZE
-            RealmList<WalletAddress> addresses = RealmManager.getAssetsDao().getWalletById(walletIndex).getAddresses();
+            RealmList<WalletAddress> addresses = RealmManager.getAssetsDao().getWalletById(walletIndex).getBtcWallet().getAddresses();
 //            List<WalletAddress> inputs = transactionHistory.getInputs();
 
             List<WalletAddress> outputs = transactionHistory.getOutputs();

@@ -19,7 +19,8 @@ import io.multy.api.socket.CurrenciesRate;
 import io.multy.api.socket.SocketManager;
 import io.multy.api.socket.TransactionUpdateEntity;
 import io.multy.model.DataManager;
-import io.multy.model.entities.wallet.WalletRealmObject;
+import io.multy.model.entities.wallet.Wallet;
+import io.multy.storage.RealmManager;
 import io.multy.util.Constants;
 import io.multy.util.SingleLiveEvent;
 
@@ -27,7 +28,7 @@ public class AssetsViewModel extends BaseViewModel implements LifecycleObserver 
 
     private SocketManager socketManager;
 
-    public MutableLiveData<List<WalletRealmObject>> wallets = new MutableLiveData<>();
+    public MutableLiveData<List<Wallet>> wallets = new MutableLiveData<>();
     public MutableLiveData<CurrenciesRate> rates = new MutableLiveData<>();
     public SingleLiveEvent<TransactionUpdateEntity> transactionUpdate = new SingleLiveEvent<>();
 
@@ -59,11 +60,11 @@ public class AssetsViewModel extends BaseViewModel implements LifecycleObserver 
         }
     }
 
-    public List<WalletRealmObject> getWalletsFromDB() {
-        return DataManager.getInstance().getWallets();
+    public List<Wallet> getWalletsFromDB() {
+        return RealmManager.getAssetsDao().getWallets();
     }
 
-    public MutableLiveData<List<WalletRealmObject>> getWallets() {
+    public MutableLiveData<List<Wallet>> getWallets() {
         return wallets;
     }
 

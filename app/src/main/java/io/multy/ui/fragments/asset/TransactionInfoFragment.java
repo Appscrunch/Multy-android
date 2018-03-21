@@ -155,8 +155,8 @@ public class TransactionInfoFragment extends BaseFragment {
     private void loadData() {
         viewModel.getWalletLive().observe(this, walletRealmObject -> {
             if (walletRealmObject != null) {
-                toolbarWalletName.setText(walletRealmObject.getName());
-                for (WalletAddress address : walletRealmObject.getAddresses()) {
+                toolbarWalletName.setText(walletRealmObject.getWalletName());
+                for (WalletAddress address : walletRealmObject.getBtcWallet().getAddresses()) {
                     if (!walletAddresses.contains(address.getAddress())) {
                         walletAddresses.add(address.getAddress());
                     }

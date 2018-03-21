@@ -9,7 +9,7 @@ package io.multy.api;
 
 import io.multy.model.entities.AuthEntity;
 import io.multy.model.entities.TransactionRequestEntity;
-import io.multy.model.entities.wallet.WalletRealmObject;
+import io.multy.model.entities.wallet.Wallet;
 import io.multy.model.requests.AddWalletAddressRequest;
 import io.multy.model.requests.HdTransactionRequestEntity;
 import io.multy.model.requests.UpdateWalletNameRequest;
@@ -18,6 +18,7 @@ import io.multy.model.responses.AuthResponse;
 import io.multy.model.responses.FeeRateResponse;
 import io.multy.model.responses.ServerConfigResponse;
 import io.multy.model.responses.SingleWalletResponse;
+import io.multy.model.responses.TestWalletResponse;
 import io.multy.model.responses.TransactionHistoryResponse;
 import io.multy.model.responses.UserAssetsResponse;
 import io.multy.model.responses.WalletsResponse;
@@ -36,7 +37,7 @@ public interface ApiServiceInterface {
     Call<AuthResponse> auth(@Body AuthEntity authEntity);
 
     @POST("api/v1/wallet")
-    Call<ResponseBody> addWallet(@Body WalletRealmObject wallet);
+    Call<ResponseBody> addWallet(@Body Wallet wallet);
 
     @POST("api/v1/gettransactioninfo/{id}")
     Call<ResponseBody> getTransactionInfo(@Path("id") String transactionId);
@@ -76,4 +77,7 @@ public interface ApiServiceInterface {
 
     @GET("/server/config")
     Call<ServerConfigResponse> getServerConfig();
+
+    @GET("api/v1/wallets/verbose")
+    Call<TestWalletResponse> testWalletVerbose();
 }

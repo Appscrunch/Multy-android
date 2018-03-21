@@ -94,7 +94,7 @@ public class TransactionFeeFragment extends BaseFragment implements MyFeeAdapter
         setupInput();
 
         viewModel.speeds.observe(this, speeds -> setAdapter());
-        viewModel.requestFeeRates(NativeDataHelper.Currency.BTC.getValue());
+        viewModel.requestFeeRates(NativeDataHelper.Blockchain.BTC.getValue());
         Analytics.getInstance(getActivity()).logTransactionFeeLaunch(viewModel.getChainId());
         isDonationChanged = false;
         return view;

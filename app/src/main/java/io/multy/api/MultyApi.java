@@ -22,7 +22,7 @@ import io.multy.model.DataManager;
 import io.multy.model.entities.AuthEntity;
 import io.multy.model.entities.TransactionRequestEntity;
 import io.multy.model.entities.UserId;
-import io.multy.model.entities.wallet.WalletRealmObject;
+import io.multy.model.entities.wallet.Wallet;
 import io.multy.model.requests.AddWalletAddressRequest;
 import io.multy.model.requests.HdTransactionRequestEntity;
 import io.multy.model.requests.UpdateWalletNameRequest;
@@ -30,6 +30,7 @@ import io.multy.model.responses.AuthResponse;
 import io.multy.model.responses.FeeRateResponse;
 import io.multy.model.responses.ServerConfigResponse;
 import io.multy.model.responses.SingleWalletResponse;
+import io.multy.model.responses.TestWalletResponse;
 import io.multy.model.responses.TransactionHistoryResponse;
 import io.multy.model.responses.UserAssetsResponse;
 import io.multy.model.responses.WalletsResponse;
@@ -48,6 +49,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public enum MultyApi implements MultyApiInterface {
 
     INSTANCE {
+
+        //        static final String BASE_URL = "http://192.168.0.121:7778/";  // local
+//        static final String BASE_URL = "http://88.198.47.112:7778/";  // remote
+//        static final String BASE_URL = "https://api.multy.io/";  // Special for Jack Bolt!
+        static final String BASE_URL = "https://stage.multy.io/";  // Special for Jack Bolt!
 
         private ApiServiceInterface api = new Retrofit.Builder()
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
@@ -99,7 +105,7 @@ public enum MultyApi implements MultyApiInterface {
         }
 
         @Override
-        public Call<ResponseBody> addWallet(Context context, WalletRealmObject wallet) {
+        public Call<ResponseBody> addWallet(Context context, Wallet wallet) {
             return api.addWallet(wallet);
         }
 
@@ -162,5 +168,10 @@ public enum MultyApi implements MultyApiInterface {
         public Call<ResponseBody> sendHdTransaction(HdTransactionRequestEntity transactionRequestEntity) {
             return api.sendHdTransaction(transactionRequestEntity);
         }
-    };
+
+        @Override
+        public Call<TestWalletResponse> testWalletVerbose() {
+            return api.testWalletVerbose();
+        }
+    }
 }

@@ -20,11 +20,18 @@ public class UpdateWalletNameRequest {
     private int currencyId;
     @SerializedName("walletIndex")
     private int walletIndex;
+    @SerializedName("networkID")
+    private int networkId;
 
-    public UpdateWalletNameRequest(String newName, int currencyId, int walletIndex) {
+    public UpdateWalletNameRequest(String newName, int currencyId, int walletIndex, int networkId) {
         this.newName = newName;
         this.currencyId = currencyId;
         this.walletIndex = walletIndex;
+        this.networkId = networkId;
+    }
+
+    public int getNetworkId() {
+        return networkId;
     }
 
     public String getNewName() {
