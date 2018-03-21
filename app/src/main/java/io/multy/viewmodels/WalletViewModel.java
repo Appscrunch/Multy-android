@@ -108,7 +108,7 @@ public class WalletViewModel extends BaseViewModel {
                 FirstLaunchHelper.setCredentials("");
                 ServerConfigResponse serverConfig = EventBus.getDefault().removeStickyEvent(ServerConfigResponse.class);
                 if (serverConfig != null) {
-                    RealmManager.open(Multy.getContext());
+                    RealmManager.open();
                     RealmManager.getSettingsDao().saveDonation(serverConfig.getDonates());
                 }
             }

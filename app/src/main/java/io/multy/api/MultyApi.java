@@ -74,6 +74,7 @@ public enum MultyApi implements MultyApiInterface {
                             @Nullable
                             @Override
                             public Request authenticate(Route route, okhttp3.Response response) throws IOException {
+                                RealmManager.open();
                                 final UserId userIdEntity = RealmManager.getSettingsDao().getUserId();
                                 final String userId = userIdEntity == null ? "" : userIdEntity.getUserId();
                                 final String pushToken = FirebaseInstanceId.getInstance().getToken() == null ? "noPushToken" : FirebaseInstanceId.getInstance().getToken();

@@ -76,7 +76,7 @@ public class BaseActivity extends AppCompatActivity implements PinNumbersAdapter
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         if (Prefs.getBoolean(Constants.PREF_APP_INITIALIZED)) {
             if (!isLockVisible) {
-                if (RealmManager.open(this) == null) {
+                if (RealmManager.open() == null) {
                     finish();
                     Intent splashIntent = new Intent(this, SplashActivity.class);
                     splashIntent.putExtra(SplashActivity.RESET_FLAG, true);
@@ -106,7 +106,7 @@ public class BaseActivity extends AppCompatActivity implements PinNumbersAdapter
             @Override
             public void foreground() {
                 if (Prefs.getBoolean(Constants.PREF_APP_INITIALIZED) && !Prefs.getBoolean(Constants.PREF_LOCK)) {
-                    if (RealmManager.open(BaseActivity.this) == null) {
+                    if (RealmManager.open() == null) {
                         finish();
                         Intent splashIntent = new Intent(BaseActivity.this, SplashActivity.class);
                         splashIntent.putExtra(SplashActivity.RESET_FLAG, true);
@@ -222,7 +222,7 @@ public class BaseActivity extends AppCompatActivity implements PinNumbersAdapter
             isLockVisible = false;
         }
 
-        if (RealmManager.open(this) == null) {
+        if (RealmManager.open() == null) {
             finish();
             Intent splashIntent = new Intent(this, SplashActivity.class);
             splashIntent.putExtra(SplashActivity.RESET_FLAG, true);

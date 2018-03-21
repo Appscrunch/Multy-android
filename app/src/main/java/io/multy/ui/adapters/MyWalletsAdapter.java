@@ -21,9 +21,6 @@ import butterknife.ButterKnife;
 import io.multy.R;
 import io.multy.api.socket.CurrenciesRate;
 import io.multy.model.entities.wallet.Wallet;
-import io.multy.model.entities.wallet.WalletRealmObject;
-import io.multy.util.CryptoFormatUtils;
-import io.multy.util.NativeDataHelper;
 
 public class MyWalletsAdapter extends RecyclerView.Adapter<MyWalletsAdapter.Holder> {
 
@@ -60,6 +57,7 @@ public class MyWalletsAdapter extends RecyclerView.Adapter<MyWalletsAdapter.Hold
         holder.amount.setText(wallet.getBalanceLabel());
         holder.amountFiat.setText(wallet.getFiatBalanceLabel());
         holder.imageChain.setImageResource(wallet.getIconResourceId());
+        holder.itemView.setOnClickListener(view -> listener.onWalletClick(data.get(position)));
     }
 
     @Override

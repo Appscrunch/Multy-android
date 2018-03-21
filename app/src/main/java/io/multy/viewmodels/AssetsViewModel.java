@@ -39,7 +39,7 @@ public class AssetsViewModel extends BaseViewModel implements LifecycleObserver 
     }
 
     private void initRates() {
-        CurrenciesRate currenciesRate = DataManager.getInstance().getCurrenciesRate();
+        CurrenciesRate currenciesRate = RealmManager.getSettingsDao().getCurrenciesRate();
         if (currenciesRate != null) {
             rates.setValue(currenciesRate);
         }

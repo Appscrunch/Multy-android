@@ -12,7 +12,6 @@ import io.multy.api.socket.CurrenciesRate;
 import io.multy.model.entities.ByteSeed;
 import io.multy.model.entities.DeviceId;
 import io.multy.model.entities.DonateFeatureEntity;
-import io.multy.model.entities.ExchangePrice;
 import io.multy.model.entities.Mnemonic;
 import io.multy.model.entities.RootKey;
 import io.multy.model.entities.Token;
@@ -79,10 +78,6 @@ public class SettingsDao {
         return realm.where(DeviceId.class).findFirst();
     }
 
-    public void saveExchangePrice(final ExchangePrice exchangePrice) {
-        realm.executeTransaction(realm -> realm.insertOrUpdate(exchangePrice));
-    }
-
     public void setUserId(UserId userId) {
         realm.executeTransaction(realm -> realm.insertOrUpdate(userId));
     }
@@ -93,14 +88,6 @@ public class SettingsDao {
 
     public ByteSeed getByteSeed() {
         return realm.where(ByteSeed.class).findFirst();
-    }
-
-    public ExchangePrice getExchangePrice() {
-        ExchangePrice exchangePrice = realm.where(ExchangePrice.class).findFirst();
-        if (exchangePrice == null) {
-            exchangePrice = new ExchangePrice(15000.00);
-        }
-        return exchangePrice;
     }
 
     public void saveCurrenciesRate(CurrenciesRate currenciesRate) {

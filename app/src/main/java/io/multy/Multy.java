@@ -19,6 +19,8 @@ import net.khirr.library.foreground.Foreground;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 
+import javax.annotation.Nullable;
+
 import io.branch.referral.Branch;
 import io.multy.storage.RealmManager;
 import io.multy.storage.SecurePreferencesHelper;
@@ -28,6 +30,7 @@ import io.multy.util.EntropyProvider;
 import io.multy.util.analytics.Analytics;
 import io.multy.util.analytics.AnalyticsConstants;
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import timber.log.Timber;
 
 public class Multy extends Application {
@@ -91,12 +94,28 @@ public class Multy extends Application {
         try {
             String key = new String(Base64.encode(EntropyProvider.generateKey(512), Base64.NO_WRAP));
             SecurePreferencesHelper.putString(getContext(), Constants.PREF_KEY, key);
-            if (RealmManager.open(getContext()) == null) { //TODO review this.
-                systemClear(getContext());
-            }
+//            if (RealmManager.open(getContext()) == null) { //TODO review this.
+//                systemClear(getContext());
+//            }
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
+    }
+
+    @Nullable
+    public static RealmConfiguration getRealmConfiguration() {
+        String key = SecurePreferencesHelper.getString(context, Constants.PREF_KEY);
+        RealmConfiguration realmConfiguration = null;
+        try {
+            return realmConfiguration = new RealmConfiguration.Builder()
+                    .encryptionKey(Base64.decode(key, Base64.NO_WRAP))
+                    .schemaVersion(1)
+                    .build();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public static void systemClear(Context context) {

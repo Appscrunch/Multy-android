@@ -13,10 +13,6 @@ import io.multy.R;
 import io.multy.ui.fragments.asset.CreateAssetFragment;
 import io.multy.util.analytics.Analytics;
 
-/**
- * Created by anschutz1927@gmail.com on 23.11.17.
- */
-
 public class CreateAssetActivity extends BaseActivity {
 
     public static final String EXTRA_IS_FIRST_START = "isFirstStart";

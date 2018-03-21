@@ -27,37 +27,13 @@ public class RealmManager {
 
     private static Realm realm;
 
-    public static Realm open(Context context) {
-        if (realm == null || realm.isClosed()) {
-            try {
-                realm = Realm.getInstance(getConfiguration(context));
-            } catch (Throwable t) {
-                t.printStackTrace();
-            }
+    public static Realm open() {
+        try {
+            realm = Realm.getInstance(Multy.getRealmConfiguration());
+        } catch (Throwable t) {
+            t.printStackTrace();
         }
         return realm;
-    }
-
-    /**
-     * TODO set config to DEFAULT ONLY ONCE SOMEWHERE, for some reason generatekey isn't working in onCreate of Multy.class
-     *
-     * @return
-     */
-    @Deprecated
-    @Nullable
-    public static RealmConfiguration getConfiguration(Context context) {
-        String key = SecurePreferencesHelper.getString(context, Constants.PREF_KEY);
-        RealmConfiguration realmConfiguration = null;
-        try {
-            realmConfiguration = new RealmConfiguration.Builder()
-                    .encryptionKey(Base64.decode(key, Base64.NO_WRAP))
-                    .schemaVersion(1)
-                    .build();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return realmConfiguration;
     }
 
     public static void close() {
@@ -78,7 +54,7 @@ public class RealmManager {
 
     public static void clear() {
         if (realm == null || realm.isClosed()) {
-            open(Multy.getContext());
+            open();
         }
         realm.executeTransaction(realm -> realm.deleteAll());
     }

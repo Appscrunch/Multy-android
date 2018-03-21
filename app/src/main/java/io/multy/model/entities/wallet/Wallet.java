@@ -107,7 +107,7 @@ public class Wallet extends RealmObject implements WalletBalanceInterface {
     public int getIconResourceId() {
         switch (NativeDataHelper.Blockchain.valueOf(currencyId)) {
             case BTC:
-                return R.drawable.ic_btc;
+                return networkId == NativeDataHelper.NetworkId.MAIN_NET.getValue() ? R.drawable.ic_btc : R.drawable.ic_btc;
             case ETH:
                 return R.drawable.ic_eth_medium_icon;
             default:
