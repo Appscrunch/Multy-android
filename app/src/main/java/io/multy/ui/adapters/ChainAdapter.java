@@ -62,22 +62,10 @@ public class ChainAdapter extends RecyclerView.Adapter<ChainAdapter.Holder> {
     public void onBindViewHolder(@NonNull Holder holder, int position) {
         switch (chainType) {
             case AVAILABLE:
-                ((AvailableChainHolder) holder).imageCoin.setImageDrawable(availableChainsImageIds.getDrawable(position));
-                ((AvailableChainHolder) holder).textChainAbbrev.setText(availableChainsAbbrev[position]);
-                ((AvailableChainHolder) holder).textChainName.setText(availableChainsName[position]);
-                ((AvailableChainHolder) holder).checkBox.setChecked(chainCurrency != null
-                        && availableChainsAbbrev[position].equals(chainCurrency) && chainNet == availableChainNets[position]);
-                holder.divider.setVisibility(position == availableChainsAbbrev.length - 1 ? View.INVISIBLE : View.VISIBLE);
-                holder.itemView.setOnClickListener(v -> listener.onClickAvailableChain(availableChainsAbbrev[position],
-                        availableChainNets[position], availableChainIds[position]));
+                bindAvailable((AvailableChainHolder) holder, position);
                 break;
             case SOON:
-                ((DisabledChainHolder) holder).imageCoin.setImageDrawable(disabledChainsImageIds.getDrawable(position));
-                ((DisabledChainHolder) holder).textChainAbbrev.setText(disabledChainsAbbrev[position]);
-                ((DisabledChainHolder) holder).textChainName.setText(disabledChainsName[position]);
-                holder.divider.setVisibility(position == disabledChainsAbbrev.length - 1 ? View.INVISIBLE : View.VISIBLE);
-                holder.itemView.setOnClickListener(v -> listener.onClickSoonChain(disabledChainsAbbrev[position],
-                        disabledChainsDonationCodes.getInteger(position, 0)));
+                bindDisable((DisabledChainHolder) holder, position);
                 break;
         }
     }
@@ -104,6 +92,26 @@ public class ChainAdapter extends RecyclerView.Adapter<ChainAdapter.Holder> {
         this.availableChainNets = availableChainNets;
         this.availableChainIds = availableChainIds;
         notifyDataSetChanged();
+    }
+
+    private void bindAvailable(AvailableChainHolder holder, int position) {
+        holder.imageCoin.setImageDrawable(availableChainsImageIds.getDrawable(position));
+        holder.textChainAbbrev.setText(availableChainsAbbrev[position]);
+        holder.textChainName.setText(availableChainsName[position]);
+        holder.checkBox.setChecked(chainCurrency != null
+                && availableChainsAbbrev[position].equals(chainCurrency) && chainNet == availableChainNets[position]);
+        holder.divider.setVisibility(position == availableChainsAbbrev.length - 1 ? View.INVISIBLE : View.VISIBLE);
+        holder.itemView.setOnClickListener(v -> listener.onClickAvailableChain(availableChainsAbbrev[position],
+                availableChainNets[position], availableChainIds[position]));
+    }
+
+    private void bindDisable(DisabledChainHolder holder, int position) {
+        holder.imageCoin.setImageDrawable(disabledChainsImageIds.getDrawable(position));
+        holder.textChainAbbrev.setText(disabledChainsAbbrev[position]);
+        holder.textChainName.setText(disabledChainsName[position]);
+        holder.divider.setVisibility(position == disabledChainsAbbrev.length - 1 ? View.INVISIBLE : View.VISIBLE);
+        holder.itemView.setOnClickListener(v -> listener.onClickSoonChain(disabledChainsAbbrev[position],
+                disabledChainsDonationCodes.getInteger(position, 0)));
     }
 
     public void setSoonChainsData(TypedArray disableChainImageIds, String[] disabledChainAbbrevs,
