@@ -115,7 +115,8 @@
             android:id="@+id/text_chain_currency"
             style="@style/TextChooserCreateWallet"
             android:layout_below="@id/text_chain"
-            android:text="@string/btc" />
+            android:text="@string/btc"
+            android:textAllCaps="false" />
 
         <ImageView
             android:layout_width="wrap_content"
@@ -149,7 +150,8 @@
             android:id="@+id/text_fiat_currency"
             style="@style/TextChooserCreateWallet"
             android:layout_below="@id/text_fiat"
-            android:text="@string/usd" />
+            android:text="@string/usd"
+            android:textAllCaps="false" />
 
         <ImageView
             android:layout_width="wrap_content"
