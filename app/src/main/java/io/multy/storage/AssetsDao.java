@@ -49,12 +49,15 @@ public class AssetsDao {
         if (savedWallet == null) {
             savedWallet = new Wallet();
         }
+        savedWallet.setIndex(index);
+        savedWallet.setWalletName(name);
+        savedWallet.setBalance(balance);
 
         if (wallet.getCurrencyId() == NativeDataHelper.Blockchain.BTC.getValue()) {
-            savedWallet.setIndex(index);
-            savedWallet.setWalletName(name);
-            savedWallet.setBalance(balance);
             savedWallet.setBtcWallet(wallet.getBtcWallet().asRealmObject(realm));
+        } else {
+            //consider ETH here. will switch
+            savedWallet.setEthWallet(wallet.getEthWallet().asRealmObject(realm));
         }
 
         realm.insertOrUpdate(savedWallet);

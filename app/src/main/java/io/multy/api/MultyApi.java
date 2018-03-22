@@ -126,8 +126,8 @@ public enum MultyApi implements MultyApiInterface {
         }
 
         @Override
-        public Call<SingleWalletResponse> getWalletVerbose(int currencyId, int walletIndex) {
-            return api.getWalletVerboseByIndex(currencyId, walletIndex);
+        public Call<SingleWalletResponse> getWalletVerbose(int walletIndex, int currencyId, int networkId) {
+            return api.getWalletVerboseByIndex(walletIndex, currencyId, networkId);
         }
 
         @Override

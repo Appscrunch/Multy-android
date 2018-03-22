@@ -179,25 +179,6 @@ public class AssetsFragment extends BaseFragment implements MyWalletsAdapter.OnW
     }
 
     private void updateWallets() {
-//        MultyApi.INSTANCE.testWalletVerbose().enqueue(new Callback<TestWalletResponse>() {
-//            @Override
-//            public void onResponse(Call<TestWalletResponse> call, Response<TestWalletResponse> response) {
-//                if (response.isSuccessful()) {
-//                    for (Wallet wallet : response.body().getWallets()) {
-//                        recyclerView.setVisibility(View.VISIBLE);
-//                        recyclerView.setAdapter(new MyWalletsAdapter(response.body().getWallets()));
-//                        Log.i("wise", "wallet " + wallet.getCurrencyId() + " " + wallet.getBalanceLabel() + " " + wallet.getFiatBalanceLabel());
-//                    }
-//                }
-//                Log.i("wise", "success");
-//            }
-//
-//            @Override
-//            public void onFailure(Call<TestWalletResponse> call, Throwable t) {
-//                t.printStackTrace();
-//                Log.i("wise", "failure");
-//            }
-//        });
         MultyApi.INSTANCE.getWalletsVerbose().enqueue(new Callback<WalletsResponse>() {
             @Override
             public void onResponse(@NonNull Call<WalletsResponse> call, @NonNull Response<WalletsResponse> response) {

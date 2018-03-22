@@ -60,8 +60,8 @@ public interface ApiServiceInterface {
     @POST("api/v1/address")
     Call<ResponseBody> addWalletAddress(@Body AddWalletAddressRequest addWalletAddressRequest);
 
-    @GET("api/v1/wallet/{walletIndex}/verbose/{currencyId}")
-    Call<SingleWalletResponse> getWalletVerboseByIndex(@Path("currencyId") int currencyId, @Path("walletIndex") int walletIndex);
+    @GET("api/v1/wallet/{walletIndex}/verbose/{currencyId}/{networkId}")
+    Call<SingleWalletResponse> getWalletVerboseByIndex(@Path("walletIndex") int walletIndex, @Path("currencyId") int currencyId, @Path("networkId") int networkId);
 
     @POST("api/v1/wallet/name")
     Call<ResponseBody> updateWalletName(@Body UpdateWalletNameRequest updateWalletName);

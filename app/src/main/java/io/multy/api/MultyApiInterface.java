@@ -33,7 +33,7 @@ public interface MultyApiInterface {
 
     Call<ResponseBody> addWalletAddress(AddWalletAddressRequest addWalletAddressRequest);
 
-    Call<SingleWalletResponse> getWalletVerbose(int currencyId, int walletIndex);
+    Call<SingleWalletResponse> getWalletVerbose(int walletIndex, int currencyId, int networkId);
 
     Call<WalletsResponse> getWalletsVerbose();
 

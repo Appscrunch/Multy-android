@@ -179,14 +179,13 @@ public class SendSummaryFragment extends BaseFragment {
         try {
             viewModel.isLoading.setValue(true);
             byte[] seed = RealmManager.getSettingsDao().getSeed().getSeed();
+            final int currencyId = viewModel.getWallet().getCurrencyId();
+            final int networkId = viewModel.getWallet().getNetworkId();
             final int addressesSize = viewModel.getWallet().getBtcWallet().getAddresses().size();
-            final String changeAddress = NativeDataHelper.makeAccountAddress(seed, viewModel.getWallet().getIndex(),
-                    addressesSize, NativeDataHelper.Blockchain.BTC.getValue(),
-                    NativeDataHelper.NetworkId.TEST_NET.getValue());
+            final String changeAddress = NativeDataHelper.makeAccountAddress(seed, viewModel.getWallet().getIndex(), addressesSize, currencyId, networkId);
             final String hex = viewModel.transaction.getValue();
             Timber.i("hex=%s", hex);
-            MultyApi.INSTANCE.sendHdTransaction(new HdTransactionRequestEntity(
-                    NativeDataHelper.Blockchain.BTC.getValue(),
+            MultyApi.INSTANCE.sendHdTransaction(new HdTransactionRequestEntity(currencyId, networkId,
                     new HdTransactionRequestEntity.Payload(changeAddress, addressesSize, viewModel.getWallet().getIndex(), hex))).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -330,7 +329,8 @@ public class SendSummaryFragment extends BaseFragment {
                 returnSliderOnStart();
             case MotionEvent.ACTION_CANCEL:
                 return true;
-                default: return false;
+            default:
+                return false;
         }
     }
 }

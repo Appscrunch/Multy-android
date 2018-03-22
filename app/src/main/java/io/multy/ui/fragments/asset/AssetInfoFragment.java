@@ -137,7 +137,9 @@ public class AssetInfoFragment extends BaseFragment implements AppBarLayout.OnOf
 
         final int walletIndex = viewModel.getWalletLive().getValue().getIndex();
         final int currencyId = viewModel.getWalletLive().getValue().getCurrencyId();
-        MultyApi.INSTANCE.getWalletVerbose(currencyId, walletIndex).enqueue(new Callback<SingleWalletResponse>() {
+        final int networkId = viewModel.getWalletLive().getValue().getNetworkId();
+
+        MultyApi.INSTANCE.getWalletVerbose(walletIndex, currencyId, networkId).enqueue(new Callback<SingleWalletResponse>() {
             @Override
             public void onResponse(Call<SingleWalletResponse> call, Response<SingleWalletResponse> response) {
                 viewModel.isLoading.postValue(false);
@@ -163,7 +165,7 @@ public class AssetInfoFragment extends BaseFragment implements AppBarLayout.OnOf
     public void onResume() {
         super.onResume();
         if (getActivity() != null) {
-                getActivity().registerReceiver(receiver, new IntentFilter());
+            getActivity().registerReceiver(receiver, new IntentFilter());
         }
         viewModel.subscribeSocketsUpdate();
         appBarLayout.addOnOffsetChangedListener(this);

@@ -12,6 +12,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 
 import io.multy.R;
+import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
 
@@ -48,5 +49,17 @@ public class EthWallet extends RealmObject {
 
     public void setAddresses(RealmList<WalletAddress> addresses) {
         this.addresses = addresses;
+    }
+
+    public EthWallet asRealmObject(Realm realm) {
+        EthWallet ethWallet = realm.createObject(EthWallet.class);
+        ethWallet.setAddresses(new RealmList<>());
+
+        for (WalletAddress walletAddress : getAddresses()) {
+            ethWallet.getAddresses().add(realm.copyToRealm(walletAddress));
+        }
+        ethWallet.setNonce(nonce);
+        ethWallet.setBalance(balance);
+        return ethWallet;
     }
 }
