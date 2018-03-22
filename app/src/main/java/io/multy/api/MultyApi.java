@@ -145,8 +145,8 @@ public enum MultyApi implements MultyApiInterface {
             return api.removeWallet(currencyId, walletIndex);
         }
 
-        public Call<TransactionHistoryResponse> getTransactionHistory(int currencyId, int walletIndex) {
-            return api.getTransactionHistory(currencyId, walletIndex);
+        public Call<TransactionHistoryResponse> getTransactionHistory(int currencyId, int networkId, int walletIndex) {
+            return api.getTransactionHistory(currencyId, networkId, walletIndex);
         }
 
         @Override

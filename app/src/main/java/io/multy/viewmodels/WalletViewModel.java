@@ -151,7 +151,7 @@ public class WalletViewModel extends BaseViewModel {
     }
 
     public MutableLiveData<ArrayList<TransactionHistory>> getTransactionsHistory() {
-        MultyApi.INSTANCE.getTransactionHistory(wallet.getValue().getCurrencyId(), wallet.getValue().getIndex()).enqueue(new Callback<TransactionHistoryResponse>() {
+        MultyApi.INSTANCE.getTransactionHistory(wallet.getValue().getCurrencyId(), wallet.getValue().getNetworkId(), wallet.getValue().getIndex()).enqueue(new Callback<TransactionHistoryResponse>() {
             @Override
             public void onResponse(@NonNull Call<TransactionHistoryResponse> call, @NonNull Response<TransactionHistoryResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {

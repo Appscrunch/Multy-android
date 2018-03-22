@@ -240,7 +240,7 @@ public class DonationFragment extends BaseFragment {
             byte[] transactionHex = NativeDataHelper.makeTransaction(seed, wallet.getIndex(), amount,
                     fee, "0", receiverAddress, changeAddress, donationAddress, false);
 
-            MultyApi.INSTANCE.sendHdTransaction(new HdTransactionRequestEntity(NativeDataHelper.Blockchain.BTC.getValue(),
+            MultyApi.INSTANCE.sendHdTransaction(new HdTransactionRequestEntity(wallet.getCurrencyId(), wallet.getNetworkId(),
                     new HdTransactionRequestEntity.Payload(changeAddress, addressesSize, wallet.getIndex(), byteArrayToHex(transactionHex)))).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

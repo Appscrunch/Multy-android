@@ -72,8 +72,8 @@ public interface ApiServiceInterface {
     @GET("api/v1/wallets/verbose")
     Call<WalletsResponse> getWalletsVerbose();
 
-    @GET("api/v1/wallets/transactions/{currencyid}/{walletIndex}")
-    Call<TransactionHistoryResponse> getTransactionHistory(@Path("currencyid") int currencyId, @Path("walletIndex") int walletIndex);
+    @GET("api/v1/wallets/transactions/{currencyid}/{networkid}/{walletIndex}")
+    Call<TransactionHistoryResponse> getTransactionHistory(@Path("currencyid") int currencyId, @Path("networkid") int networkId, @Path("walletIndex") int walletIndex);
 
     @GET("/server/config")
     Call<ServerConfigResponse> getServerConfig();
