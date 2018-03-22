@@ -162,7 +162,7 @@ public class RequestSummaryFragment extends BaseFragment {
     void onClickAddress() {
         Analytics.getInstance(getActivity()).logReceiveSummary(AnalyticsConstants.RECEIVE_SUMMARY_ADDRESS, viewModel.getChainId());
         ((AssetRequestActivity) getActivity()).setFragment(R.string.all_addresses,
-                AddressesFragment.newInstance(viewModel.getWallet().getIndex()));
+                AddressesFragment.newInstance(viewModel.getWallet().getId()));
     }
 
     @OnClick(R.id.container_summ)

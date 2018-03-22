@@ -111,7 +111,7 @@ public class AssetSendActivity extends BaseActivity {
     private void startFlow() {
         AssetSendViewModel viewModel = ViewModelProviders.of(this).get(AssetSendViewModel.class);
         if (getIntent().hasExtra(Constants.EXTRA_WALLET_ID)) {
-            viewModel.setWallet(RealmManager.getAssetsDao().getWalletById(getIntent().getExtras().getInt(Constants.EXTRA_WALLET_ID, -1)));
+            viewModel.setWallet(RealmManager.getAssetsDao().getWalletById(getIntent().getExtras().getLong(Constants.EXTRA_WALLET_ID, -1)));
         }
 
         if (getIntent().hasExtra(Constants.EXTRA_ADDRESS)) {

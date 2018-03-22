@@ -24,6 +24,7 @@ import io.multy.storage.RealmManager;
 import io.multy.util.NativeDataHelper;
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 public class Wallet extends RealmObject implements WalletBalanceInterface {
 
@@ -37,6 +38,7 @@ public class Wallet extends RealmObject implements WalletBalanceInterface {
     private String walletName;
     @SerializedName("lastactiontime")
     private long lastActionTime;
+    @PrimaryKey
     @SerializedName("dateofcreation")
     private long dateOfCreation;
     @SerializedName("pending")
@@ -107,9 +109,9 @@ public class Wallet extends RealmObject implements WalletBalanceInterface {
     public int getIconResourceId() {
         switch (NativeDataHelper.Blockchain.valueOf(currencyId)) {
             case BTC:
-                return networkId == NativeDataHelper.NetworkId.MAIN_NET.getValue() ? R.drawable.ic_btc : R.drawable.ic_btc;
+                return networkId == NativeDataHelper.NetworkId.MAIN_NET.getValue() ? R.drawable.ic_btc : R.drawable.ic_chain_btc_test;
             case ETH:
-                return R.drawable.ic_eth_medium_icon;
+                return networkId == NativeDataHelper.NetworkId.MAIN_NET.getValue() ? R.drawable.ic_eth_medium_icon : R.drawable.ic_chain_eth_test;
             default:
                 return 0;
         }
@@ -241,5 +243,9 @@ public class Wallet extends RealmObject implements WalletBalanceInterface {
 
     public void setCreationAddress(String creationAddress) {
         this.creationAddress = creationAddress;
+    }
+
+    public long getId() {
+        return dateOfCreation;
     }
 }

@@ -15,7 +15,7 @@ To conrtibute please check **Build instruction
 git clone https://github.com/Appscrunch/Multy-android.git
 ```
 
-2. Make shure you have CMake and NDK installed in the Android Studio SDK Tools
+2. Make shure you have CMake and NDK installed in Android Studio SDK Tools
 
 3. Clone master branch of the Multy-Core project
 ```

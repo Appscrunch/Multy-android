@@ -124,7 +124,7 @@ public class AssetInfoFragment extends BaseFragment implements AppBarLayout.OnOf
             refreshWallet();
         });
 
-        Wallet wallet = viewModel.getWallet(getActivity().getIntent().getIntExtra(Constants.EXTRA_WALLET_ID, 0));
+        Wallet wallet = viewModel.getWallet(getActivity().getIntent().getLongExtra(Constants.EXTRA_WALLET_ID, 0));
         viewModel.getWalletLive().observe(this, this::setupWalletInfo);
         viewModel.getWalletLive().setValue(wallet);
         Analytics.getInstance(getActivity()).logWalletLaunch(AnalyticsConstants.WALLET_SCREEN, viewModel.getChainId());
@@ -286,7 +286,7 @@ public class AssetInfoFragment extends BaseFragment implements AppBarLayout.OnOf
             if (transactions != null && !transactions.isEmpty()) {
                 try {
                     transactionsAdapter.setTransactions(transactions);
-                    recyclerView.setAdapter(new AssetTransactionsAdapter(transactions, viewModel.wallet.getValue().getIndex()));
+                    recyclerView.setAdapter(new AssetTransactionsAdapter(transactions, viewModel.wallet.getValue().getId()));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -316,11 +316,11 @@ public class AssetInfoFragment extends BaseFragment implements AppBarLayout.OnOf
         Analytics.getInstance(getActivity()).logWallet(AnalyticsConstants.WALLET_ADDRESSES, viewModel.getChainId());
         if (viewModel.getWalletLive().getValue() != null) {
             ((AssetActivity) getActivity()).setFragment(R.id.container_full,
-                    AddressesFragment.newInstance(viewModel.getWalletLive().getValue().getIndex()));
+                    AddressesFragment.newInstance(viewModel.getWalletLive().getValue().getId()));
         } else {
-            Wallet wallet = viewModel.getWallet(getActivity().getIntent().getIntExtra(Constants.EXTRA_WALLET_ID, 0));
+            Wallet wallet = viewModel.getWallet(getActivity().getIntent().getLongExtra(Constants.EXTRA_WALLET_ID, 0));
             ((AssetActivity) getActivity()).setFragment(R.id.container_full,
-                    AddressesFragment.newInstance(wallet.getIndex()));
+                    AddressesFragment.newInstance(wallet.getId()));
         }
     }
 

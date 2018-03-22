@@ -41,12 +41,12 @@ public class AssetTransactionsAdapter extends RecyclerView.Adapter<RecyclerView.
     private static final int TYPE_CONFIRMED = 203;
     private static final int TYPE_REJECTED = 204;
 
-    private int walletIndex;
+    private long walletId;
     private List<TransactionHistory> transactionHistoryList;
 
-    public AssetTransactionsAdapter(List<TransactionHistory> transactionHistoryList, int walletIndex) {
+    public AssetTransactionsAdapter(List<TransactionHistory> transactionHistoryList, long walletId) {
         this.transactionHistoryList = transactionHistoryList;
-        this.walletIndex = walletIndex;
+        this.walletId = walletId;
         Collections.sort(this.transactionHistoryList, (transactionHistory, t1) -> Long.compare(t1.getMempoolTime(), transactionHistory.getMempoolTime()));
     }
 
@@ -100,7 +100,7 @@ public class AssetTransactionsAdapter extends RecyclerView.Adapter<RecyclerView.
             int mode = isIncoming ? MODE_RECEIVE : MODE_SEND;
             transactionInfo.putInt(TransactionInfoFragment.SELECTED_POSITION, position);
             transactionInfo.putInt(TransactionInfoFragment.TRANSACTION_INFO_MODE, mode);
-            transactionInfo.putInt(TransactionInfoFragment.WALLET_INDEX, walletIndex);
+            transactionInfo.putLong(TransactionInfoFragment.WALLET_INDEX, walletId);
             ((FragmentActivity) v.getContext()).getSupportFragmentManager().beginTransaction()
                     .replace(R.id.container_full, TransactionInfoFragment.newInstance(transactionInfo))
                     .addToBackStack(TransactionInfoFragment.TAG)
@@ -136,7 +136,7 @@ public class AssetTransactionsAdapter extends RecyclerView.Adapter<RecyclerView.
             holder.fiatLocked.setText(String.format("(%s USD)", lockedFiat));
         } else {
             //TODO REMOVE DRY AND OPTIMIZE
-            RealmList<WalletAddress> addresses = RealmManager.getAssetsDao().getWalletById(walletIndex).getBtcWallet().getAddresses();
+            RealmList<WalletAddress> addresses = RealmManager.getAssetsDao().getWalletById(walletId).getBtcWallet().getAddresses();
 //            List<WalletAddress> inputs = transactionHistory.getInputs();
 
             List<WalletAddress> outputs = transactionHistory.getOutputs();
@@ -210,7 +210,7 @@ public class AssetTransactionsAdapter extends RecyclerView.Adapter<RecyclerView.
             holder.fiat.setText(stockFiat.equals("") ? "" : String.format("%s USD", stockFiat));
         } else {
             //TODO REMOVE DRY AND OPTIMIZE
-            RealmList<WalletAddress> addresses = RealmManager.getAssetsDao().getWalletById(walletIndex).getBtcWallet().getAddresses();
+            RealmList<WalletAddress> addresses = RealmManager.getAssetsDao().getWalletById(walletId).getBtcWallet().getAddresses();
 //            List<WalletAddress> inputs = transactionHistory.getInputs();
 
             List<WalletAddress> outputs = transactionHistory.getOutputs();

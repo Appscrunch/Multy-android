@@ -103,10 +103,10 @@ public class AssetRequestActivity extends BaseActivity {
 
     private void startFlow() {
         if (getIntent().hasExtra(Constants.EXTRA_WALLET_ID)) {
-            if (getIntent().getIntExtra(Constants.EXTRA_WALLET_ID, oneNegative) != oneNegative) {
+            if (getIntent().getLongExtra(Constants.EXTRA_WALLET_ID, -1) != -1) {
                 AssetRequestViewModel viewModel = ViewModelProviders.of(this).get(AssetRequestViewModel.class);
 //                viewModel.setContext(this);
-                viewModel.getWallet(getIntent().getIntExtra(Constants.EXTRA_WALLET_ID, oneNegative));
+                viewModel.getWallet(getIntent().getLongExtra(Constants.EXTRA_WALLET_ID, -1));
                 viewModel.getWalletLive().observe(this, walletRealmObject -> setFragment(R.string.receive_summary, RequestSummaryFragment.newInstance()));
             } else {
                 Toast.makeText(this, "Invalid wallet index", Toast.LENGTH_SHORT).show();

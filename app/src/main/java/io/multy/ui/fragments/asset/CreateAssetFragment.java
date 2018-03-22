@@ -154,7 +154,7 @@ public class CreateAssetFragment extends BaseFragment {
     private void showWalletInfoActivity(Wallet walletRealmObject) {
         Intent intent = new Intent(getActivity(), AssetActivity.class);
         if (walletRealmObject != null) {
-            intent.putExtra(Constants.EXTRA_WALLET_ID, walletRealmObject.getIndex());
+            intent.putExtra(Constants.EXTRA_WALLET_ID, walletRealmObject.getId());
         }
 
         getActivity().startActivity(intent);
@@ -199,6 +199,7 @@ public class CreateAssetFragment extends BaseFragment {
 
     @OnClick(R.id.text_create)
     public void onClickCreate() {
+        walletViewModel.isLoading.setValue(true);
         Analytics.getInstance(getActivity()).logCreateWallet();
         Wallet walletRealmObject = walletViewModel.createWallet(editTextWalletName.getText().toString(), chainId, chainNet);
         MultyApi.INSTANCE.addWallet(getActivity(), walletRealmObject).enqueue(new Callback<ResponseBody>() {

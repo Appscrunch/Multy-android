@@ -40,10 +40,10 @@ public class AddressesFragment extends BaseFragment {
     @BindView(R.id.text_title)
     TextView textViewTitle;
 
-    public static AddressesFragment newInstance(int walletIndex) {
+    public static AddressesFragment newInstance(long walletId) {
         AddressesFragment addressesFragment = new AddressesFragment();
         Bundle arguments = new Bundle();
-        arguments.putInt(Constants.EXTRA_WALLET_ID, walletIndex);
+        arguments.putLong(Constants.EXTRA_WALLET_ID, walletId);
         addressesFragment.setArguments(arguments);
         return addressesFragment;
     }
@@ -66,7 +66,7 @@ public class AddressesFragment extends BaseFragment {
     public void onStart() {
         super.onStart();
         if (getArguments().getInt(Constants.EXTRA_WALLET_ID) != -1) {
-            Wallet wallet = RealmManager.getAssetsDao().getWalletById(getArguments().getInt(Constants.EXTRA_WALLET_ID, -1));
+            Wallet wallet = RealmManager.getAssetsDao().getWalletById(getArguments().getLong(Constants.EXTRA_WALLET_ID, -1));
             textViewTitle.setText(wallet.getWalletName());
             recyclerView.setAdapter(new AddressesAdapter(wallet.getBtcWallet().getAddresses()));
         } else {

@@ -64,8 +64,8 @@ public class AssetRequestViewModel extends BaseViewModel {
         return amount;
     }
 
-    public Wallet getWallet(int index) {
-        this.wallet = RealmManager.getAssetsDao().getWalletById(index);
+    public Wallet getWallet(long id) {
+        this.wallet = RealmManager.getAssetsDao().getWalletById(id);
         walletLive.setValue(wallet);
         return wallet;
     }
@@ -121,7 +121,7 @@ public class AssetRequestViewModel extends BaseViewModel {
             MultyApi.INSTANCE.addWalletAddress(new AddWalletAddressRequest(wallet.getIndex(), creationAddress, addressIndex)).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    RealmManager.getAssetsDao().saveBtcAddress(wallet.getIndex(), new WalletAddress(addressIndex, creationAddress));
+                    RealmManager.getAssetsDao().saveBtcAddress(wallet.getId(), new WalletAddress(addressIndex, creationAddress));
                     address.setValue(creationAddress);
                     isLoading.setValue(false);
                     isLoading.call();

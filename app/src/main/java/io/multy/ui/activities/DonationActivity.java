@@ -28,7 +28,7 @@ public class DonationActivity extends BaseActivity {
         setContentView(R.layout.activity_donation);
         setTitle(R.string.wallet);
         getSupportFragmentManager().beginTransaction().add(R.id.container,
-                DonationFragment.newInstance(getIntent().getIntExtra(Constants.EXTRA_WALLET_ID, 0),
+                DonationFragment.newInstance(getIntent().getLongExtra(Constants.EXTRA_WALLET_ID, 0),
                         getIntent().getIntExtra(Constants.EXTRA_DONATION_CODE, 0))).commit();
     }
 
@@ -38,7 +38,7 @@ public class DonationActivity extends BaseActivity {
         for (Wallet wallet : wallets) {
             if (wallet.isPayable()) {
                 context.startActivity(new Intent(context, DonationActivity.class)
-                        .putExtra(Constants.EXTRA_WALLET_ID, wallet.getIndex())
+                        .putExtra(Constants.EXTRA_WALLET_ID, wallet.getId())
                         .putExtra(Constants.EXTRA_DONATION_CODE, donationCode));
                 return;
             }

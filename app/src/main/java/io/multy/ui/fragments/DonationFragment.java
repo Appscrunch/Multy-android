@@ -38,7 +38,6 @@ import io.multy.api.socket.CurrenciesRate;
 import io.multy.model.entities.Fee;
 import io.multy.model.entities.wallet.CurrencyCode;
 import io.multy.model.entities.wallet.Wallet;
-import io.multy.model.entities.wallet.WalletRealmObject;
 import io.multy.model.requests.HdTransactionRequestEntity;
 import io.multy.model.responses.FeeRateResponse;
 import io.multy.storage.RealmManager;
@@ -62,7 +61,7 @@ import static io.multy.ui.fragments.send.SendSummaryFragment.byteArrayToHex;
 
 public class DonationFragment extends BaseFragment {
 
-    private final static String ARG_WALLET_INDEX = "wallet_index";
+    private final static String ARG_WALLET_ID = "wallet_id";
     private final static String ARG_DONATION_CODE = "donation_code";
 
     @BindView(R.id.scroll_view)
@@ -82,10 +81,10 @@ public class DonationFragment extends BaseFragment {
     private Wallet wallet;
     private long maxValue;
 
-    public static DonationFragment newInstance(int walletIndex, int donationCode) {
+    public static DonationFragment newInstance(long walletId, int donationCode) {
         DonationFragment donationFragment = new DonationFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_WALLET_INDEX, walletIndex);
+        args.putLong(ARG_WALLET_ID, walletId);
         args.putInt(ARG_DONATION_CODE, donationCode);
         donationFragment.setArguments(args);
         return donationFragment;
@@ -105,7 +104,7 @@ public class DonationFragment extends BaseFragment {
         });
         inputDonation.setOnClickListener(v -> scrollDown());
 
-        pickWallet(getArguments().getInt(ARG_WALLET_INDEX));
+        pickWallet(getArguments().getLong(ARG_WALLET_ID));
         setupInput();
         requestRates();
         return convertView;
@@ -122,8 +121,8 @@ public class DonationFragment extends BaseFragment {
         }, 400);
     }
 
-    private void pickWallet(int walletIndex) {
-        wallet = RealmManager.getAssetsDao().getWalletById(walletIndex);
+    private void pickWallet(long walletId) {
+        wallet = RealmManager.getAssetsDao().getWalletById(walletId);
         maxValue = wallet.getAvailableBalanceNumeric().longValue();
         textWalletName.setText(wallet.getWalletName());
         inputDonation.setText(CryptoFormatUtils.satoshiToBtc((wallet.getAvailableBalanceNumeric().longValue() / 100) * 3));
@@ -291,7 +290,7 @@ public class DonationFragment extends BaseFragment {
     @OnClick(R.id.button_wallet)
     void onClickWallet() {
         WalletChooserDialogFragment walletChooser = WalletChooserDialogFragment.newInstance();
-        walletChooser.setOnWalletClickListener(wallet -> pickWallet(wallet.getIndex()));
+        walletChooser.setOnWalletClickListener(wallet -> pickWallet(wallet.getId()));
         walletChooser.show(getFragmentManager(), "");
     }
 }

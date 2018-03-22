@@ -45,10 +45,12 @@ public class AssetsDao {
         final String name = wallet.getWalletName();
         final String balance = wallet.getBalance();
 
-        Wallet savedWallet = getWalletById(index);
+        Wallet savedWallet = getWalletById(wallet.getId());
         if (savedWallet == null) {
             savedWallet = new Wallet();
         }
+        savedWallet.setDateOfCreation(wallet.getDateOfCreation());
+        savedWallet.setLastActionTime(wallet.getLastActionTime());
         savedWallet.setIndex(index);
         savedWallet.setWalletName(name);
         savedWallet.setBalance(balance);
@@ -73,9 +75,9 @@ public class AssetsDao {
         return realm.where(Wallet.class).equalTo("currencyid", blockChainId).findAll();
     }
 
-    public void saveBtcAddress(int walletIndex, WalletAddress address) {
+    public void saveBtcAddress(long id, WalletAddress address) {
         realm.executeTransaction(realm -> {
-            Wallet wallet = getWalletById(walletIndex);
+            Wallet wallet = getWalletById(id);
             wallet.getBtcWallet().getAddresses().add(realm.copyToRealm(address));
             realm.insertOrUpdate(wallet);
         });
@@ -89,11 +91,11 @@ public class AssetsDao {
         realm.executeTransaction(realm -> realm.where(Wallet.class).findAll().deleteAllFromRealm());
     }
 
-    public Wallet getWalletById(int id) {
-        return realm.where(Wallet.class).equalTo("index", id).findFirst();
+    public Wallet getWalletById(long id) {
+        return realm.where(Wallet.class).equalTo("dateOfCreation", id).findFirst();
     }
 
-    public void updateWalletName(int id, String newName) {
+    public void updateWalletName(long id, String newName) {
         realm.executeTransaction(realm1 -> {
             Wallet wallet = getWalletById(id);
             wallet.setWalletName(newName);
@@ -101,7 +103,7 @@ public class AssetsDao {
         });
     }
 
-    public void removeWallet(int id) {
+    public void removeWallet(long id) {
         realm.executeTransaction(realm -> {
             Wallet wallet = getWalletById(id);
             wallet.deleteFromRealm();

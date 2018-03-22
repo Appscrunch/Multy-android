@@ -63,14 +63,14 @@ public class AssetActivity extends BaseActivity {
         Analytics.getInstance(this).logWallet(AnalyticsConstants.WALLET_SEND, viewModel.getChainId());
         startActivity(new Intent(this, AssetSendActivity.class)
                 .addCategory(Constants.EXTRA_SENDER_ADDRESS)
-                .putExtra(Constants.EXTRA_WALLET_ID, getIntent().getIntExtra(Constants.EXTRA_WALLET_ID, 0)));
+                .putExtra(Constants.EXTRA_WALLET_ID, getIntent().getLongExtra(Constants.EXTRA_WALLET_ID, 0)));
     }
 
     @OnClick(R.id.receive)
     void onClickReceive() {
         Analytics.getInstance(this).logWallet(AnalyticsConstants.WALLET_RECEIVE, viewModel.getChainId());
         startActivity(new Intent(this, AssetRequestActivity.class)
-                .putExtra(Constants.EXTRA_WALLET_ID, getIntent().getIntExtra(Constants.EXTRA_WALLET_ID, 0)));
+                .putExtra(Constants.EXTRA_WALLET_ID, getIntent().getLongExtra(Constants.EXTRA_WALLET_ID, 0)));
     }
 
     @OnClick(R.id.exchange)
