@@ -25,16 +25,36 @@
 
     <string-array name="available_chain_abbrev">
         <item>BTC</item>
+        <item>BTC</item>
+        <item>ETH</item>
+        <item>ETH</item>
     </string-array>
     <string-array name="available_chain_name">
         <item>Bitcoin</item>
+        <item>Bitcoin</item>
+        <item>Ethereum</item>
+        <item>Ethereum</item>
     </string-array>
     <array name="available_chain_image_ids">
         <item>@drawable/ic_btk_logo</item>
+        <item>@drawable/ic_chain_btc_test</item>
+        <item>@drawable/chain_eth</item>
+        <item>@drawable/ic_chain_eth_test</item>
     </array>
+    <integer-array name="available_chain_net_types">
+        <item>0</item>
+        <item>1</item>
+        <item>0</item>
+        <item>1</item>
+    </integer-array>
+    <integer-array name="available_chain_ids">
+        <item>0</item>
+        <item>0</item>
+        <item>60</item>
+        <item>60</item>
+    </integer-array>
     <string-array name="soon_chain_abbrev">
         <item>LBTC</item>
-        <item>ETH</item>
         <item>GOLOS</item>
         <item>STEEM</item>
         <item>BTS</item>
@@ -46,7 +66,6 @@
     </string-array>
     <string-array name="soon_chain_name">
         <item>Lightning Bitcoin</item>
-        <item>Ethereum</item>
         <item>Golos</item>
         <item>Steem</item>
         <item>BitShares</item>
@@ -58,7 +77,6 @@
     </string-array>
     <array name="soon_chain_image_ids">
         <item>@drawable/chain_lbtc</item>
-        <item>@drawable/chain_eth</item>
         <item>@drawable/chain_golos</item>
         <item>@drawable/chain_steem</item>
         <item>@drawable/chain_bts</item>

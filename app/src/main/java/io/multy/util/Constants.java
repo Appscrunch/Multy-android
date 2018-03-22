@@ -57,6 +57,9 @@ public class Constants {
     public static final String FLAG_VIEW_SEED_PHRASE = "view_seed_phrase";
     public static final String PREF_IS_PUSH_ENABLED = "PREF_IS_PUSH_ENABLED";
 
+    public static final int REQUEST_CODE_SET_CHAIN = 560;
+    public static final String CHAIN_NAME = "chain_name";
+    public static final String CHAIN_NET = "chain_net";
 
     public static final int CAMERA_REQUEST_CODE = 328;
     public static final String EXTRA_QR_CONTENTS = "EXTRA_QR_CONTENTS";
