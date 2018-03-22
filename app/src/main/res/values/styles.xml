@@ -398,4 +398,18 @@
         <item name="android:background">#cfd9e8</item>
     </style>
 
+    <style name="GasInputs">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginEnd">16dp</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:inputType">number</item>
+        <item name="android:maxLength">20</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">@color/gray_dark</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
 </resources>

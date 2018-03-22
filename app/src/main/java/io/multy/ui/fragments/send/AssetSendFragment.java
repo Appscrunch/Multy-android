@@ -59,7 +59,7 @@ public class AssetSendFragment extends BaseFragment {
         viewModel = ViewModelProviders.of(getActivity()).get(AssetSendViewModel.class);
         setBaseViewModel(viewModel);
         if (!TextUtils.isEmpty(viewModel.getReceiverAddress().getValue())) {
-            inputAddress.setText(viewModel.getReceiverAddress().getValue()); // to set address from scanning qr or wallet
+            inputAddress.setText(viewModel.getReceiverAddress().getValue());// to set address from scanning qr or wallet
         }
         viewModel.getReceiverAddress().observe(getActivity(), s -> inputAddress.setText(s));
         setupInputAddress();
@@ -90,9 +90,8 @@ public class AssetSendFragment extends BaseFragment {
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 boolean isValidAddress = false;
                 try {
-                    NativeDataHelper.isValidAddress(charSequence.toString(),
-                            NativeDataHelper.Blockchain.BTC.getValue(),
-                            NativeDataHelper.NetworkId.TEST_NET.getValue());
+                    NativeDataHelper.isValidAddress(charSequence.toString(), viewModel.getWallet().getCurrencyId(),
+                            viewModel.getWallet().getNetworkId());
                     isValidAddress = true;
                 } catch (JniException e) {
                     //TODO replace these lines with boolean isValidAddress = NativeDataHelper.isAddressValid(address); instead of try catch and code spaming.
@@ -154,6 +153,11 @@ public class AssetSendFragment extends BaseFragment {
         if (getActivity().getIntent().hasCategory(Constants.EXTRA_SENDER_ADDRESS)) {
             RealmManager.getAssetsDao().getWalletById(getActivity().getIntent().getLongExtra(Constants.EXTRA_WALLET_ID, 0));
             ((AssetSendActivity) getActivity()).setFragment(R.string.transaction_fee, R.id.container, TransactionFeeFragment.newInstance());
+            if (viewModel.getWallet().getCurrencyId() == NativeDataHelper.Blockchain.BTC.getValue()) {
+                ((AssetSendActivity) getActivity()).setFragment(R.string.transaction_fee, R.id.container, TransactionFeeFragment.newInstance());
+            } else if (viewModel.getWallet().getCurrencyId() == NativeDataHelper.Blockchain.ETH.getValue()) {
+                ((AssetSendActivity) getActivity()).setFragment(R.string.transaction_fee, R.id.container, EthTransactionFeeFragment.newInstance());
+            }
         }
     }
 }

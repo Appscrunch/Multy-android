@@ -21,6 +21,7 @@ public class Constants {
     public static final String BASE_URL = "https://stage.multy.io/";  // Special for Jack Bolt!
 
     public static final String DONTAION_ADDRESS = "mzqiDnETWkunRDZxjUQ34JzN1LDevh5DpU";
+    public static final String DONTAION_ADDRESS_TESTNET = "mnUtMQcs3s8kSkSRXpREVtJamgUCWpcFj4";
 
     public static final int ANDROID_OS_ID = 1;
 
@@ -59,8 +60,11 @@ public class Constants {
     public static final String PREF_IS_PUSH_ENABLED = "PREF_IS_PUSH_ENABLED";
 
     public static final int REQUEST_CODE_SET_CHAIN = 560;
+    public static final int REQUEST_CODE_SET_GAS = 560;
     public static final String CHAIN_NAME = "chain_name";
     public static final String CHAIN_NET = "chain_net";
+    public static final String GAS_PRICE = "gas_price";
+    public static final String GAS_LIMIT = "gas_limit";
 
     public static final int CAMERA_REQUEST_CODE = 328;
     public static final String EXTRA_QR_CONTENTS = "EXTRA_QR_CONTENTS";
@@ -103,6 +107,7 @@ public class Constants {
     public static final String PUSH_TOPIC = "btcTransactionUpdate-";
     public static final String MULTY_IO_URL = "http://multy.io";
     public static final String CHAIN_ID = "CHAIN_ID";
+    public static final String FEATURE_ID = "FEATURE_ID";
 
     public static final int DONATE_WITH_TRANSACTION = 10000;
     public static final int DONATE_ADDING_ACTIVITY = 10200;

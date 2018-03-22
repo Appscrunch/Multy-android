@@ -97,6 +97,7 @@
     <string name="btc_adddresses">BTC Addresses</string>
     <string name="addresses">Addresses</string>
     <string name="eth">ETH</string>
+    <string name="tokens">Tokens</string>
     <string name="create">Create</string>
     <string name="reference_currency">Reference currency</string>
     <string name="create_wallet">Create Wallet</string>
@@ -252,5 +253,8 @@
     <string name="core_new_line">Core:\n</string>
     <string name="version_title">Multy Ctypto Wallet v</string>
     <string name="environment_new_line">Environment:\n </string>
+    <string name="gas_price">GAS Price</string>
+    <string name="gas_limit">GAS Limit</string>
+    <string name="percent_0">0%</string>
 
 </resources>
