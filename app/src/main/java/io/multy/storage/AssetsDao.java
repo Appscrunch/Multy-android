@@ -52,6 +52,8 @@ public class AssetsDao {
         savedWallet.setIndex(index);
         savedWallet.setWalletName(name);
         savedWallet.setBalance(balance);
+        savedWallet.setNetworkId(wallet.getNetworkId());
+        savedWallet.setCurrencyId(wallet.getCurrencyId());
 
         if (wallet.getCurrencyId() == NativeDataHelper.Blockchain.BTC.getValue()) {
             savedWallet.setBtcWallet(wallet.getBtcWallet().asRealmObject(realm));

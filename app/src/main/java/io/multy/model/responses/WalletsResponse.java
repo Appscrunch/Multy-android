@@ -42,6 +42,15 @@ public class WalletsResponse {
         return 0;
     }
 
+    public int getEthTopWalletIndex() {
+        for (TopIndex topIndex : topIndexes) {
+            if (topIndex.getCurrencyId() == NativeDataHelper.Blockchain.ETH.getValue()) {
+                return topIndex.getTopWalletIndex();
+            }
+        }
+        return 0;
+    }
+
     public int getCode() {
         return code;
     }
