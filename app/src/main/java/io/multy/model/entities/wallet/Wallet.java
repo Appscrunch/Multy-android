@@ -15,6 +15,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -79,6 +80,17 @@ public class Wallet extends RealmObject implements WalletBalanceInterface {
         return addresses.get(addresses.size() - 1);
     }
 
+    public List<WalletAddress> getAddresses() {
+        switch (NativeDataHelper.Blockchain.valueOf(currencyId)) {
+            case BTC:
+                return getBtcWallet().getAddresses();
+            case ETH:
+                return getEthWallet().getAddresses();
+        }
+
+        return new ArrayList<>();
+    }
+
     @Override
     public String getBalanceLabel() {
         switch (NativeDataHelper.Blockchain.valueOf(currencyId)) {
@@ -97,11 +109,17 @@ public class Wallet extends RealmObject implements WalletBalanceInterface {
         //TODO support different fiat currencies here
         switch (NativeDataHelper.Blockchain.valueOf(currencyId)) {
             case BTC:
-                return String.valueOf(convertBalance(BtcWallet.DIVISOR).doubleValue() * currenciesRate.getBtcToUsd()); //convert from satoshi
+                return String.valueOf(convertBalance(BtcWallet.DIVISOR).doubleValue() * currenciesRate.getBtcToUsd() + getFiatString()); //convert from satoshi
             case ETH:
-                return String.valueOf(convertBalance(EthWallet.DIVISOR).doubleValue() * currenciesRate.getEthToUsd()); //convert from wev
+                return String.valueOf(convertBalance(EthWallet.DIVISOR).doubleValue() * currenciesRate.getEthToUsd() + getFiatString()); //convert from wev
             default:
                 return "unsupported";
+        }
+    }
+
+    public String getFiatString() {
+        switch (fiatId) {
+            default: return "$";
         }
     }
 

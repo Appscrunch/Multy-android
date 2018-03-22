@@ -154,8 +154,7 @@ public class AssetRequestViewModel extends BaseViewModel {
     }
 
     public String getWalletAddress() {
-        List<WalletAddress> addresses = wallet.getBtcWallet().getAddresses();
-        return addresses.isEmpty() ? wallet.getCreationAddress() : addresses.get(addresses.size() - 1).getAddress();
+        return wallet.getActiveAddress().getAddress();
     }
 
     public int getChainId() {

@@ -1,5 +1,6 @@
 package io.multy.ui.fragments.asset;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -49,6 +50,7 @@ import io.multy.ui.fragments.AddressesFragment;
 import io.multy.ui.fragments.BaseFragment;
 import io.multy.util.Constants;
 import io.multy.util.CryptoFormatUtils;
+import io.multy.util.NativeDataHelper;
 import io.multy.util.analytics.Analytics;
 import io.multy.util.analytics.AnalyticsConstants;
 import io.multy.viewmodels.WalletViewModel;
@@ -90,6 +92,8 @@ public class AssetInfoFragment extends BaseFragment implements AppBarLayout.OnOf
     AppBarLayout appBarLayout;
     @BindView(R.id.container_info)
     View containerInfo;
+    @BindView(R.id.card_addresses)
+    View containerAddresses;
 
     private WalletViewModel viewModel;
     private final static DecimalFormat format = new DecimalFormat("#.##");
@@ -125,7 +129,7 @@ public class AssetInfoFragment extends BaseFragment implements AppBarLayout.OnOf
         });
 
         Wallet wallet = viewModel.getWallet(getActivity().getIntent().getLongExtra(Constants.EXTRA_WALLET_ID, 0));
-        viewModel.getWalletLive().observe(this, this::setupWalletInfo);
+        viewModel.getWalletLive().observe(this, wallet1 -> AssetInfoFragment.this.setupWalletInfo(wallet1));
         viewModel.getWalletLive().setValue(wallet);
         Analytics.getInstance(getActivity()).logWalletLaunch(AnalyticsConstants.WALLET_SCREEN, viewModel.getChainId());
         return view;
@@ -138,6 +142,7 @@ public class AssetInfoFragment extends BaseFragment implements AppBarLayout.OnOf
         final int walletIndex = viewModel.getWalletLive().getValue().getIndex();
         final int currencyId = viewModel.getWalletLive().getValue().getCurrencyId();
         final int networkId = viewModel.getWalletLive().getValue().getNetworkId();
+        final long walletId = viewModel.getWalletLive().getValue().getId();
 
         MultyApi.INSTANCE.getWalletVerbose(walletIndex, currencyId, networkId).enqueue(new Callback<SingleWalletResponse>() {
             @Override
@@ -146,11 +151,12 @@ public class AssetInfoFragment extends BaseFragment implements AppBarLayout.OnOf
                 if (response.isSuccessful() && response.body().getWallets() != null && response.body().getWallets().size() > 0) {
                     AssetsDao assetsDao = RealmManager.getAssetsDao();
                     assetsDao.saveWallet(response.body().getWallets().get(0));
-                    viewModel.wallet.postValue(assetsDao.getWalletById(walletIndex));
+                    viewModel.wallet.postValue(assetsDao.getWalletById(walletId));
                 }
 
                 updateBalanceViews();
-                requestTransactions();
+                Wallet wallet = viewModel.wallet.getValue();
+                requestTransactions(wallet.getCurrencyId(), wallet.getNetworkId(), wallet.getIndex());
             }
 
             @Override
@@ -235,10 +241,13 @@ public class AssetInfoFragment extends BaseFragment implements AppBarLayout.OnOf
 
     private void setupWalletInfo(Wallet wallet) {
         initialize();
-        requestTransactions();
+        requestTransactions(wallet.getCurrencyId(), wallet.getNetworkId(), wallet.getIndex());
 
         textWalletName.setText(wallet.getWalletName());
         textAddress.setText(wallet.getActiveAddress().getAddress()); //need test this so don't remove commented code below
+
+        containerAddresses.setVisibility(viewModel.wallet.getValue().getCurrencyId() != NativeDataHelper.Blockchain.BTC.getValue() ?
+                View.GONE : View.VISIBLE);
 
 //        if (wallet.getAddresses() != null && !wallet.getAddresses().isEmpty()) {
 //            textAddress.setText(wallet.getAddresses().get(wallet.getAddresses().size() - 1).getAddress());
@@ -281,8 +290,8 @@ public class AssetInfoFragment extends BaseFragment implements AppBarLayout.OnOf
         containerAvailableBalance.setVisibility(View.GONE);
     }
 
-    private void requestTransactions() {
-        viewModel.getTransactionsHistory().observe(this, transactions -> {
+    private void requestTransactions(final int currencyId, final int networkId, final int walletIndex) {
+        viewModel.getTransactionsHistory(currencyId, networkId, walletIndex).observe(this, transactions -> {
             if (transactions != null && !transactions.isEmpty()) {
                 try {
                     transactionsAdapter.setTransactions(transactions);
@@ -301,8 +310,7 @@ public class AssetInfoFragment extends BaseFragment implements AppBarLayout.OnOf
     }
 
     private String getAddressToShare() {
-        RealmList<WalletAddress> addresses = viewModel.wallet.getValue().getBtcWallet().getAddresses();
-        return addresses.get(addresses.size() - 1).getAddress();
+        return viewModel.wallet.getValue().getActiveAddress().getAddress();
     }
 
     @OnClick(R.id.options)
@@ -382,7 +390,6 @@ public class AssetInfoFragment extends BaseFragment implements AppBarLayout.OnOf
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onTransactionUpdateEvent(TransactionUpdateEvent event) {
-        Log.i(TAG, "transaction update event called");
         refreshWallet();
     }
 

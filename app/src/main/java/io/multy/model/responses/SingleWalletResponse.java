@@ -6,6 +6,7 @@
 
 package io.multy.model.responses;
 
+import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.List;
 import io.multy.model.entities.wallet.Wallet;
 import io.multy.model.entities.wallet.WalletRealmObject;
 import io.multy.util.NativeDataHelper;
+import io.multy.util.WalletDeserializer;
 
 public class SingleWalletResponse {
 
@@ -21,6 +23,7 @@ public class SingleWalletResponse {
     private int code;
     @SerializedName("message")
     private String message;
+    @JsonAdapter(WalletDeserializer.class)
     @SerializedName("wallet")
     private List<Wallet> wallets;
 

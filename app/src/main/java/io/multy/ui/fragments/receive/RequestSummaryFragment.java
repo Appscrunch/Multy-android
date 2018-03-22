@@ -118,15 +118,8 @@ public class RequestSummaryFragment extends BaseFragment {
 
         textAddress.setText(viewModel.getWalletAddress());
         textWalletName.setText(viewModel.getWallet().getWalletName());
-
-        BigInteger balance = viewModel.getWallet().getBalanceNumeric();
-        long pending = viewModel.getWallet().getPendingBalance().longValue();
-        final double pendingBalance = pending / Math.pow(10, 8);
-
-        textBalanceCurrency.setText(pending == 0 ? "0.0$" : NumberFormatter.getFiatInstance().format(viewModel.getExchangePrice() * pendingBalance) + " USD");
-        textBalanceOriginal.setText(pending != 0 ? CryptoFormatUtils.satoshiToBtc(pending) : String.valueOf(pending));
-        textBalanceOriginal.append(Constants.SPACE);
-        textBalanceOriginal.append(CurrencyCode.BTC.name());
+        textBalanceCurrency.setText(viewModel.getWallet().getFiatBalanceLabel());
+        textBalanceOriginal.setText(viewModel.getWallet().getBalanceLabel());
 
         if (viewModel.getAmount() != zero) {
             setBalance();

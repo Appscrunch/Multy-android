@@ -7,6 +7,7 @@
 package io.multy.storage;
 
 import java.util.List;
+import java.util.Objects;
 
 import io.multy.model.entities.wallet.BtcWallet;
 import io.multy.model.entities.wallet.RecentAddress;
@@ -45,10 +46,7 @@ public class AssetsDao {
         final String name = wallet.getWalletName();
         final String balance = wallet.getBalance();
 
-        Wallet savedWallet = getWalletById(wallet.getId());
-        if (savedWallet == null) {
-            savedWallet = new Wallet();
-        }
+        Wallet savedWallet = new Wallet();
         savedWallet.setDateOfCreation(wallet.getDateOfCreation());
         savedWallet.setLastActionTime(wallet.getLastActionTime());
         savedWallet.setIndex(index);
@@ -58,10 +56,10 @@ public class AssetsDao {
         savedWallet.setCurrencyId(wallet.getCurrencyId());
 
         if (wallet.getCurrencyId() == NativeDataHelper.Blockchain.BTC.getValue()) {
-            savedWallet.setBtcWallet(wallet.getBtcWallet().asRealmObject(realm));
+            savedWallet.setBtcWallet(Objects.requireNonNull(wallet.getBtcWallet()).asRealmObject(realm));
         } else {
             //consider ETH here. will switch
-            savedWallet.setEthWallet(wallet.getEthWallet().asRealmObject(realm));
+            savedWallet.setEthWallet(Objects.requireNonNull(wallet.getEthWallet()).asRealmObject(realm));
         }
 
         realm.insertOrUpdate(savedWallet);

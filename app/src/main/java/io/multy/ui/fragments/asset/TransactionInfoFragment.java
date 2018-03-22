@@ -115,7 +115,8 @@ public class TransactionInfoFragment extends BaseFragment {
         return fragment;
     }
 
-    public TransactionInfoFragment() {}
+    public TransactionInfoFragment() {
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -153,17 +154,22 @@ public class TransactionInfoFragment extends BaseFragment {
     }
 
     private void loadData() {
-        viewModel.getWalletLive().observe(this, walletRealmObject -> {
-            if (walletRealmObject != null) {
-                toolbarWalletName.setText(walletRealmObject.getWalletName());
-                for (WalletAddress address : walletRealmObject.getBtcWallet().getAddresses()) {
+        viewModel.getWalletLive().observe(this, wallet -> {
+            if (wallet != null) {
+                toolbarWalletName.setText(wallet.getWalletName());
+                for (WalletAddress address : wallet.getBtcWallet().getAddresses()) {
                     if (!walletAddresses.contains(address.getAddress())) {
                         walletAddresses.add(address.getAddress());
                     }
                 }
+                loadTransactionHistory(wallet.getCurrencyId(), wallet.getNetworkId(), wallet.getIndex());
             }
         });
-        viewModel.getTransactionsHistory().observe(this, transactionHistories -> {
+
+    }
+
+    private void loadTransactionHistory(final int currencyId, final int networkId, final int walletIndex) {
+        viewModel.getTransactionsHistory(currencyId, networkId, walletIndex).observe(this, transactionHistories -> {
             if (transactionHistories == null || transactionHistories.size() == 0) {
                 return;
             } else if (transaction != null) {
