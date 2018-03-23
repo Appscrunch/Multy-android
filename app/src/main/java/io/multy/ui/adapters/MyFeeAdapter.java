@@ -26,12 +26,6 @@ import io.reactivex.annotations.Nullable;
 
 public class MyFeeAdapter extends RecyclerView.Adapter<MyFeeAdapter.FeeHolder> {
 
-    public interface OnCustomFeeClickListener {
-        void onClickCustomFee(long currentValue);
-
-        void logTransactionFee(int position);
-    }
-
     private ArrayList<Fee> rates;
     private OnCustomFeeClickListener listener;
 
@@ -145,5 +139,10 @@ public class MyFeeAdapter extends RecyclerView.Adapter<MyFeeAdapter.FeeHolder> {
             setIsRecyclable(false);
             ButterKnife.bind(this, itemView);
         }
+    }
+
+    public interface OnCustomFeeClickListener {
+        void onClickCustomFee(long currentValue);
+        void logTransactionFee(int position);
     }
 }

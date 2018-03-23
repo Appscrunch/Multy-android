@@ -63,6 +63,8 @@ public class DonationFragment extends BaseFragment {
 
     private final static String ARG_WALLET_ID = "wallet_id";
     private final static String ARG_DONATION_CODE = "donation_code";
+    public static final String TAG_SEND_SUCCESS = DonationFragment.class.getSimpleName();
+
 
     @BindView(R.id.scroll_view)
     ScrollView scrollView;
@@ -107,6 +109,10 @@ public class DonationFragment extends BaseFragment {
         pickWallet(getArguments().getLong(ARG_WALLET_ID));
         setupInput();
         requestRates();
+
+        Analytics.getInstance(getContext()).logDonationSendLaunch(getArguments() == null ?
+                0 : getArguments().getInt(ARG_DONATION_CODE, 0));
+
         return convertView;
     }
 
@@ -245,7 +251,13 @@ public class DonationFragment extends BaseFragment {
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     if (response.isSuccessful()) {
                         viewModel.isLoading.postValue(false);
-                        new CompleteDialogFragment().show(getActivity().getSupportFragmentManager(), "");
+                        CompleteDialogFragment completeDialog = new CompleteDialogFragment();
+                        if (getArguments() != null) {
+                            Bundle donateArgs = new Bundle();
+                            donateArgs.putInt(Constants.FEATURE_ID, getArguments().getInt(ARG_DONATION_CODE, 0));
+                            completeDialog.setArguments(donateArgs);
+                        }
+                        completeDialog.show(getActivity().getSupportFragmentManager(), TAG_SEND_SUCCESS);
                     } else {
                         Analytics.getInstance(getActivity()).logError(AnalyticsConstants.ERROR_TRANSACTION_API);
                         showError();
@@ -279,12 +291,19 @@ public class DonationFragment extends BaseFragment {
     void onClickSend(View view) {
 //        new CompleteDialogFragment().show(getActivity().getSupportFragmentManager(), "");
         view.setEnabled(false);
-        //todo: if wallet is on testnet then address for donate should be "mnUtMQcs3s8kSkSRXpREVtJamgUCWpcFj4"
-        String addressForDonate = RealmManager.getSettingsDao()
-                .getDonationAddress(getArguments().getInt(ARG_DONATION_CODE, 0));
+        //if wallet is on testnet then address for donate should be "mnUtMQcs3s8kSkSRXpREVtJamgUCWpcFj4"
+        String addressForDonate;
+        if (wallet.getNetworkId() == NativeDataHelper.NetworkId.TEST_NET.getValue()) {
+            addressForDonate = Constants.DONTAION_ADDRESS_TESTNET;
+        } else {
+            addressForDonate = RealmManager.getSettingsDao()
+                    .getDonationAddress(getArguments().getInt(ARG_DONATION_CODE, 0));
+        }
         if (addressForDonate != null) {
             sendTransaction(addressForDonate);
         }
+        Analytics.getInstance(view.getContext()).logDonationSendDonateClick(getArguments() == null ?
+                0 : getArguments().getInt(ARG_DONATION_CODE, 0));
     }
 
     @OnClick(R.id.button_wallet)

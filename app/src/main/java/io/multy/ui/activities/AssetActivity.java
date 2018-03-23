@@ -20,13 +20,13 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.multy.R;
 import io.multy.model.entities.wallet.Wallet;
-import io.multy.model.entities.wallet.WalletRealmObject;
-import io.multy.storage.RealmManager;
 import io.multy.ui.fragments.AddressesFragment;
 import io.multy.ui.fragments.asset.AssetInfoFragment;
+import io.multy.ui.fragments.asset.EthAssetInfoFragment;
 import io.multy.ui.fragments.asset.TransactionInfoFragment;
 import io.multy.ui.fragments.dialogs.DonateDialog;
 import io.multy.util.Constants;
+import io.multy.util.NativeDataHelper;
 import io.multy.util.analytics.Analytics;
 import io.multy.util.analytics.AnalyticsConstants;
 import io.multy.viewmodels.WalletViewModel;
@@ -49,7 +49,12 @@ public class AssetActivity extends BaseActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
-        setFragment(R.id.frame_container, AssetInfoFragment.newInstance());
+        Wallet wallet = viewModel.getWallet(getIntent().getLongExtra(Constants.EXTRA_WALLET_ID, 0));
+        if (wallet.getCurrencyId() == NativeDataHelper.Blockchain.BTC.getValue()) {
+            setFragment(R.id.frame_container, AssetInfoFragment.newInstance());
+        } else if (wallet.getCurrencyId() == NativeDataHelper.Blockchain.ETH.getValue()) {
+            setFragment(R.id.frame_container, EthAssetInfoFragment.newInstance());
+        }
     }
 
     @Override
