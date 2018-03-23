@@ -53,7 +53,7 @@ public class AssetsDao {
         savedWallet.setCurrencyId(wallet.getCurrencyId());
 
         if (wallet.getCurrencyId() == NativeDataHelper.Blockchain.BTC.getValue()) {
-            savedWallet.setBtcWallet(Objects.requireNonNull(wallet.getBtcWallet()).asRealmObject(realm));
+            savedWallet.setBtcWallet(wallet.getBtcWallet().asRealmObject(realm));
             savedWallet.setBalance(String.valueOf(savedWallet.getBtcWallet().calculateBalance()));
             savedWallet.setAvailableBalance(String.valueOf(savedWallet.getBtcWallet().calculateAvailableBalance()));
         } else {

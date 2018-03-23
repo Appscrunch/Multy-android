@@ -114,7 +114,7 @@ public class WalletViewModel extends BaseViewModel {
             }
 
             final int topIndex = blockChainId == NativeDataHelper.Blockchain.BTC.getValue() ?
-                    Prefs.getInt(Constants.PREF_WALLET_TOP_INDEX_BTC, 0) : Prefs.getInt(Constants.PREF_WALLET_TOP_INDEX_ETH, 0);
+                    Prefs.getInt(Constants.PREF_WALLET_TOP_INDEX_BTC + networkId, 0) : Prefs.getInt(Constants.PREF_WALLET_TOP_INDEX_ETH + networkId, 0);
 
 //            if (!Prefs.getBoolean(Constants.PREF_APP_INITIALIZED)) {
 //                FirstLaunchHelper.setCredentials("");

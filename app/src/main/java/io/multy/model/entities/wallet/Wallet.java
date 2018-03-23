@@ -117,6 +117,7 @@ public class Wallet extends RealmObject implements WalletBalanceInterface {
 
     @Override
     public String getFiatBalanceLabel() {
+        RealmManager.open();
         CurrenciesRate currenciesRate = RealmManager.getSettingsDao().getCurrenciesRate();
         //TODO support different fiat currencies here
         switch (NativeDataHelper.Blockchain.valueOf(currencyId)) {

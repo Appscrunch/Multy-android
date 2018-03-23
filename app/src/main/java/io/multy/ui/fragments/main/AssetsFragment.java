@@ -184,8 +184,8 @@ public class AssetsFragment extends BaseFragment implements MyWalletsAdapter.OnW
             public void onResponse(@NonNull Call<WalletsResponse> call, @NonNull Response<WalletsResponse> response) {
                 if (response.body() != null) {
                     //TODO COMPARE WALLET CURRENCY ID AND TOP INDEX CURRENCY ID
-                    Prefs.putInt(Constants.PREF_WALLET_TOP_INDEX_BTC, response.body().getBtcTopWalletIndex());
-                    Prefs.putInt(Constants.PREF_WALLET_TOP_INDEX_ETH, response.body().getEthTopWalletIndex());
+                    response.body().saveBtcTopWalletIndex();
+                    response.body().saveEthTopWalletIndex();
                     AssetsDao assetsDao = RealmManager.getAssetsDao();
                     if (response.body().getWallets() != null && response.body().getWallets().size() != 0) {
                         assetsDao.deleteAll();

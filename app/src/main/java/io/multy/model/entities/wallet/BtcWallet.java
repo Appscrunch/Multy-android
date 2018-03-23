@@ -67,24 +67,25 @@ public class BtcWallet extends RealmObject {
     public long calculateBalance() {
         long calculatedBalance = 0;
         for (WalletAddress walletAddress : addresses) {
-            if (walletAddress.getOutputs() != null) {
-                for (Output output : walletAddress.getOutputs()) {
-                    switch (output.getStatus()) {
-                        case Constants.TX_IN_BLOCK_INCOMING:
-                            calculatedBalance += Long.valueOf(output.getTxOutAmount());
-                            break;
-                        case Constants.TX_IN_BLOCK_OUTCOMING:
-                            calculatedBalance -= Long.valueOf(output.getTxOutAmount());
-                            break;
-                        case Constants.TX_CONFIRMED_INCOMING:
-                            calculatedBalance += Long.valueOf(output.getTxOutAmount());
-                            break;
-                        case Constants.TX_CONFIRMED_OUTCOMING:
-                            calculatedBalance -= Long.valueOf(output.getTxOutAmount());
-                            break;
-                    }
-                }
-            }
+            calculatedBalance += walletAddress.getAmount();
+//            if (walletAddress.getOutputs() != null) {
+//                for (Output output : walletAddress.getOutputs()) {
+//                    switch (output.getStatus()) {
+//                        case Constants.TX_IN_BLOCK_INCOMING:
+//                            calculatedBalance += Long.valueOf(output.getTxOutAmount());
+//                            break;
+//                        case Constants.TX_IN_BLOCK_OUTCOMING:
+//                            calculatedBalance -= Long.valueOf(output.getTxOutAmount());
+//                            break;
+//                        case Constants.TX_CONFIRMED_INCOMING:
+//                            calculatedBalance += Long.valueOf(output.getTxOutAmount());
+//                            break;
+//                        case Constants.TX_CONFIRMED_OUTCOMING:
+//                            calculatedBalance -= Long.valueOf(output.getTxOutAmount());
+//                            break;
+//                    }
+//                }
+//            }
         }
 
         return calculatedBalance;
