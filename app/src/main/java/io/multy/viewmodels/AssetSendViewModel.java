@@ -9,8 +9,6 @@ package io.multy.viewmodels;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.Handler;
 
-import com.samwolfand.oneprefs.Prefs;
-
 import io.multy.Multy;
 import io.multy.R;
 import io.multy.api.MultyApi;
@@ -125,9 +123,9 @@ public class AssetSendViewModel extends BaseViewModel {
         isAmountScanned = amountScanned;
     }
 
-    public void requestFeeRates(int currencyId) {
-        isLoading.setValue(true);
-        MultyApi.INSTANCE.getFeeRates(currencyId).enqueue(new Callback<FeeRateResponse>() {
+    public void requestFeeRates(int currencyId, int networkId) {
+        isLoading.postValue(true);
+        MultyApi.INSTANCE.getFeeRates(currencyId, networkId).enqueue(new Callback<FeeRateResponse>() {
             @Override
             public void onResponse(Call<FeeRateResponse> call, Response<FeeRateResponse> response) {
                 isLoading.postValue(false);
@@ -171,13 +169,17 @@ public class AssetSendViewModel extends BaseViewModel {
         }
 
         if (donationAddress == null) {
-            donationAddress = Prefs.getString(Constants.PREF_DONATE_ADDRESS_BTC);
+            if (getWallet().getNetworkId() == NativeDataHelper.NetworkId.MAIN_NET.getValue()) {
+                donationAddress = RealmManager.getSettingsDao().getDonationAddress(Constants.DONATE_WITH_TRANSACTION);
+            } else {
+                donationAddress = Constants.DONTAION_ADDRESS_TESTNET;
+            }
         }
 
         handler.postDelayed(() -> {
             try {
                 //important notice - native makeTransaction() method will update UI automatically with correct transaction price
-                byte[] transactionHex = NativeDataHelper.makeTransaction(
+                byte[] transactionHex = NativeDataHelper.makeTransaction(getWallet().getId(), getWallet().getNetworkId(),
                         seed, walletIndex, String.valueOf(amount),
                         String.valueOf(getFee().getAmount()), getDonationSatoshi(),
                         getReceiverAddress().getValue(), changeAddress, donationAddress, false);
@@ -190,7 +192,7 @@ public class AssetSendViewModel extends BaseViewModel {
 
     public void signTransaction() {
         try {
-            byte[] transactionHex = NativeDataHelper.makeTransaction(
+            byte[] transactionHex = NativeDataHelper.makeTransaction(getWallet().getId(), getWallet().getNetworkId(),
                     seed, getWallet().getIndex(), String.valueOf(CryptoFormatUtils.btcToSatoshi(String.valueOf(String.valueOf(amount)))),
                     String.valueOf(getFee().getAmount()), getDonationSatoshi(),
                     getReceiverAddress().getValue(), changeAddress, donationAddress, isPayForCommission);
@@ -201,7 +203,7 @@ public class AssetSendViewModel extends BaseViewModel {
     }
 
     /**
-     * this methohd will be called from JNI automatically while makeTransaction is processing
+     * this method will be called from JNI automatically while makeTransaction is processing
      *
      * @param amount transactionPrice.
      */

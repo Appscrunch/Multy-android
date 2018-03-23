@@ -172,7 +172,7 @@ public class DonationFragment extends BaseFragment {
 
     private void requestRates() {
         viewModel.isLoading.postValue(true);
-        MultyApi.INSTANCE.getFeeRates(NativeDataHelper.Blockchain.BTC.getValue()).enqueue(new Callback<FeeRateResponse>() {
+        MultyApi.INSTANCE.getFeeRates(wallet.getCurrencyId(), wallet.getNetworkId()).enqueue(new Callback<FeeRateResponse>() {
             @Override
             public void onResponse(Call<FeeRateResponse> call, Response<FeeRateResponse> response) {
                 if (response.isSuccessful()) {
@@ -240,9 +240,9 @@ public class DonationFragment extends BaseFragment {
 
         try {
             final String changeAddress = NativeDataHelper.makeAccountAddress(seed, wallet.getIndex(), addressesSize,
-                    NativeDataHelper.Blockchain.BTC.getValue(),
-                    NativeDataHelper.NetworkId.TEST_NET.getValue());
-            byte[] transactionHex = NativeDataHelper.makeTransaction(seed, wallet.getIndex(), amount,
+                    wallet.getCurrencyId(),
+                    wallet.getNetworkId());
+            byte[] transactionHex = NativeDataHelper.makeTransaction(wallet.getId(), wallet.getNetworkId(), seed, wallet.getIndex(), amount,
                     fee, "0", receiverAddress, changeAddress, donationAddress, false);
 
             MultyApi.INSTANCE.sendHdTransaction(new HdTransactionRequestEntity(wallet.getCurrencyId(), wallet.getNetworkId(),

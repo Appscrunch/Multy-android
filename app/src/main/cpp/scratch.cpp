@@ -99,7 +99,7 @@ void throw_java_exception(JNIEnv *env, const Error &error) {
         ErrorPtr error(statement);                                                                  \
         if (error)                                                                                  \
         {                                                                                           \
-            __android_log_print(ANDROID_LOG_INFO, "Multy-core error", "In file %s, \n in line: %d ", error->location.file , error->location.line );    \
+            __android_log_print(ANDROID_LOG_INFO, "Multy-core error", "In file %s, \n in line: %d, jni : %d ", error->location.file , error->location.line, __LINE__ );    \
             throw_java_exception(env, *error);                                                      \
             return (0);                                                                         \
         }                                                                                           \
@@ -279,7 +279,8 @@ Java_io_multy_util_NativeDataHelper_getMyPrivateKey(JNIEnv *env, jclass type_, j
 }
 
 JNIEXPORT jbyteArray JNICALL
-Java_io_multy_util_NativeDataHelper_makeTransaction(JNIEnv *jniEnv, jobject obj, jbyteArray jSeed,
+Java_io_multy_util_NativeDataHelper_makeTransaction(JNIEnv *jniEnv, jobject obj, jlong jWalletId,
+                                                    jint jNetworkId, jbyteArray jSeed,
                                                     jint jWalletIndex, jstring amountToSpend,
                                                     jstring jFeePerByte, jstring jDonation,
                                                     jstring jDestinationAddress,
@@ -295,8 +296,8 @@ Java_io_multy_util_NativeDataHelper_makeTransaction(JNIEnv *jniEnv, jobject obj,
     env->GetByteArrayRegion(jSeed, 0, len, reinterpret_cast<jbyte *>(seedBuf));
 
     jclass jTransaction = env->FindClass("io/multy/util/SendTransactionModel");
-    jmethodID jMethodInit = env->GetMethodID(jTransaction, "<init>", "(ILjava/lang/String;)V");
-    jobject jObjectTransaction = env->NewObject(jTransaction, jMethodInit, jWalletIndex,
+    jmethodID jMethodInit = env->GetMethodID(jTransaction, "<init>", "(JLjava/lang/String;)V");
+    jobject jObjectTransaction = env->NewObject(jTransaction, jMethodInit, jWalletId,
                                                 amountToSpend);
 
     jmethodID jMidSetup = env->GetMethodID(jTransaction, "setupFields", "(I)V");
@@ -318,7 +319,7 @@ Java_io_multy_util_NativeDataHelper_makeTransaction(JNIEnv *jniEnv, jobject obj,
     HDAccountPtr hdAccount;
     HANDLE_ERROR(
             make_hd_account(rootKey.get(),
-                            BlockchainType{BLOCKCHAIN_BITCOIN, BLOCKCHAIN_NET_TYPE_TESTNET},
+                            BlockchainType{BLOCKCHAIN_BITCOIN, (BlockchainNetType) jNetworkId},
                             jWalletIndex, reset_sp(hdAccount)));
 
     AccountPtr baseAccount;
@@ -336,6 +337,10 @@ Java_io_multy_util_NativeDataHelper_makeTransaction(JNIEnv *jniEnv, jobject obj,
     const char *destinationAmountStr = env->GetStringUTFChars(amountToSpend, nullptr);
     const char *changeAddressStr = env->GetStringUTFChars(jChangeAddress, nullptr);
     const char *donationAddressStr = env->GetStringUTFChars(jDonationAddress, nullptr);
+
+    __android_log_print(ANDROID_LOG_INFO, "receiver address", "%s", destinationAddressStr);
+    __android_log_print(ANDROID_LOG_INFO, "change address", "%s", changeAddressStr);
+    __android_log_print(ANDROID_LOG_INFO, "change address", "%s", jDonationAddress);
 
     BigInt destinationAmount(destinationAmountStr);
     const BigInt feePerByte(feePerByteStr);

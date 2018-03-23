@@ -23,6 +23,7 @@ import io.multy.R;
 import io.multy.api.socket.CurrenciesRate;
 import io.multy.storage.RealmManager;
 import io.multy.util.NativeDataHelper;
+import io.multy.util.NumberFormatter;
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -95,7 +96,18 @@ public class Wallet extends RealmObject implements WalletBalanceInterface {
     public String getBalanceLabel() {
         switch (NativeDataHelper.Blockchain.valueOf(currencyId)) {
             case BTC:
-                return convertBalance(BtcWallet.DIVISOR) + " BTC"; // not sure this is good decision //TODO investigate
+                return getBtcDoubleValue() + " BTC";
+            case ETH:
+                return convertBalance(EthWallet.DIVISOR) + " ETH";
+            default:
+                return "unsupported";
+        }
+    }
+
+    public String getAvailableBalanceLabel() {
+        switch (NativeDataHelper.Blockchain.valueOf(currencyId)) {
+            case BTC:
+                return getBtcAvailableDoubleValue() + " BTC";
             case ETH:
                 return convertBalance(EthWallet.DIVISOR) + " ETH";
             default:
@@ -109,7 +121,7 @@ public class Wallet extends RealmObject implements WalletBalanceInterface {
         //TODO support different fiat currencies here
         switch (NativeDataHelper.Blockchain.valueOf(currencyId)) {
             case BTC:
-                return String.valueOf(convertBalance(BtcWallet.DIVISOR).doubleValue() * currenciesRate.getBtcToUsd() + getFiatString()); //convert from satoshi
+                return String.valueOf(NumberFormatter.getFiatInstance().format(getBtcDoubleValue() * currenciesRate.getBtcToUsd()) + getFiatString()); //convert from satoshi
             case ETH:
                 return String.valueOf(convertBalance(EthWallet.DIVISOR).doubleValue() * currenciesRate.getEthToUsd() + getFiatString()); //convert from wev
             default:
@@ -117,9 +129,31 @@ public class Wallet extends RealmObject implements WalletBalanceInterface {
         }
     }
 
+    public String getAvailableFiatBalanceLabel() {
+        CurrenciesRate currenciesRate = RealmManager.getSettingsDao().getCurrenciesRate();
+        //TODO support different fiat currencies here
+        switch (NativeDataHelper.Blockchain.valueOf(currencyId)) {
+            case BTC:
+                return String.valueOf(NumberFormatter.getFiatInstance().format(getBtcAvailableDoubleValue() * currenciesRate.getBtcToUsd()) + getFiatString()); //convert from satoshi
+            case ETH:
+                return String.valueOf(convertBalance(EthWallet.DIVISOR).doubleValue() * currenciesRate.getEthToUsd() + getFiatString()); //convert from wev
+            default:
+                return "unsupported";
+        }
+    }
+
+    public double getBtcDoubleValue() {
+        return balance.equals("0") ? 0 : (getBalanceNumeric().longValue() / BtcWallet.DIVISOR.doubleValue());
+    }
+
+    public double getBtcAvailableDoubleValue() {
+        return availableBalance.equals("0") ? 0 : (getBalanceNumeric().longValue() / BtcWallet.DIVISOR.doubleValue());
+    }
+
     public String getFiatString() {
         switch (fiatId) {
-            default: return "$";
+            default:
+                return "$";
         }
     }
 

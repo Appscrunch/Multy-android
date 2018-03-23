@@ -42,8 +42,8 @@ public interface ApiServiceInterface {
     @POST("api/v1/gettransactioninfo/{id}")
     Call<ResponseBody> getTransactionInfo(@Path("id") String transactionId);
 
-    @GET("api/v1/transaction/feerate/{currencyId}")
-    Call<FeeRateResponse> getFeeRates(@Path("currencyId") int currencyId);
+    @GET("api/v1/transaction/feerate/{currencyId}/{networkId}")
+    Call<FeeRateResponse> getFeeRates(@Path("currencyId") int currencyId, @Path("networkId") int networkId);
 
     @GET("api/v1/getwalletaddresses/{walletId}")
     Observable<UserAssetsResponse> getWalletAddresses(@Path("walletId") int walletId);

@@ -106,7 +106,7 @@ public class EthTransactionFeeFragment extends BaseFragment
         setupInput();
 
         viewModel.speeds.observe(this, speeds -> setAdapter());
-        viewModel.requestFeeRates(NativeDataHelper.Blockchain.BTC.getValue());
+        viewModel.requestFeeRates(viewModel.getWallet().getCurrencyId(), viewModel.getWallet().getNetworkId());
         Analytics.getInstance(getActivity()).logTransactionFeeLaunch(viewModel.getChainId());
         isDonationChanged = false;
 

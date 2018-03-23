@@ -45,7 +45,7 @@ public interface MultyApiInterface {
 
     Call<ServerConfigResponse> getServerConfig();
 
-    Call<FeeRateResponse> getFeeRates(int currencyId);
+    Call<FeeRateResponse> getFeeRates(int currencyId, int networkId);
 
     Call<ResponseBody> sendHdTransaction(HdTransactionRequestEntity transactionRequestEntity);
 

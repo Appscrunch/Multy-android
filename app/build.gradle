@@ -94,7 +94,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:27.1.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.0-beta5'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0-beta6'
     implementation 'com.android.support:recyclerview-v7:27.1.0'
     implementation 'com.android.support:cardview-v7:27.1.0'
     implementation 'com.android.support:design:27.1.0'
@@ -109,16 +109,16 @@ dependencies {
     implementation 'com.jakewharton:butterknife:8.8.1'
     implementation 'com.jakewharton.timber:timber:4.6.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
-    implementation 'com.google.android.gms:play-services-gcm:11.8.0'
-    implementation 'com.google.firebase:firebase-core:11.8.0'
+    implementation 'com.google.android.gms:play-services-gcm:12.0.0'
+    implementation 'com.google.firebase:firebase-core:12.0.0'
     implementation('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
         transitive = true
     }
-    implementation 'com.google.firebase:firebase-core:11.8.0'
-    implementation 'com.google.firebase:firebase-messaging:11.8.0'
-    implementation 'android.arch.lifecycle:extensions:1.1.0'
-    testImplementation 'android.arch.core:core-testing:1.1.0'
-    implementation 'android.arch.lifecycle:reactivestreams:1.1.0'
+    implementation 'com.google.firebase:firebase-core:12.0.0'
+    implementation 'com.google.firebase:firebase-messaging:12.0.0'
+    implementation 'android.arch.lifecycle:extensions:1.1.1'
+    testImplementation 'android.arch.core:core-testing:1.1.1'
+    implementation 'android.arch.lifecycle:reactivestreams:1.1.1'
     implementation 'com.samwolfand.oneprefs:one-prefs:1.0'
     implementation 'com.google.zxing:core:3.3.0'
     implementation 'com.google.zxing:javase:3.3.0'

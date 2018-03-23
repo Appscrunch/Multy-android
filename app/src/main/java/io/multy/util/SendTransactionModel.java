@@ -14,6 +14,9 @@ import io.multy.model.entities.wallet.WalletAddress;
 import io.multy.model.entities.wallet.WalletRealmObject;
 import io.multy.storage.RealmManager;
 
+/**
+ * Used only from JNI to init data for BTC transaction.
+ */
 public class SendTransactionModel {
 
     private final static String TAG = SendTransactionModel.class.getSimpleName();
@@ -26,8 +29,8 @@ public class SendTransactionModel {
     private ArrayList<WalletAddress> addresses;
     private int addressIndex;
 
-    public SendTransactionModel(int walletIndex, String amount) {
-        wallet = RealmManager.getAssetsDao().getWalletById(walletIndex);
+    public SendTransactionModel(long walletId, String amount) {
+        wallet = RealmManager.getAssetsDao().getWalletById(walletId);
         initAddresses(Long.valueOf(amount));
     }
 

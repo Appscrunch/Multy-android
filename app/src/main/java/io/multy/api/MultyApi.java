@@ -156,8 +156,8 @@ public enum MultyApi implements MultyApiInterface {
         }
 
         @Override
-        public Call<FeeRateResponse> getFeeRates(int currencyId) {
-            return api.getFeeRates(currencyId);
+        public Call<FeeRateResponse> getFeeRates(int currencyId, int networkId) {
+            return api.getFeeRates(currencyId, networkId);
         }
 
         @Override

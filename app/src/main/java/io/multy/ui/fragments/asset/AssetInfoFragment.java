@@ -260,26 +260,21 @@ public class AssetInfoFragment extends BaseFragment implements AppBarLayout.OnOf
 
     private void updateBalanceViews() {
         Wallet wallet = viewModel.getWalletLive().getValue();
-        final long balance = wallet.getBalanceNumeric().longValue();
-        final long pending = wallet.getPendingBalance().longValue();
 
-        if (pending == 0 || balance == pending) {
+        final long balance = wallet.getBalanceNumeric().longValue();
+        final long availableBalance = wallet.getAvailableBalanceNumeric().longValue();
+
+        if (balance == availableBalance) {
             hideAvailableAmount();
         } else {
             showAvailableAmount();
         }
 
-        final double formatBalance = balance / Math.pow(10, 8);
-        final double formatPending = pending / Math.pow(10, 8);
+        textAvailableFiat.setText(wallet.getAvailableFiatBalanceLabel());
+        textBalanceFiat.setText(wallet.getFiatBalanceLabel());
 
-        final CurrenciesRate currenciesRate = RealmManager.getSettingsDao().getCurrenciesRate();
-        final double exchangePrice = currenciesRate != null ? currenciesRate.getBtcToUsd() : 0;
-
-        textAvailableFiat.setText(balance == 0 ? "0.0$" : format.format(exchangePrice * formatBalance) + "$");
-        textBalanceFiat.setText(pending == 0 ? "0.0$" : format.format(exchangePrice * formatPending) + "$");
-
-        textBalanceOriginal.setText(pending != 0 ? CryptoFormatUtils.satoshiToBtc(pending) : String.valueOf(pending));
-        textAvailableValue.setText(balance != 0 ? CryptoFormatUtils.satoshiToBtc(balance) : String.valueOf(balance));
+        textBalanceOriginal.setText(wallet.getBalanceLabel());
+        textAvailableValue.setText(wallet.getAvailableBalanceLabel());
     }
 
     private void showAvailableAmount() {
