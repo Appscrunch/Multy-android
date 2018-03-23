@@ -27,8 +27,10 @@ import io.multy.ui.adapters.MyWalletsAdapter;
 import io.multy.ui.fragments.BaseFragment;
 import io.multy.util.Constants;
 import io.multy.util.CryptoFormatUtils;
+import io.multy.util.NativeDataHelper;
 import io.multy.util.analytics.Analytics;
 import io.multy.viewmodels.AssetSendViewModel;
+import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -61,7 +63,8 @@ public class WalletChooserFragment extends BaseFragment implements MyWalletsAdap
     @Override
     public void onWalletClick(Wallet wallet) {
         viewModel.isLoading.setValue(true);
-        MultyApi.INSTANCE.getWalletVerbose(wallet.getIndex(), wallet.getCurrencyId(), wallet.getNetworkId()).enqueue(new Callback<SingleWalletResponse>() {
+        MultyApi.INSTANCE.getWalletVerbose(wallet.getIndex(), wallet.getCurrencyId(), wallet.getNetworkId())
+                .enqueue(new Callback<SingleWalletResponse>() {
             @Override
             public void onResponse(Call<SingleWalletResponse> call, Response<SingleWalletResponse> response) {
                 viewModel.isLoading.setValue(false);
@@ -87,7 +90,8 @@ public class WalletChooserFragment extends BaseFragment implements MyWalletsAdap
 
     private void proceed(Wallet wallet) {
         if (viewModel.isAmountScanned()) {
-            if (Double.parseDouble(CryptoFormatUtils.satoshiToBtc(wallet.getPendingBalance().longValue())) >= viewModel.getAmount()) {
+            if (Double.parseDouble(CryptoFormatUtils
+                    .satoshiToBtc(wallet.getPendingBalance().longValue())) >= viewModel.getAmount()) {
                 launchTransactionFee(wallet);
             } else {
                 Toast.makeText(getContext(), getString(R.string.no_balance), Toast.LENGTH_SHORT).show();
@@ -98,12 +102,20 @@ public class WalletChooserFragment extends BaseFragment implements MyWalletsAdap
     }
 
     private void setupAdapter() {
-        recyclerView.setAdapter(new MyWalletsAdapter(this, RealmManager.getAssetsDao().getWallets()));
+        RealmResults<Wallet> wallets = RealmManager.getAssetsDao()
+                .getWallets(viewModel.getWallet().getCurrencyId(), viewModel.getWallet().getNetworkId());
+        recyclerView.setAdapter(new MyWalletsAdapter(this, wallets));
     }
 
     private void launchTransactionFee(Wallet wallet) {
         viewModel.setWallet(wallet);
-        ((AssetSendActivity) getActivity()).setFragment(R.string.transaction_fee, R.id.container, TransactionFeeFragment.newInstance());
+        if (wallet.getCurrencyId() == NativeDataHelper.Blockchain.BTC.getValue()) {
+            ((AssetSendActivity) getActivity()).setFragment(R.string.transaction_fee, R.id.container,
+                    TransactionFeeFragment.newInstance());
+        } else if (wallet.getCurrencyId() == NativeDataHelper.Blockchain.ETH.getValue()) {
+            ((AssetSendActivity) getActivity()).setFragment(R.string.transaction_fee, R.id.container,
+                    EthTransactionFeeFragment.newInstance());
+        }
     }
 
 }
