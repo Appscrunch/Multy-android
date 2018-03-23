@@ -97,6 +97,10 @@ public class AssetSendFragment extends BaseFragment {
                     //TODO replace these lines with boolean isValidAddress = NativeDataHelper.isAddressValid(address); instead of try catch and code spaming.
                     e.printStackTrace();
                 }
+                //todo remove when multy core will support ethereum valid address
+                if (viewModel.getWallet().getCurrencyId() == NativeDataHelper.Blockchain.ETH.getValue()) {
+                    isValidAddress = true;
+                }
                 if (TextUtils.isEmpty(charSequence) || !isValidAddress){
                     buttonNext.setBackgroundResource(R.color.disabled);
                     buttonNext.setEnabled(false);
@@ -152,7 +156,6 @@ public class AssetSendFragment extends BaseFragment {
         ((AssetSendActivity) getActivity()).setFragment(R.string.send_from, R.id.container, WalletChooserFragment.newInstance());
         if (getActivity().getIntent().hasCategory(Constants.EXTRA_SENDER_ADDRESS)) {
             RealmManager.getAssetsDao().getWalletById(getActivity().getIntent().getLongExtra(Constants.EXTRA_WALLET_ID, 0));
-            ((AssetSendActivity) getActivity()).setFragment(R.string.transaction_fee, R.id.container, TransactionFeeFragment.newInstance());
             if (viewModel.getWallet().getCurrencyId() == NativeDataHelper.Blockchain.BTC.getValue()) {
                 ((AssetSendActivity) getActivity()).setFragment(R.string.transaction_fee, R.id.container, TransactionFeeFragment.newInstance());
             } else if (viewModel.getWallet().getCurrencyId() == NativeDataHelper.Blockchain.ETH.getValue()) {

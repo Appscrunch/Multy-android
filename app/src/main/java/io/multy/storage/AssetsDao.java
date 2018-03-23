@@ -9,15 +9,12 @@ package io.multy.storage;
 import java.util.List;
 import java.util.Objects;
 
-import io.multy.model.entities.wallet.BtcWallet;
 import io.multy.model.entities.wallet.RecentAddress;
 import io.multy.model.entities.wallet.Wallet;
 import io.multy.model.entities.wallet.WalletAddress;
-import io.multy.model.entities.wallet.WalletRealmObject;
 import io.multy.util.NativeDataHelper;
 import io.reactivex.annotations.NonNull;
 import io.realm.Realm;
-import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
 
@@ -71,8 +68,13 @@ public class AssetsDao {
         return realm.where(Wallet.class).findAll();
     }
 
-    public RealmResults<Wallet> getWaleltByBlockchain(int blockChainId) {
-        return realm.where(Wallet.class).equalTo("currencyid", blockChainId).findAll();
+    public RealmResults<Wallet> getWallets(int blockChainId) {
+        return realm.where(Wallet.class).equalTo("currencyId", blockChainId).findAll();
+    }
+
+    public RealmResults<Wallet> getWallets(int blockChainId, int networkId) {
+        return realm.where(Wallet.class).equalTo("currencyId", blockChainId)
+                .equalTo("networkId", networkId).findAll();
     }
 
     public void saveBtcAddress(long id, WalletAddress address) {
