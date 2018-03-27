@@ -256,5 +256,6 @@
     <string name="gas_price">GAS Price</string>
     <string name="gas_limit">GAS Limit</string>
     <string name="percent_0">0%</string>
+    <string name="crypto_portfolio">Crypto portfolio</string>
 
 </resources>

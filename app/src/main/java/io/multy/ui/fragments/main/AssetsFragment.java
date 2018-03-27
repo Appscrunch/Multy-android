@@ -13,14 +13,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.Group;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -41,7 +40,6 @@ import io.multy.R;
 import io.multy.api.MultyApi;
 import io.multy.model.entities.wallet.Wallet;
 import io.multy.model.events.TransactionUpdateEvent;
-import io.multy.model.responses.TestWalletResponse;
 import io.multy.model.responses.WalletsResponse;
 import io.multy.storage.AssetsDao;
 import io.multy.storage.RealmManager;
@@ -66,6 +64,8 @@ public class AssetsFragment extends BaseFragment implements MyWalletsAdapter.OnW
 
     public static final String TAG = AssetsFragment.class.getSimpleName();
 
+    @BindView(R.id.nested)
+    NestedScrollView scrollView;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
     @BindView(R.id.group_wallets_list)
@@ -82,8 +82,6 @@ public class AssetsFragment extends BaseFragment implements MyWalletsAdapter.OnW
     ConstraintLayout containerCreateRestore;
     @BindView(R.id.button_warn)
     View buttonWarn;
-    @BindView(R.id.appbar_layout)
-    AppBarLayout appBarLayout;
     @BindView(R.id.view_pager)
     ViewPager viewPager;
     @BindView(R.id.image_dot_portfolio)
@@ -93,6 +91,7 @@ public class AssetsFragment extends BaseFragment implements MyWalletsAdapter.OnW
 
     private AssetsViewModel viewModel;
     private MyWalletsAdapter walletsAdapter;
+    private boolean isViewsScroll = false;
 
     public static AssetsFragment newInstance() {
         return new AssetsFragment();
@@ -111,14 +110,65 @@ public class AssetsFragment extends BaseFragment implements MyWalletsAdapter.OnW
         return view;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        checkViewsVisibility();
+    }
+
+    @Override
+    public void onPause() {
+        WalletActionsDialog dialog = (WalletActionsDialog) getChildFragmentManager().findFragmentByTag(WalletActionsDialog.TAG);
+        if (dialog != null) {
+            dialog.dismiss();
+        }
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        if ((requestCode == Constants.REQUEST_CODE_RESTORE || requestCode == Constants.REQUEST_CODE_CREATE) && resultCode == Activity.RESULT_OK) {
+        checkViewsVisibility();
+        initialize();
+        ((BaseActivity) getActivity()).subscribeToPushNotifications();
+//        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onWalletClick(Wallet wallet) {
+        Analytics.getInstance(getActivity()).logMainWalletOpen(viewModel.getChainId());
+        Intent intent = new Intent(getActivity(), AssetActivity.class);
+        intent.putExtra(Constants.EXTRA_WALLET_ID, wallet.getId());
+        startActivity(intent);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onTransactionUpdateEvent(TransactionUpdateEvent event) {
+        Log.i(TAG, "transaction update event called");
+        updateWallets();
+    }
+
     private void initialize() {
         if (Prefs.getBoolean(Constants.PREF_APP_INITIALIZED)) {
             if (RealmManager.getSettingsDao().getUserId() != null) {
                 viewModel.rates.observe(this, currenciesRate -> {
                     RealmManager.getSettingsDao().saveCurrenciesRate(currenciesRate);
-                    if (walletsAdapter != null) {
-                        RealmManager.getSettingsDao().saveCurrenciesRate(currenciesRate);
-                        walletsAdapter.notifyDataSetChanged();
+                    if (walletsAdapter != null && !isViewsScroll) {
+                        walletsAdapter.notifyDataSetChanged(); //todo this method make lag on screen
+                        //todo too much on main thread
                     }
                 });
                 viewModel.transactionUpdate.observe(this, transactionUpdateEntity -> {
@@ -127,7 +177,7 @@ public class AssetsFragment extends BaseFragment implements MyWalletsAdapter.OnW
                 viewModel.init(getLifecycle());
             }
         }
-        appBarLayout.post(() -> disableAppBarScrolling());
+        recyclerView.setNestedScrollingEnabled(false);
         viewPager.setAdapter(new PortfoliosAdapter(getChildFragmentManager()));
         viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
@@ -139,21 +189,18 @@ public class AssetsFragment extends BaseFragment implements MyWalletsAdapter.OnW
                     imageDotPortfolio.setAlpha(0.3f);
                     imageDotChart.setAlpha(1f);
                 }
+                scrollView.fling(0);
+                scrollView.fullScroll(View.FOCUS_UP);
             }
         });
-    }
-
-    private void disableAppBarScrolling() {
-        if (!ViewCompat.isLaidOut(appBarLayout)) {
-            return;
-        }
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) appBarLayout.getLayoutParams();
-        AppBarLayout.Behavior behavior = (AppBarLayout.Behavior) params.getBehavior();
-        behavior.setDragCallback(new AppBarLayout.Behavior.DragCallback() {
-            @Override
-            public boolean canDrag(@NonNull AppBarLayout appBarLayout) {
-                return false;
+        scrollView.setOnTouchListener((view1, motionEvent) -> {
+            if (motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
+                isViewsScroll = true;
+            } else if (motionEvent.getAction() == MotionEvent.ACTION_CANCEL ||
+                    motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                isViewsScroll = false;
             }
+            return false;
         });
     }
 
@@ -211,39 +258,6 @@ public class AssetsFragment extends BaseFragment implements MyWalletsAdapter.OnW
                 t.printStackTrace();
             }
         });
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        checkViewsVisibility();
-    }
-
-    @Override
-    public void onPause() {
-        WalletActionsDialog dialog = (WalletActionsDialog) getChildFragmentManager().findFragmentByTag(WalletActionsDialog.TAG);
-        if (dialog != null) {
-            dialog.dismiss();
-        }
-        super.onPause();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(this);
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onTransactionUpdateEvent(TransactionUpdateEvent event) {
-        Log.i(TAG, "transaction update event called");
-        updateWallets();
     }
 
     private void initList() {
@@ -314,23 +328,5 @@ public class AssetsFragment extends BaseFragment implements MyWalletsAdapter.OnW
     @OnClick(R.id.logo)
     void onClickLogo() {
         Analytics.getInstance(getActivity()).logMain(AnalyticsConstants.MAIN_LOGO);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if ((requestCode == Constants.REQUEST_CODE_RESTORE || requestCode == Constants.REQUEST_CODE_CREATE) && resultCode == Activity.RESULT_OK) {
-        checkViewsVisibility();
-        initialize();
-        ((BaseActivity) getActivity()).subscribeToPushNotifications();
-//        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
-    public void onWalletClick(Wallet wallet) {
-        Analytics.getInstance(getActivity()).logMainWalletOpen(viewModel.getChainId());
-        Intent intent = new Intent(getActivity(), AssetActivity.class);
-        intent.putExtra(Constants.EXTRA_WALLET_ID, wallet.getId());
-        startActivity(intent);
     }
 }
