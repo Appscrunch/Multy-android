@@ -96,7 +96,7 @@ public class Wallet extends RealmObject implements WalletBalanceInterface {
     public String getBalanceLabel() {
         switch (NativeDataHelper.Blockchain.valueOf(currencyId)) {
             case BTC:
-                return getBtcDoubleValue() + " BTC";
+                return NumberFormatter.getInstance().format(getBtcDoubleValue()) + " BTC";
             case ETH:
                 return convertBalance(EthWallet.DIVISOR) + " ETH";
             default:
@@ -107,7 +107,7 @@ public class Wallet extends RealmObject implements WalletBalanceInterface {
     public String getAvailableBalanceLabel() {
         switch (NativeDataHelper.Blockchain.valueOf(currencyId)) {
             case BTC:
-                return getBtcAvailableDoubleValue() + " BTC";
+                return NumberFormatter.getInstance().format(getBtcAvailableDoubleValue()) + " BTC";
             case ETH:
                 return convertBalance(EthWallet.DIVISOR) + " ETH";
             default:

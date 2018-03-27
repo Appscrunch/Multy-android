@@ -202,7 +202,7 @@ public class TransactionInfoFragment extends BaseFragment {
             double outValue = 0;
             List<WalletAddress> outputs = transaction.getOutputs();
             for (WalletAddress output : outputs) {
-                if (!output.getAddress().equals(Constants.DONTAION_ADDRESS) && !walletAddresses.contains(output.getAddress())) {
+                if (!output.getAddress().equals(Constants.DONATION_ADDRESS) && !walletAddresses.contains(output.getAddress())) {
                     outValue += output.getAmount();
                 }
             }

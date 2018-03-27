@@ -185,6 +185,7 @@ public class SendSummaryFragment extends BaseFragment {
             final String changeAddress = NativeDataHelper.makeAccountAddress(seed, viewModel.getWallet().getIndex(), addressesSize, currencyId, networkId);
             final String hex = viewModel.transaction.getValue();
             Timber.i("hex=%s", hex);
+            Timber.i("change address=%s", changeAddress);
             MultyApi.INSTANCE.sendHdTransaction(new HdTransactionRequestEntity(currencyId, networkId,
                     new HdTransactionRequestEntity.Payload(changeAddress, addressesSize, viewModel.getWallet().getIndex(), hex))).enqueue(new Callback<ResponseBody>() {
                 @Override

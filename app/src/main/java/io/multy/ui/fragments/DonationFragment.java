@@ -294,7 +294,7 @@ public class DonationFragment extends BaseFragment {
         //if wallet is on testnet then address for donate should be "mnUtMQcs3s8kSkSRXpREVtJamgUCWpcFj4"
         String addressForDonate;
         if (wallet.getNetworkId() == NativeDataHelper.NetworkId.TEST_NET.getValue()) {
-            addressForDonate = Constants.DONTAION_ADDRESS_TESTNET;
+            addressForDonate = Constants.DONATION_ADDRESS_TESTNET;
         } else {
             addressForDonate = RealmManager.getSettingsDao()
                     .getDonationAddress(getArguments().getInt(ARG_DONATION_CODE, 0));

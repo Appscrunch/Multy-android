@@ -316,6 +316,9 @@ Java_io_multy_util_NativeDataHelper_makeTransaction(JNIEnv *jniEnv, jobject obj,
     BinaryData seed{seedBuf, len};
     HANDLE_ERROR(make_master_key(&seed, reset_sp(rootKey)));
 
+
+    __android_log_print(ANDROID_LOG_INFO, "networkid address", "%d", jNetworkId);
+
     HDAccountPtr hdAccount;
     HANDLE_ERROR(
             make_hd_account(rootKey.get(),

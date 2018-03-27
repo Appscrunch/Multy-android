@@ -8,6 +8,7 @@ package io.multy.viewmodels;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.os.Handler;
+import android.util.Log;
 
 import io.multy.Multy;
 import io.multy.R;
@@ -160,24 +161,27 @@ public class AssetSendViewModel extends BaseViewModel {
         if (changeAddress == null) {
             try {
                 changeAddress = NativeDataHelper.makeAccountAddress(seed, walletIndex, getWallet().getBtcWallet().getAddresses().size(),
-                        NativeDataHelper.Blockchain.BTC.getValue(),
-                        NativeDataHelper.NetworkId.TEST_NET.getValue());
+                        getWallet().getCurrencyId(), getWallet().getNetworkId());
             } catch (JniException e) {
                 e.printStackTrace();
                 errorMessage.setValue("Error creating change address " + e.getMessage());
             }
         }
 
+        if (getWallet().getNetworkId() == NativeDataHelper.NetworkId.MAIN_NET.getValue()) {
+            donationAddress = RealmManager.getSettingsDao().getDonationAddress(Constants.DONATE_WITH_TRANSACTION);
+        } else {
+            donationAddress = Constants.DONATION_ADDRESS_TESTNET;
+        }
+
         if (donationAddress == null) {
-            if (getWallet().getNetworkId() == NativeDataHelper.NetworkId.MAIN_NET.getValue()) {
-                donationAddress = RealmManager.getSettingsDao().getDonationAddress(Constants.DONATE_WITH_TRANSACTION);
-            } else {
-                donationAddress = Constants.DONTAION_ADDRESS_TESTNET;
-            }
+            donationAddress = "";
         }
 
         handler.postDelayed(() -> {
             try {
+                Log.i("wise", "networkId");
+                Log.i("wise", "donation address " + donationAddress + " " + getDonationSatoshi());
                 //important notice - native makeTransaction() method will update UI automatically with correct transaction price
                 byte[] transactionHex = NativeDataHelper.makeTransaction(getWallet().getId(), getWallet().getNetworkId(),
                         seed, walletIndex, String.valueOf(amount),

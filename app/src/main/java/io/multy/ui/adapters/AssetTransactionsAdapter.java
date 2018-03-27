@@ -147,7 +147,7 @@ public class AssetTransactionsAdapter extends RecyclerView.Adapter<RecyclerView.
 
             for (WalletAddress output : outputs) {
 
-                if (!output.getAddress().equals(Constants.DONTAION_ADDRESS)) {
+                if (!output.getAddress().equals(Constants.DONATION_ADDRESS)) {
                     for (WalletAddress walletAddress : addresses) {
                         if (output.getAddress().equals(walletAddress.getAddress())) {
                             userChangeAddress = output;
@@ -221,7 +221,7 @@ public class AssetTransactionsAdapter extends RecyclerView.Adapter<RecyclerView.
 
             for (WalletAddress output : outputs) {
 
-                if (!output.getAddress().equals(Constants.DONTAION_ADDRESS)) {
+                if (!output.getAddress().equals(Constants.DONATION_ADDRESS)) {
                     for (WalletAddress walletAddress : addresses) {
                         if (output.getAddress().equals(walletAddress.getAddress())) {
                             userChangeAddress = output;

@@ -15,13 +15,10 @@ public class Constants {
             + " " + Build.VERSION.RELEASE
             + " " + Build.VERSION_CODES.class.getFields()[android.os.Build.VERSION.SDK_INT].getName();
 
-//    static final String BASE_URL = "http://192.168.0.121:7778/";  // local
-//    static final String BASE_URL = "http://88.198.47.112:7778/";  // remote
-//    static final String BASE_URL = "https://api.multy.io/";  // Special for Jack Bolt!
-    public static final String BASE_URL = "https://stage.multy.io/";  // Special for Jack Bolt!
+    public static final String BASE_URL = "https://stage.multy.io/";
 
-    public static final String DONTAION_ADDRESS = "mzqiDnETWkunRDZxjUQ34JzN1LDevh5DpU";
-    public static final String DONTAION_ADDRESS_TESTNET = "mnUtMQcs3s8kSkSRXpREVtJamgUCWpcFj4";
+    public static final String DONATION_ADDRESS = "mzqiDnETWkunRDZxjUQ34JzN1LDevh5DpU";
+    public static final String DONATION_ADDRESS_TESTNET = "mnUtMQcs3s8kSkSRXpREVtJamgUCWpcFj4";
 
     public static final int ANDROID_OS_ID = 1;
 
@@ -81,17 +78,6 @@ public class Constants {
     public final static String ETH = "ETH";
     public final static String USD = "USD";
     public final static String EUR = "EUR";
-
-    public static final String ERROR_LOAD_EXCHANGE_PRICE = "Can't load exchange price. Will be used the last one";
-    public static final String ERROR_ADDING_ADDRESS = "An error occurred while adding new address";
-
-    public static final int ZERO = 0;
-    public static final int ONE = 1;
-
-    public static final String BULLETS_FIVE = " • • • ∙ ";
-
-    public static final int TRANSACTIONS_EMPTY_SIZE = 0;
-    public static final int ADDRESS_PART = 9;
 
     public static final int TX_MEMPOOL_INCOMING = 1;
     public static final int TX_MEMPOOL_OUTCOMING = 3;
