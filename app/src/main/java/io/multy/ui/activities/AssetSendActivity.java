@@ -188,7 +188,7 @@ public class AssetSendActivity extends BaseActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == Constants.CAMERA_REQUEST_CODE) {
+        if (requestCode == Constants.CAMERA_REQUEST_CODE && grantResults.length > 0) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Analytics.getInstance(this).logSendTo(AnalyticsConstants.PERMISSION_GRANTED);
                 showScanScreen();

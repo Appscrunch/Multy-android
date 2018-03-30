@@ -163,4 +163,11 @@ public class AssetSendFragment extends BaseFragment {
             }
         }
     }
+
+    @OnClick(R.id.container)
+    void onClickContainer() {
+        if (getActivity() != null) {
+            hideKeyboard(getActivity());
+        }
+    }
 }
