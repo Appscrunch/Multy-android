@@ -55,6 +55,7 @@ import io.multy.util.Constants;
 import io.multy.util.analytics.Analytics;
 import io.multy.util.analytics.AnalyticsConstants;
 import io.multy.viewmodels.AssetsViewModel;
+import io.multy.viewmodels.WalletViewModel;
 import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -202,6 +203,8 @@ public class AssetsFragment extends BaseFragment implements MyWalletsAdapter.OnW
             }
             return false;
         });
+
+        WalletViewModel.saveDonateAddresses();
     }
 
     private void checkViewsVisibility() {

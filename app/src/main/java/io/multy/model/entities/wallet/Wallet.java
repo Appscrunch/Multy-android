@@ -171,6 +171,10 @@ public class Wallet extends RealmObject implements WalletBalanceInterface {
     }
 
     public boolean isPayable() {
+        if (isPending()) {
+            return false;
+        }
+
         switch (NativeDataHelper.Blockchain.valueOf(currencyId)) {
             case BTC:
                 return getAvailableBalanceNumeric().longValue() > 150;

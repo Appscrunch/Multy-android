@@ -33,6 +33,12 @@ public class AssetsDao {
     public void saveWallets(List<Wallet> wallets) {
         realm.executeTransaction(realm -> {
             for (Wallet wallet : wallets) {
+
+                Wallet toDelete = getWalletById(wallet.getId());
+                if (toDelete != null) {
+                    toDelete.deleteFromRealm(); //TODO review this
+                }
+
                 saveSingleWallet(wallet);
             }
         });

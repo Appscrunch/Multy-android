@@ -99,6 +99,13 @@ public class WalletViewModel extends BaseViewModel {
         return wallet;
     }
 
+    public static void saveDonateAddresses() {
+        ServerConfigResponse serverConfig = EventBus.getDefault().removeStickyEvent(ServerConfigResponse.class);
+        if (serverConfig != null) {
+            RealmManager.getSettingsDao().saveDonation(serverConfig.getDonates());
+        }
+    }
+
     public Wallet createWallet(String walletName, int blockChainId, int networkId) {
         isLoading.setValue(true);
         Wallet walletRealmObject = null;
@@ -106,11 +113,8 @@ public class WalletViewModel extends BaseViewModel {
             if (!Prefs.getBoolean(Constants.PREF_APP_INITIALIZED)) {
                 Multy.makeInitialized();
                 FirstLaunchHelper.setCredentials("");
-                ServerConfigResponse serverConfig = EventBus.getDefault().removeStickyEvent(ServerConfigResponse.class);
-                if (serverConfig != null) {
-                    RealmManager.open();
-                    RealmManager.getSettingsDao().saveDonation(serverConfig.getDonates());
-                }
+                RealmManager.open();
+                saveDonateAddresses();
             }
 
             final int topIndex = blockChainId == NativeDataHelper.Blockchain.BTC.getValue() ?

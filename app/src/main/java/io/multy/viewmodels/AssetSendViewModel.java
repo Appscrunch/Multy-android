@@ -202,6 +202,7 @@ public class AssetSendViewModel extends BaseViewModel {
                     getReceiverAddress().getValue(), changeAddress, donationAddress, isPayForCommission);
             transaction.setValue(byteArrayToHex(transactionHex));
         } catch (JniException e) {
+            errorMessage.setValue(e.getMessage() + ". Please, try again.");
             e.printStackTrace();
         }
     }

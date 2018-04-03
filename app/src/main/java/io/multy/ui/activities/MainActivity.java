@@ -73,7 +73,6 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
         onTabSelected(tabLayout.getTabAt(0));
 
         subscribeToPushNotifications();
-        handleDonate();
 
         if (Prefs.getBoolean(Constants.PREF_LOCK)) {
             showLock();
@@ -126,16 +125,6 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
                 .beginTransaction()
                 .replace(container, fragment)
                 .commit();
-    }
-
-    private void handleDonate() {
-        if (Prefs.getBoolean(Constants.PREF_APP_INITIALIZED)) {
-            ServerConfigResponse serverConfig = EventBus.getDefault().removeStickyEvent(ServerConfigResponse.class);
-            if (serverConfig != null) {
-                RealmManager.open();
-                RealmManager.getSettingsDao().saveDonation(serverConfig.getDonates());
-            }
-        }
     }
 
     @Override

@@ -296,14 +296,12 @@ public class DonationFragment extends BaseFragment {
         if (wallet.getNetworkId() == NativeDataHelper.NetworkId.TEST_NET.getValue()) {
             addressForDonate = Constants.DONATION_ADDRESS_TESTNET;
         } else {
-            addressForDonate = RealmManager.getSettingsDao()
-                    .getDonationAddress(getArguments().getInt(ARG_DONATION_CODE, 0));
+            addressForDonate = RealmManager.getSettingsDao().getDonationAddress(getArguments().getInt(ARG_DONATION_CODE, 0));
         }
         if (addressForDonate != null) {
             sendTransaction(addressForDonate);
         }
-        Analytics.getInstance(view.getContext()).logDonationSendDonateClick(getArguments() == null ?
-                0 : getArguments().getInt(ARG_DONATION_CODE, 0));
+        Analytics.getInstance(view.getContext()).logDonationSendDonateClick(getArguments() == null ? 0 : getArguments().getInt(ARG_DONATION_CODE, 0));
     }
 
     @OnClick(R.id.button_wallet)
