@@ -15,7 +15,7 @@ public class Constants {
             + " " + Build.VERSION.RELEASE
             + " " + Build.VERSION_CODES.class.getFields()[android.os.Build.VERSION.SDK_INT].getName();
 
-    public static final String BASE_URL = "https://stage.multy.io/";
+    public static final String BASE_URL = "https://test.multy.io/";
 
     public static final String DONATION_ADDRESS = "mzqiDnETWkunRDZxjUQ34JzN1LDevh5DpU";
     public static final String DONATION_ADDRESS_TESTNET = "mnUtMQcs3s8kSkSRXpREVtJamgUCWpcFj4";
@@ -89,7 +89,8 @@ public class Constants {
     public static final int REQUEST_CODE_RESTORE = 22;
     public static final int REQUEST_CODE_CREATE = 22;
 
-    public static final String BLOCKCHAIN_INFO_PATH = "https://testnet.blockchain.info/tx/";
+    public static final String BLOCKCHAIN_TEST_INFO_PATH = "https://testnet.blockchain.info/tx/";
+    public static final String BLOCKCHAIN_MAIN_INFO_PATH = "https://blockchain.info/tx/";
     public static final String PUSH_TOPIC = "btcTransactionUpdate-";
     public static final String MULTY_IO_URL = "http://multy.io";
     public static final String CHAIN_ID = "CHAIN_ID";
