@@ -28,14 +28,10 @@ import android.widget.TextView;
 
 import com.samwolfand.oneprefs.Prefs;
 
-
-import org.greenrobot.eventbus.EventBus;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.multy.R;
-import io.multy.model.responses.ServerConfigResponse;
 import io.multy.storage.RealmManager;
 import io.multy.ui.fragments.main.AssetsFragment;
 import io.multy.ui.fragments.main.ContactsFragment;

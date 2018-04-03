@@ -17,7 +17,6 @@ import io.multy.model.entities.RootKey;
 import io.multy.model.entities.Token;
 import io.multy.model.entities.UserId;
 import io.multy.model.responses.ServerConfigResponse;
-import io.multy.util.Constants;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.annotations.Nullable;
 import io.realm.Realm;
@@ -106,10 +105,9 @@ public class SettingsDao {
     public void saveDonation(List<ServerConfigResponse.Donate> donates) {
         realm.executeTransactionAsync(realm -> {
             for (ServerConfigResponse.Donate donate : donates) {
-                if (donate.getOs() == Constants.ANDROID_OS_ID) {
+                if (donate.getFeatureCode() < 20000) {
                     DonateFeatureEntity donateFeature = new DonateFeatureEntity(donate.getFeatureCode());
                     donateFeature.setDonationAddress(donate.getDonationAddress());
-                    donateFeature.setFeatureDescription(donate.getFeatureDescription());
                     realm.insertOrUpdate(donateFeature);
                 }
             }
