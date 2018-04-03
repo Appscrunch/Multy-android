@@ -204,7 +204,9 @@ public class AssetsFragment extends BaseFragment implements MyWalletsAdapter.OnW
             return false;
         });
 
-        WalletViewModel.saveDonateAddresses();
+        if (Prefs.getBoolean(Constants.PREF_APP_INITIALIZED)) {
+            WalletViewModel.saveDonateAddresses();
+        }
     }
 
     private void checkViewsVisibility() {

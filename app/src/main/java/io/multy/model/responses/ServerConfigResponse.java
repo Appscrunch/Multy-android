@@ -53,29 +53,15 @@ public class ServerConfigResponse {
         @SerializedName("DonationAddress")
         private String donationAddress;
 
-        @SerializedName("Feature")
-        private String featureDescription;
-
         @SerializedName("FeatureCode")
         private int featureCode;
-
-        @SerializedName("OS")
-        private int os;
 
         public String getDonationAddress() {
             return donationAddress;
         }
 
-        public String getFeatureDescription() {
-            return featureDescription;
-        }
-
         public int getFeatureCode() {
             return featureCode;
-        }
-
-        public int getOs() {
-            return os;
         }
     }
 }

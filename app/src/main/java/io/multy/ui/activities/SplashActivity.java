@@ -106,12 +106,7 @@ public class SplashActivity extends AppCompatActivity {
                         }
 
                         if (configResponse.getDonates() != null) {
-                            Timber.e("Donates == null");
-                            if (Prefs.getBoolean(Constants.PREF_APP_INITIALIZED)) {
-                                RealmManager.getSettingsDao().saveDonation(configResponse.getDonates());
-                            } else {
-                                EventBus.getDefault().postSticky(configResponse);
-                            }
+                            EventBus.getDefault().postSticky(configResponse);
                         }
                     } catch (PackageManager.NameNotFoundException e) {
                         e.printStackTrace();
