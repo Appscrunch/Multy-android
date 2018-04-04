@@ -15,8 +15,6 @@ import io.multy.util.analytics.Analytics;
 
 public class CreateAssetActivity extends BaseActivity {
 
-    public static final String EXTRA_IS_FIRST_START = "isFirstStart";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

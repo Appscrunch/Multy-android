@@ -45,7 +45,7 @@ public interface MultyApiInterface {
 
     Call<ResponseBody> updateWalletName(UpdateWalletNameRequest updateWalletName);
 
-    Call<ResponseBody> removeWallet(int currencyId, int walletIndex);
+    Call<ResponseBody> removeWallet(int currencyId, int networkId, int walletIndex);
 
     Call<TransactionHistoryResponse> getTransactionHistory(int currencyId, int networkId, int walletIndex);
 

@@ -281,7 +281,7 @@
         <item name="android:background">@drawable/selector_white</item>
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>
-        <item name="android:padding">16dp</item>
+        <item name="android:padding">12dp</item>
     </style>
 
     <style name="TitleChooserCreateWallet">

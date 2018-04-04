@@ -6,7 +6,6 @@
 
 package io.multy.ui.fragments.asset;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -21,7 +20,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,10 +38,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.multy.R;
 import io.multy.api.MultyApi;
-import io.multy.api.socket.CurrenciesRate;
 import io.multy.model.entities.wallet.Wallet;
-import io.multy.model.entities.wallet.WalletAddress;
-import io.multy.model.entities.wallet.WalletRealmObject;
 import io.multy.model.events.TransactionUpdateEvent;
 import io.multy.model.responses.SingleWalletResponse;
 import io.multy.storage.AssetsDao;
@@ -55,16 +50,13 @@ import io.multy.ui.adapters.EmptyTransactionsAdapter;
 import io.multy.ui.fragments.AddressesFragment;
 import io.multy.ui.fragments.BaseFragment;
 import io.multy.util.Constants;
-import io.multy.util.CryptoFormatUtils;
 import io.multy.util.NativeDataHelper;
 import io.multy.util.analytics.Analytics;
 import io.multy.util.analytics.AnalyticsConstants;
 import io.multy.viewmodels.WalletViewModel;
-import io.realm.RealmList;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import timber.log.Timber;
 
 public class AssetInfoFragment extends BaseFragment implements AppBarLayout.OnOffsetChangedListener {
 
@@ -266,6 +258,9 @@ public class AssetInfoFragment extends BaseFragment implements AppBarLayout.OnOf
 
     private void updateBalanceViews() {
         Wallet wallet = viewModel.getWalletLive().getValue();
+        if (!wallet.isValid()) {
+            return;
+        }
 
         final long balance = wallet.getBalanceNumeric().longValue();
         final long availableBalance = wallet.getAvailableBalanceNumeric().longValue();

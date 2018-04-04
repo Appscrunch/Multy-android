@@ -247,7 +247,7 @@
                 android:id="@+id/group_wallets_list"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:constraint_referenced_ids="recycler_view,button_add,text_wallets" />
+                app:constraint_referenced_ids="button_add,text_wallets" />
 
             <android.support.constraint.Group
                 android:id="@+id/group_create_description"
