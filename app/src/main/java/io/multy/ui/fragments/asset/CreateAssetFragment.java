@@ -31,7 +31,6 @@ import io.multy.api.MultyApi;
 import io.multy.model.entities.wallet.Wallet;
 import io.multy.storage.RealmManager;
 import io.multy.ui.activities.AssetActivity;
-import io.multy.ui.activities.CreateAssetActivity;
 import io.multy.ui.fragments.BaseFragment;
 import io.multy.util.Constants;
 import io.multy.util.NativeDataHelper;
@@ -55,7 +54,6 @@ public class CreateAssetFragment extends BaseFragment {
     @BindView(R.id.text_chain_currency)
     TextView textViewChainCurrency;
 
-    private boolean isFirstStart = false;
     private WalletViewModel walletViewModel;
     private int chainNet = NativeDataHelper.NetworkId.MAIN_NET.getValue();
     private int chainId = NativeDataHelper.Blockchain.BTC.getValue();
@@ -75,10 +73,6 @@ public class CreateAssetFragment extends BaseFragment {
         initialize();
         subscribeToCurrencyUpdate();
         Analytics.getInstance(getActivity()).logCreateWalletLaunch();
-
-        if (getArguments() != null) {
-            isFirstStart = getArguments().getBoolean(CreateAssetActivity.EXTRA_IS_FIRST_START, false);
-        }
 
         editTextWalletName.requestFocus();
         editTextWalletName.postDelayed(() -> {
@@ -165,6 +159,7 @@ public class CreateAssetFragment extends BaseFragment {
     public void onClickChain() {
         Analytics.getInstance(getActivity()).logCreateWalletChain();
         if (getActivity() != null) {
+            hideKeyboard(getActivity());
             ChainChooserFragment fragment = (ChainChooserFragment) getActivity().getSupportFragmentManager()
                     .findFragmentByTag(ChainChooserFragment.TAG);
             if (fragment == null) {
@@ -181,11 +176,9 @@ public class CreateAssetFragment extends BaseFragment {
     @OnClick(R.id.button_fiat)
     public void onClickFiat() {
         Analytics.getInstance(getActivity()).logCreateWalletFiatClick();
-//        ArrayList<String> chains = new ArrayList<>(3);
-//        chains.add(Constants.USD);
-//        chains.add(Constants.EUR);
-//        ListDialogFragment.newInstance(chains, CurrencyType.FIAT).show(getFragmentManager(), "");
-        if (!isFirstStart && getActivity() != null) {
+
+        if (getActivity() != null) {
+            hideKeyboard(getActivity());
             CurrencyChooserFragment fragment = (CurrencyChooserFragment) getActivity().getSupportFragmentManager()
                     .findFragmentByTag(CurrencyChooserFragment.TAG);
             if (fragment == null) {

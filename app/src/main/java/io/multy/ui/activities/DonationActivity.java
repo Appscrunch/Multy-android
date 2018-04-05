@@ -12,9 +12,10 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
 
+import com.samwolfand.oneprefs.Prefs;
+
 import io.multy.R;
 import io.multy.model.entities.wallet.Wallet;
-import io.multy.model.entities.wallet.WalletRealmObject;
 import io.multy.storage.RealmManager;
 import io.multy.ui.fragments.DonationFragment;
 import io.multy.util.Constants;
@@ -33,6 +34,11 @@ public class DonationActivity extends BaseActivity {
     }
 
     public static void showDonation(Context context, int donationCode) {
+        if (!Prefs.getBoolean(Constants.PREF_APP_INITIALIZED, false)) {
+            Toast.makeText(context, "You are have no wallets, let's make the first wallet!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         RealmResults<Wallet> wallets = RealmManager.getAssetsDao().getWallets();
 
         for (Wallet wallet : wallets) {

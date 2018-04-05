@@ -296,7 +296,6 @@ public class AssetsFragment extends BaseFragment implements MyWalletsAdapter.OnW
 
     private void onWalletAddClick() {
         startActivityForResult(new Intent(getActivity(), CreateAssetActivity.class)
-                .putExtra(CreateAssetActivity.EXTRA_IS_FIRST_START, viewModel.isFirstStart())
                 .addCategory(Constants.EXTRA_RESTORE), Constants.REQUEST_CODE_CREATE);
     }
 

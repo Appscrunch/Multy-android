@@ -30,13 +30,11 @@ import io.multy.api.MultyApi;
 import io.multy.api.socket.CurrenciesRate;
 import io.multy.api.socket.SocketManager;
 import io.multy.api.socket.TransactionUpdateEntity;
-import io.multy.model.DataManager;
 import io.multy.model.entities.TransactionHistory;
 import io.multy.model.entities.wallet.BtcWallet;
 import io.multy.model.entities.wallet.EthWallet;
 import io.multy.model.entities.wallet.Wallet;
 import io.multy.model.entities.wallet.WalletAddress;
-import io.multy.model.entities.wallet.WalletRealmObject;
 import io.multy.model.requests.UpdateWalletNameRequest;
 import io.multy.model.responses.ServerConfigResponse;
 import io.multy.model.responses.TransactionHistoryResponse;
@@ -118,13 +116,15 @@ public class WalletViewModel extends BaseViewModel {
             }
 
             final int topIndex = blockChainId == NativeDataHelper.Blockchain.BTC.getValue() ?
-                    Prefs.getInt(Constants.PREF_WALLET_TOP_INDEX_BTC + networkId, 0) : Prefs.getInt(Constants.PREF_WALLET_TOP_INDEX_ETH + networkId, 0);
+                    Prefs.getInt(Constants.PREF_WALLET_TOP_INDEX_BTC + networkId, 0) :
+                    Prefs.getInt(Constants.PREF_WALLET_TOP_INDEX_ETH + networkId, 0);
 
 //            if (!Prefs.getBoolean(Constants.PREF_APP_INITIALIZED)) {
 //                FirstLaunchHelper.setCredentials("");
 //            }
 
-            String creationAddress = NativeDataHelper.makeAccountAddress(RealmManager.getSettingsDao().getSeed().getSeed(), topIndex, 0, blockChainId, networkId);
+            String creationAddress = NativeDataHelper.makeAccountAddress(RealmManager.getSettingsDao().getSeed().getSeed(),
+                    topIndex, 0, blockChainId, networkId);
             walletRealmObject = new Wallet();
             walletRealmObject.setWalletName(walletName);
 
@@ -203,12 +203,17 @@ public class WalletViewModel extends BaseViewModel {
 
     public MutableLiveData<Boolean> removeWallet() {
         isLoading.setValue(true);
-        MultyApi.INSTANCE.removeWallet(0, wallet.getValue().getIndex()).enqueue(new Callback<ResponseBody>() {
+        MultyApi.INSTANCE.removeWallet(wallet.getValue().getCurrencyId(), wallet.getValue().getNetworkId(),
+                wallet.getValue().getIndex()).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-                RealmManager.getAssetsDao().removeWallet(wallet.getValue().getId());
+                if (response.isSuccessful()) {
+                    RealmManager.getAssetsDao().removeWallet(wallet.getValue().getId());
+                    isRemoved.setValue(true);
+                } else {
+                    isRemoved.setValue(false);
+                }
                 isLoading.setValue(false);
-                isRemoved.setValue(true);
             }
 
             @Override

@@ -18,7 +18,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
 
-import io.multy.model.DataManager;
 import io.multy.model.entities.AuthEntity;
 import io.multy.model.entities.TransactionRequestEntity;
 import io.multy.model.entities.UserId;
@@ -35,7 +34,6 @@ import io.multy.model.responses.TransactionHistoryResponse;
 import io.multy.model.responses.UserAssetsResponse;
 import io.multy.model.responses.WalletsResponse;
 import io.multy.storage.RealmManager;
-import io.multy.storage.SettingsDao;
 import io.multy.util.Constants;
 import io.reactivex.Observable;
 import okhttp3.Authenticator;
@@ -141,8 +139,8 @@ public enum MultyApi implements MultyApiInterface {
         }
 
         @Override
-        public Call<ResponseBody> removeWallet(int currencyId, int walletIndex) {
-            return api.removeWallet(currencyId, walletIndex);
+        public Call<ResponseBody> removeWallet(int currencyId, int networkId, int walletIndex) {
+            return api.removeWallet(currencyId, networkId, walletIndex);
         }
 
         public Call<TransactionHistoryResponse> getTransactionHistory(int currencyId, int networkId, int walletIndex) {
