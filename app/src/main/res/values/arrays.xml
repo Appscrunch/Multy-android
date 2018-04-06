@@ -90,8 +90,8 @@
         <item>@drawable/chain_erc_20</item>
     </array>
     <array name="soon_chain_donate_addresses">
-        <item>10100</item>
         <item>10101</item>
+        <item>10100</item>
         <item>10102</item>
         <item>10103</item>
         <item>10104</item>
