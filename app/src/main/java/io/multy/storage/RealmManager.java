@@ -7,19 +7,12 @@
 package io.multy.storage;
 
 import android.content.Context;
-import android.util.Base64;
 import android.util.Log;
 
 import java.io.File;
 
-import javax.annotation.Nullable;
-
 import io.multy.Multy;
-import io.multy.util.Constants;
-import io.multy.util.analytics.Analytics;
-import io.multy.util.analytics.AnalyticsConstants;
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 
 public class RealmManager {
 

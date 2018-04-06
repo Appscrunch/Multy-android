@@ -144,21 +144,19 @@ public class AssetTransactionsAdapter extends RecyclerView.Adapter<RecyclerView.
             //TODO REMOVE DRY AND OPTIMIZE
             RealmList<WalletAddress> addresses = RealmManager.getAssetsDao().getWalletById(walletId).getBtcWallet().getAddresses();
 //            List<WalletAddress> inputs = transactionHistory.getInputs();
-
             List<WalletAddress> outputs = transactionHistory.getOutputs();
 //            user change address must be last, so reversing
 //            Collections.reverse(outputs);
             WalletAddress userChangeAddress = null;
-            String addressTo = "";
+            WalletAddress addressTo = null;
 
             for (WalletAddress output : outputs) {
-
                 if (!output.getAddress().equals(Constants.DONATION_ADDRESS)) {
                     for (WalletAddress walletAddress : addresses) {
                         if (output.getAddress().equals(walletAddress.getAddress())) {
                             userChangeAddress = output;
                         } else {
-                            addressTo = output.getAddress();
+                            addressTo = output;
                         }
                     }
                 }
@@ -174,9 +172,10 @@ public class AssetTransactionsAdapter extends RecyclerView.Adapter<RecyclerView.
                 holder.containerLocked.setVisibility(View.GONE);
             }
 
-            amount = CryptoFormatUtils.satoshiToBtc(transactionHistory.getTxOutAmount());
+//            amount = CryptoFormatUtils.satoshiToBtc(transactionHistory.getTxOutAmount());
+            amount = CryptoFormatUtils.satoshiToBtc(addressTo.getAmount());
             amountFiat = getStockFiatAmount(transactionHistory);
-            setAddress(addressTo, holder.containerAddresses);
+            setAddress(addressTo.getAddress(), holder.containerAddresses);
         }
 
         holder.amount.setText(String.format("%s BTC", amount));
@@ -223,7 +222,7 @@ public class AssetTransactionsAdapter extends RecyclerView.Adapter<RecyclerView.
 //            user change address must be last, so reversing
 //            Collections.reverse(outputs);
             WalletAddress userChangeAddress = null;
-            String addressTo = "";
+            WalletAddress addressTo = null;
 
             for (WalletAddress output : outputs) {
 
@@ -232,14 +231,14 @@ public class AssetTransactionsAdapter extends RecyclerView.Adapter<RecyclerView.
                         if (output.getAddress().equals(walletAddress.getAddress())) {
                             userChangeAddress = output;
                         } else {
-                            addressTo = output.getAddress();
+                            addressTo = output;
                         }
                     }
                 }
             }
 
-            setAddress(addressTo, holder.containerAddresses);
-            holder.amount.setText(String.format("%s BTC", CryptoFormatUtils.satoshiToBtc(transactionHistory.getTxOutAmount())));
+            setAddress(addressTo.getAddress(), holder.containerAddresses);
+            holder.amount.setText(String.format("%s BTC", CryptoFormatUtils.satoshiToBtc(addressTo.getAmount())));
             holder.fiat.setText(String.format("%s USD", getStockFiatAmount(transactionHistory)));
         }
 
