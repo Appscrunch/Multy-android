@@ -194,11 +194,17 @@ public class TransactionInfoFragment extends BaseFragment {
             double outValue = 0;
             List<WalletAddress> outputs = transaction.getOutputs();
             for (WalletAddress output : outputs) {
-                if (isDonationAddress(output.getAddress())) {
-                    initializeDonationBlock(output, exchangeRate);
-                } else if (!walletAddresses.contains(output.getAddress())) {
+                if (!walletAddresses.contains(output.getAddress())) {
                     outValue += output.getAmount();
+                    if (isDonationAddress(output.getAddress())) {
+                        initializeDonationBlock(output, exchangeRate);
+                    }
                 }
+//                if (isDonationAddress(output.getAddress())) {
+//                    initializeDonationBlock(output, exchangeRate);
+//                } else if (!walletAddresses.contains(output.getAddress())) {
+//                    outValue += output.getAmount();
+//                }
             }
             textValue.append(CryptoFormatUtils.satoshiToBtc(outValue));
             textAmount.append(CryptoFormatUtils.satoshiToUsd(outValue, exchangeRate));

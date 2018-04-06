@@ -29,6 +29,7 @@ import io.multy.model.entities.wallet.Wallet;
 import io.multy.storage.RealmManager;
 import io.multy.ui.adapters.MyWalletsAdapter;
 import io.multy.util.Constants;
+import io.multy.util.NativeDataHelper;
 import io.multy.util.analytics.Analytics;
 
 public class WalletChooserDialogFragment extends DialogFragment {
@@ -87,7 +88,9 @@ public class WalletChooserDialogFragment extends DialogFragment {
     public ArrayList<Wallet> getAvailableWallets() {
         ArrayList<Wallet> wallets = new ArrayList<>();
         for (Wallet walletRealmObject : RealmManager.getAssetsDao().getWallets()) {
-            if (Long.valueOf(walletRealmObject.getAvailableBalance()) > 150) {
+            if (Long.valueOf(walletRealmObject.getAvailableBalance()) > 150 &&
+                    walletRealmObject.getCurrencyId() == NativeDataHelper.Blockchain.BTC.getValue() &&
+                    walletRealmObject.getNetworkId() == NativeDataHelper.NetworkId.MAIN_NET.getValue()) {
                 wallets.add(walletRealmObject);
             }
         }

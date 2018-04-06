@@ -19,6 +19,7 @@ import io.multy.model.entities.wallet.Wallet;
 import io.multy.storage.RealmManager;
 import io.multy.ui.fragments.DonationFragment;
 import io.multy.util.Constants;
+import io.multy.util.NativeDataHelper;
 import io.realm.RealmResults;
 
 public class DonationActivity extends BaseActivity {
@@ -42,7 +43,8 @@ public class DonationActivity extends BaseActivity {
         RealmResults<Wallet> wallets = RealmManager.getAssetsDao().getWallets();
 
         for (Wallet wallet : wallets) {
-            if (wallet.isPayable()) {
+            if (wallet.isPayable() && wallet.getCurrencyId() == NativeDataHelper.Blockchain.BTC.getValue() &&
+                    wallet.getNetworkId() == NativeDataHelper.NetworkId.MAIN_NET.getValue()) {
                 context.startActivity(new Intent(context, DonationActivity.class)
                         .putExtra(Constants.EXTRA_WALLET_ID, wallet.getId())
                         .putExtra(Constants.EXTRA_DONATION_CODE, donationCode));

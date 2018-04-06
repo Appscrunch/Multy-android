@@ -179,9 +179,8 @@ public class SettingsFragment extends BaseFragment implements BaseActivity.OnLoc
             if (fragment == null) {
                 fragment = ExchangeChooserFragment.getInstance();
             }
-            getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container_frame, fragment).addToBackStack(ExchangeChooserFragment.TAG)
-                    .commit();
+            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.full_container, fragment)
+                    .addToBackStack(ExchangeChooserFragment.TAG).commit();
         }
     }
 
