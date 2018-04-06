@@ -200,11 +200,6 @@ public class TransactionInfoFragment extends BaseFragment {
                         initializeDonationBlock(output, exchangeRate);
                     }
                 }
-//                if (isDonationAddress(output.getAddress())) {
-//                    initializeDonationBlock(output, exchangeRate);
-//                } else if (!walletAddresses.contains(output.getAddress())) {
-//                    outValue += output.getAmount();
-//                }
             }
             textValue.append(CryptoFormatUtils.satoshiToBtc(outValue));
             textAmount.append(CryptoFormatUtils.satoshiToUsd(outValue, exchangeRate));
