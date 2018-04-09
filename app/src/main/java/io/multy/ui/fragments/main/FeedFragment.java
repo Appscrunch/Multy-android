@@ -68,7 +68,7 @@ public class FeedFragment extends BaseFragment {
 
     @OnClick(R.id.button_challenge)
     void onClickChallenge() {
-        WebDialogFragment.newInstance("http://multy.io/donation_features").show(getFragmentManager(), "");
+        WebDialogFragment.newInstance("http://multy.io/index.php/feature-challenge/").show(getFragmentManager(), "");
     }
 
     @OnClick(R.id.card_donation)
