@@ -6,7 +6,6 @@
 
 package io.multy.ui.fragments.send;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -35,12 +34,10 @@ import butterknife.OnClick;
 import io.multy.R;
 import io.multy.model.entities.Fee;
 import io.multy.model.entities.wallet.CurrencyCode;
-import io.multy.model.responses.FeeRateResponse;
 import io.multy.ui.activities.AssetSendActivity;
 import io.multy.ui.adapters.MyFeeAdapter;
 import io.multy.ui.fragments.BaseFragment;
 import io.multy.util.Constants;
-import io.multy.util.NativeDataHelper;
 import io.multy.util.analytics.Analytics;
 import io.multy.util.analytics.AnalyticsConstants;
 import io.multy.viewmodels.AssetSendViewModel;
@@ -166,6 +163,8 @@ public class TransactionFeeFragment extends BaseFragment implements MyFeeAdapter
 
         final TextInputEditText input = dialogView.findViewById(R.id.input_custom);
         input.setText(currentValue == -1 ? String.valueOf(20) : String.valueOf(currentValue));
+        input.setSelection(input.length());
+        input.postDelayed(() -> showKeyboard(getActivity(), input), 150);
 
         dialogBuilder.setTitle(R.string.custom_fee);
         dialogBuilder.setPositiveButton(R.string.done, (dialog, whichButton) -> {
@@ -175,6 +174,7 @@ public class TransactionFeeFragment extends BaseFragment implements MyFeeAdapter
         dialogBuilder.setNegativeButton(R.string.cancel, (dialog, whichButton) -> {
             Analytics.getInstance(getActivity()).logTransactionFee(AnalyticsConstants.TRANSACTION_FEE_CUSTOM_CANCEL, viewModel.getChainId());
         });
+        dialogBuilder.setOnDismissListener(dialog -> hideKeyboard(getActivity()));
         dialogBuilder.create().show();
     }
 

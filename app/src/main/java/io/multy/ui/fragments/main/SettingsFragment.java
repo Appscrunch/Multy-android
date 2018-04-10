@@ -10,9 +10,16 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.SwitchCompat;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -124,9 +131,22 @@ public class SettingsFragment extends BaseFragment implements BaseActivity.OnLoc
             e.printStackTrace();
         }
         String environment = getString(R.string.environment_new_line).concat(Constants.SPACE).concat(Constants.BASE_URL);
-        String complexVersion = gitVersion.concat(libVersion).concat(environment);
+        SpannableString complexVersion = new SpannableString(gitVersion.concat(libVersion).concat(environment));
+        ClickableSpan clickableSpan = new ClickableSpan() {
+            @Override
+            public void onClick(View widget) {
+                String url = Constants.BASE_URL;
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
+            }
+        };
+        int startLink = complexVersion.toString().indexOf(Constants.BASE_URL);
+        complexVersion.setSpan(clickableSpan, startLink, startLink + Constants.BASE_URL.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         textVersionTitle.append(BuildConfig.VERSION_NAME);
         textVersionDescription.setText(complexVersion);
+        textVersionDescription.setMovementMethod(LinkMovementMethod.getInstance());
+        textVersionDescription.setHighlightColor(Color.TRANSPARENT);
     }
 
     private void showSecuritySettingsFragment() {
