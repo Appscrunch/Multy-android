@@ -108,6 +108,7 @@ public class AmountChooserFragment extends BaseFragment implements BaseActivity.
         setupInputCurrency();
         setAmountTotalWithFee();
         initSpendable();
+        viewModel.setPayForCommission(switcher.isChecked());
         if (!viewModel.isAmountScanned()) {
             Analytics.getInstance(getActivity()).logSendChooseAmountLaunch(viewModel.getChainId());
         }
@@ -128,7 +129,8 @@ public class AmountChooserFragment extends BaseFragment implements BaseActivity.
         inputOriginal.postDelayed(() -> {
             if (getActivity() != null) {
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (imm != null && imm.isActive()) imm.hideSoftInputFromWindow(inputOriginal.getWindowToken(), 0);
+                if (imm != null && imm.isActive())
+                    imm.hideSoftInputFromWindow(inputOriginal.getWindowToken(), 0);
             }
         }, 110);
 //        inputOriginal.clearFocus();
@@ -185,12 +187,12 @@ public class AmountChooserFragment extends BaseFragment implements BaseActivity.
             if (switcher.isChecked()) {
                 invalid = getFeePlusDonation() + CryptoFormatUtils.btcToSatoshi(inputOriginal.getText().toString()) > spendableSatoshi;
             } else {
-                invalid = CryptoFormatUtils.btcToSatoshi(inputOriginal.getText().toString()) > spendableSatoshi;
+                invalid = CryptoFormatUtils.btcToSatoshi(inputOriginal.getText().toString()) - getFeePlusDonation() > spendableSatoshi;
             }
 
             if (invalid) {
                 Toast.makeText(getActivity(), R.string.error_balance, Toast.LENGTH_LONG).show();
-            } else {
+            } else if (!invalid){
                 viewModel.setAmount(Double.valueOf(inputOriginal.getText().toString()));
                 viewModel.signTransaction();
             }
@@ -324,13 +326,16 @@ public class AmountChooserFragment extends BaseFragment implements BaseActivity.
             @Override
             public void afterTextChanged(Editable editable) {
                 checkForPointAndZeros(editable.toString(), inputOriginal);
-
-                long amountSatoshi = CryptoFormatUtils.btcToSatoshi(inputOriginal.getText().toString());
-                if (amountSatoshi != -1) {
-                    viewModel.scheduleUpdateTransactionPrice(amountSatoshi);
-                }
+                calculateTransactionPrice();
             }
         });
+    }
+
+    private void calculateTransactionPrice() {
+        long amountSatoshi = CryptoFormatUtils.btcToSatoshi(inputOriginal.getText().toString());
+        if (amountSatoshi != -1) {
+            viewModel.scheduleUpdateTransactionPrice(amountSatoshi);
+        }
     }
 
     private void setupInputCurrency() {
@@ -404,6 +409,7 @@ public class AmountChooserFragment extends BaseFragment implements BaseActivity.
     private void setupSwitcher() {
         switcher.setOnCheckedChangeListener((compoundButton, isChecked) -> {
             viewModel.setPayForCommission(isChecked);
+            calculateTransactionPrice();
             if (isChecked) {
                 checkCommas();
                 if (!inputOriginal.getText().toString().equals("") && Double.parseDouble(inputOriginal.getText().toString()) * Math.pow(10, 8) + transactionPrice >= spendableSatoshi) {

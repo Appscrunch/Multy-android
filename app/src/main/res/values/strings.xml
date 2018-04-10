@@ -85,7 +85,7 @@
     <string name="donation_default">0.0001</string>
     <string name="donation_format_pattern">##.##</string>
     <string name="donation_format_pattern_bitcoin">##.####</string>
-    <string name="error_balance">You are trying to spend more then you have</string>
+    <string name="error_balance">Invalid amount to spend.</string>
 
     <string name="root_message">Sorry, rooted devices is not supported yet according to our safety policy. Please use our app on authorized device.</string>
     <string name="root_title">Root detected</string>

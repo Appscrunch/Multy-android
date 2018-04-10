@@ -180,13 +180,12 @@ public class AssetSendViewModel extends BaseViewModel {
 
         handler.postDelayed(() -> {
             try {
-                Log.i("wise", "networkId");
-                Log.i("wise", "donation address " + donationAddress + " " + getDonationSatoshi());
+//                Log.i("wise", getWallet().getId() + " " + getWallet().getNetworkId() + " " + amount + " " + getFee().getAmount() + " " + getDonationSatoshi() + " " + isPayForCommission);
                 //important notice - native makeTransaction() method will update UI automatically with correct transaction price
                 byte[] transactionHex = NativeDataHelper.makeTransaction(getWallet().getId(), getWallet().getNetworkId(),
                         seed, walletIndex, String.valueOf(amount),
                         String.valueOf(getFee().getAmount()), getDonationSatoshi(),
-                        getReceiverAddress().getValue(), changeAddress, donationAddress, false);
+                        getReceiverAddress().getValue(), changeAddress, donationAddress, isPayForCommission);
             } catch (JniException e) {
                 e.printStackTrace();
                 signTransactionError = e.getMessage();
@@ -196,6 +195,7 @@ public class AssetSendViewModel extends BaseViewModel {
 
     public void signTransaction() {
         try {
+//            Log.i("wise", getWallet().getId() + " " + getWallet().getNetworkId() + " " + amount + " " + getFee().getAmount() + " " + getDonationSatoshi() + " " + isPayForCommission);
             byte[] transactionHex = NativeDataHelper.makeTransaction(getWallet().getId(), getWallet().getNetworkId(),
                     seed, getWallet().getIndex(), String.valueOf(CryptoFormatUtils.btcToSatoshi(String.valueOf(String.valueOf(amount)))),
                     String.valueOf(getFee().getAmount()), getDonationSatoshi(),
