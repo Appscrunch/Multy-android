@@ -130,8 +130,8 @@ public class SettingsFragment extends BaseFragment implements BaseActivity.OnLoc
         } catch (JniException e) {
             e.printStackTrace();
         }
-        String environment = getString(R.string.environment_new_line).concat(Constants.SPACE).concat(Constants.BASE_URL);
-        SpannableString complexVersion = new SpannableString(gitVersion.concat(libVersion).concat(environment));
+        final String environment = getString(R.string.environment_new_line).concat(Constants.SPACE).concat(Constants.BASE_URL);
+        final SpannableString complexVersion = new SpannableString(gitVersion.concat(libVersion).concat(environment));
         ClickableSpan clickableSpan = new ClickableSpan() {
             @Override
             public void onClick(View widget) {
@@ -141,8 +141,8 @@ public class SettingsFragment extends BaseFragment implements BaseActivity.OnLoc
                 startActivity(i);
             }
         };
-        int startLink = complexVersion.toString().indexOf(Constants.BASE_URL);
-        complexVersion.setSpan(clickableSpan, startLink, startLink + Constants.BASE_URL.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        final int linkStartPosition = complexVersion.toString().indexOf(Constants.BASE_URL);
+        complexVersion.setSpan(clickableSpan, linkStartPosition, linkStartPosition + Constants.BASE_URL.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         textVersionTitle.append(BuildConfig.VERSION_NAME);
         textVersionDescription.setText(complexVersion);
         textVersionDescription.setMovementMethod(LinkMovementMethod.getInstance());
