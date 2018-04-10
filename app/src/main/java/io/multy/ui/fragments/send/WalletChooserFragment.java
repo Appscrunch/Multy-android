@@ -38,14 +38,35 @@ import retrofit2.Response;
 
 public class WalletChooserFragment extends BaseFragment implements MyWalletsAdapter.OnWalletClickListener {
 
-    public static WalletChooserFragment newInstance() {
-        return new WalletChooserFragment();
+    public static final int NO_VALUE = -1;
+
+    private static final String ARG_BLOCKCHAIN_ID = "blockchainId";
+    private static final String ARG_NETWORK_ID = "networkId";
+
+    public static WalletChooserFragment newInstance(int blockchainId, int networkId) {
+        WalletChooserFragment fragment = new WalletChooserFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_BLOCKCHAIN_ID, blockchainId);
+        args.putInt(ARG_NETWORK_ID, networkId);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
 
     private AssetSendViewModel viewModel;
+    int blockchainId;
+    int networkId;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            blockchainId = getArguments().getInt(ARG_BLOCKCHAIN_ID, NO_VALUE);
+            networkId = getArguments().getInt(ARG_NETWORK_ID, NO_VALUE);
+        }
+    }
 
     @Nullable
     @Override
@@ -102,8 +123,12 @@ public class WalletChooserFragment extends BaseFragment implements MyWalletsAdap
     }
 
     private void setupAdapter() {
-        RealmResults<Wallet> wallets = RealmManager.getAssetsDao()
-                .getWallets(viewModel.getWallet().getCurrencyId(), viewModel.getWallet().getNetworkId());
+        RealmResults<Wallet> wallets;
+        if (blockchainId == NO_VALUE || networkId == NO_VALUE) {
+            wallets = RealmManager.getAssetsDao().getWallets();
+        } else {
+            wallets = RealmManager.getAssetsDao().getWallets(blockchainId, networkId);
+        }
         recyclerView.setAdapter(new MyWalletsAdapter(this, wallets));
     }
 

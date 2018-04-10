@@ -103,6 +103,7 @@
             android:elevation="@dimen/elevation_4dp"
             android:gravity="center"
             android:hint="@string/hint_add_note"
+            android:imeOptions="actionDone"
             android:inputType="text"
             android:lines="@integer/one"
             app:layout_constraintLeft_toLeftOf="@+id/container_receiver"

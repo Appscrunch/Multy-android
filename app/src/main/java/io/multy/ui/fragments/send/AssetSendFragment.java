@@ -30,7 +30,6 @@ import io.multy.ui.adapters.RecentAddressesAdapter;
 import io.multy.ui.fragments.BaseFragment;
 import io.multy.ui.fragments.dialogs.DonateDialog;
 import io.multy.util.Constants;
-import io.multy.util.JniException;
 import io.multy.util.NativeDataHelper;
 import io.multy.util.analytics.Analytics;
 import io.multy.util.analytics.AnalyticsConstants;
@@ -49,6 +48,8 @@ public class AssetSendFragment extends BaseFragment {
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
 
+    private int blockchainId;
+    private int networkId;
     private AssetSendViewModel viewModel;
 
     @Nullable
@@ -88,19 +89,7 @@ public class AssetSendFragment extends BaseFragment {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                boolean isValidAddress = false;
-                try {
-                    NativeDataHelper.isValidAddress(charSequence.toString(), viewModel.getWallet().getCurrencyId(),
-                            viewModel.getWallet().getNetworkId());
-                    isValidAddress = true;
-                } catch (JniException e) {
-                    //TODO replace these lines with boolean isValidAddress = NativeDataHelper.isAddressValid(address); instead of try catch and code spaming.
-                    e.printStackTrace();
-                }
-                //todo remove when multy core will support ethereum valid address
-                if (viewModel.getWallet().getCurrencyId() == NativeDataHelper.Blockchain.ETH.getValue()) {
-                    isValidAddress = true;
-                }
+                boolean isValidAddress = checkAddressForValidation(charSequence.toString());
                 if (TextUtils.isEmpty(charSequence) || !isValidAddress){
                     buttonNext.setBackgroundResource(R.color.disabled);
                     buttonNext.setEnabled(false);
@@ -115,6 +104,20 @@ public class AssetSendFragment extends BaseFragment {
 
             }
         });
+    }
+
+    private boolean checkAddressForValidation(String address) {
+        for (NativeDataHelper.Blockchain blockchain : NativeDataHelper.Blockchain.values()) {
+            for (NativeDataHelper.NetworkId networkId : NativeDataHelper.NetworkId.values()) {
+                try {
+                    NativeDataHelper.isValidAddress(address, blockchain.getValue(), networkId.getValue());
+                    AssetSendFragment.this.blockchainId = blockchain.getValue();
+                    AssetSendFragment.this.networkId = networkId.getValue();
+                    return true;
+                } catch (Throwable ignore) { }
+            }
+        }
+        return false;
     }
 
     private void logLaunch() {
@@ -153,7 +156,7 @@ public class AssetSendFragment extends BaseFragment {
     void onClickNext(){
         viewModel.setReceiverAddress(inputAddress.getText().toString());
         viewModel.thoseAddress.setValue(inputAddress.getText().toString());
-        ((AssetSendActivity) getActivity()).setFragment(R.string.send_from, R.id.container, WalletChooserFragment.newInstance());
+        ((AssetSendActivity) getActivity()).setFragment(R.string.send_from, R.id.container, WalletChooserFragment.newInstance(blockchainId, networkId));
         if (getActivity().getIntent().hasCategory(Constants.EXTRA_SENDER_ADDRESS)) {
             RealmManager.getAssetsDao().getWalletById(getActivity().getIntent().getLongExtra(Constants.EXTRA_WALLET_ID, 0));
             if (viewModel.getWallet().getCurrencyId() == NativeDataHelper.Blockchain.BTC.getValue()) {

@@ -41,6 +41,8 @@ import io.multy.util.analytics.AnalyticsConstants;
 import io.multy.viewmodels.AssetSendViewModel;
 import timber.log.Timber;
 
+import static io.multy.ui.fragments.send.WalletChooserFragment.NO_VALUE;
+
 
 public class AssetSendActivity extends BaseActivity {
 
@@ -116,7 +118,7 @@ public class AssetSendActivity extends BaseActivity {
 
         if (getIntent().hasExtra(Constants.EXTRA_ADDRESS)) {
             setFragment(R.string.send_to, R.id.container, AssetSendFragment.newInstance());
-            setFragment(R.string.send_from, R.id.container, WalletChooserFragment.newInstance());
+            setFragment(R.string.send_from, R.id.container, WalletChooserFragment.newInstance(NO_VALUE, NO_VALUE));
             setTitle(R.string.send_from);
             viewModel.setReceiverAddress(getIntent().getStringExtra(Constants.EXTRA_ADDRESS));
             viewModel.thoseAddress.setValue(getIntent().getStringExtra(Constants.EXTRA_ADDRESS));
