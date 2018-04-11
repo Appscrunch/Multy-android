@@ -148,7 +148,7 @@ public class Wallet extends RealmObject implements WalletBalanceInterface {
     }
 
     public double getBtcAvailableDoubleValue() {
-        return availableBalance.equals("0") ? 0 : (getBalanceNumeric().longValue() / BtcWallet.DIVISOR.doubleValue());
+        return availableBalance.equals("0") ? 0 : (getAvailableBalanceNumeric().longValue() / BtcWallet.DIVISOR.doubleValue());
     }
 
     public String getFiatString() {

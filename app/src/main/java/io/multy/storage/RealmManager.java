@@ -53,8 +53,13 @@ public class RealmManager {
     }
 
     private static void isRealmAvailable() {
-        if (realm == null || realm.isClosed()) {
-            Log.e(TAG, "ERROR DB IS CLOSED OR NULL");
+        try {
+            if (realm == null || realm.isClosed()) {
+                Log.e(TAG, "ERROR DB IS CLOSED OR NULL");
+            }
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+            open();
         }
     }
 

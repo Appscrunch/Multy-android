@@ -184,15 +184,20 @@ public class AmountChooserFragment extends BaseFragment implements BaseActivity.
     void onClickNext() {
         if (!TextUtils.isEmpty(inputOriginal.getText()) && isParsable(inputOriginal.getText().toString()) && Double.valueOf(inputOriginal.getText().toString()) != 0) {
             boolean invalid;
+            long inputSatoshi = CryptoFormatUtils.btcToSatoshi(inputOriginal.getText().toString());
             if (switcher.isChecked()) {
-                invalid = getFeePlusDonation() + CryptoFormatUtils.btcToSatoshi(inputOriginal.getText().toString()) > spendableSatoshi;
+                invalid = getFeePlusDonation() + inputSatoshi > spendableSatoshi;
             } else {
-                invalid = CryptoFormatUtils.btcToSatoshi(inputOriginal.getText().toString()) - getFeePlusDonation() > spendableSatoshi;
+                if (inputSatoshi == spendableSatoshi) {
+                    invalid = false;
+                } else {
+                    invalid = inputSatoshi - getFeePlusDonation() <= spendableSatoshi;
+                }
             }
 
             if (invalid) {
                 Toast.makeText(getActivity(), R.string.error_balance, Toast.LENGTH_LONG).show();
-            } else if (!invalid){
+            } else if (!invalid) {
                 viewModel.setAmount(Double.valueOf(inputOriginal.getText().toString()));
                 viewModel.signTransaction();
             }
