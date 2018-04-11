@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.SwitchCompat;
 import android.text.SpannableString;
@@ -67,7 +68,7 @@ public class SettingsFragment extends BaseFragment implements BaseActivity.OnLoc
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
         viewModel = ViewModelProviders.of(this).get(SettingsViewModel.class);
         ButterKnife.bind(this, view);
@@ -100,6 +101,7 @@ public class SettingsFragment extends BaseFragment implements BaseActivity.OnLoc
     public void onLockClosed() {
         if (isSettingsClicked) {
             showSecuritySettingsFragment();
+            isSettingsClicked = false;
         }
     }
 
@@ -135,14 +137,12 @@ public class SettingsFragment extends BaseFragment implements BaseActivity.OnLoc
         ClickableSpan clickableSpan = new ClickableSpan() {
             @Override
             public void onClick(View widget) {
-                String url = Constants.BASE_URL;
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(url));
-                startActivity(i);
+                startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(Constants.BASE_URL)));
             }
         };
         final int linkStartPosition = complexVersion.toString().indexOf(Constants.BASE_URL);
-        complexVersion.setSpan(clickableSpan, linkStartPosition, linkStartPosition + Constants.BASE_URL.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        complexVersion.setSpan(clickableSpan, linkStartPosition, linkStartPosition + Constants.BASE_URL.length(),
+                Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         textVersionTitle.append(BuildConfig.VERSION_NAME);
         textVersionDescription.setText(complexVersion);
         textVersionDescription.setMovementMethod(LinkMovementMethod.getInstance());
