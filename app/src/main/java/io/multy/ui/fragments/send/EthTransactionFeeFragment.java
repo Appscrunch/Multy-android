@@ -11,14 +11,23 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.Group;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import java.text.DecimalFormat;
 
 import butterknife.BindString;
 import butterknife.BindView;
@@ -26,8 +35,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.multy.R;
 import io.multy.model.entities.Fee;
+import io.multy.model.entities.wallet.CurrencyCode;
 import io.multy.ui.activities.AssetSendActivity;
-import io.multy.ui.adapters.EthFeeAdapter;
 import io.multy.ui.adapters.MyFeeAdapter;
 import io.multy.ui.fragments.BaseFragment;
 import io.multy.util.Constants;
@@ -36,43 +45,68 @@ import io.multy.util.analytics.AnalyticsConstants;
 import io.multy.viewmodels.AssetSendViewModel;
 
 public class EthTransactionFeeFragment extends BaseFragment
-        implements MyFeeAdapter.OnCustomFeeClickListener, EthFeeAdapter.OnItemClickListener {
+        implements MyFeeAdapter.OnCustomFeeClickListener {
 
     public static EthTransactionFeeFragment newInstance() {
         return new EthTransactionFeeFragment();
     }
 
+    @BindView(R.id.scrollview)
+    ScrollView scrollView;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
     @BindString(R.string.donation_format_pattern)
     String formatPattern;
-
+    @BindView(R.id.switcher)
+    SwitchCompat switcher;
+    @BindView(R.id.text_donation_allow)
+    TextView textDonationAllow;
+    @BindView(R.id.text_donation_summ)
+    TextView textDonationsSum;
+    @BindView(R.id.input_donation)
+    EditText inputDonation;
+    @BindView(R.id.text_fee_currency)
+    TextView textFeeCurrency;
+    @BindView(R.id.text_fee_original)
+    TextView textFeeOriginal;
+    @BindView(R.id.group_donation)
+    Group groupDonation;
     private AssetSendViewModel viewModel;
-    private EthFeeAdapter feeAdapter;
+    private boolean isDonationChanged;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        feeAdapter = new EthFeeAdapter();
-        feeAdapter.setOnItemClickListener(this);
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_eth_transaction_fee, container, false);
+        View view = inflater.inflate(R.layout.fragment_transaction_fee, container, false);
         ButterKnife.bind(this, view);
         viewModel = ViewModelProviders.of(getActivity()).get(AssetSendViewModel.class);
         setBaseViewModel(viewModel);
-
+        textFeeOriginal.setText(Constants.ETH);
         viewModel.speeds.observe(this, speeds -> setAdapter());
         viewModel.requestFeeRates(viewModel.getWallet().getCurrencyId(), viewModel.getWallet().getNetworkId());
         Analytics.getInstance(getActivity()).logTransactionFeeLaunch(viewModel.getChainId());
+        inputDonation.setOnFocusChangeListener((view1, hasFocus) -> {
+            if (hasFocus) {
+                scrollView.postDelayed(() -> scrollView.fullScroll(ScrollView.FOCUS_DOWN), 500);
+            } else {
+                if (!TextUtils.isEmpty(inputDonation.getText())
+                        && !inputDonation.getText().toString().equals(getString(R.string.donation_default))) {
+                    Analytics.getInstance(getActivity()).logTransactionFee(AnalyticsConstants.TRANSACTION_FEE_DONATION_CHANGED, viewModel.getChainId());
+                }
+            }
+        });
+        setupSwitcher();
+        setupInput();
         return view;
     }
 
     private void setAdapter() {
-        recyclerView.setAdapter(new MyFeeAdapter(viewModel.speeds.getValue().asList(), this));
+        recyclerView.setAdapter(new MyFeeAdapter(viewModel.speeds.getValue().asList(), this, MyFeeAdapter.FeeType.ETH));
     }
 
     @Override
@@ -87,42 +121,42 @@ public class EthTransactionFeeFragment extends BaseFragment
             String gasPrice = data.getExtras().getString(Constants.GAS_PRICE, "");
             String gasLimit = data.getExtras().getString(Constants.GAS_LIMIT, "");
             if (!TextUtils.isEmpty(gasPrice) && !TextUtils.isEmpty(gasLimit)) {
-                feeAdapter.setCustomFee(gasPrice, gasLimit);
+//                feeAdapter.setCustomFee(gasPrice, gasLimit);
             }
             //todo insert selected rate into viewmodel
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    @Override
-    public void onClickCustom() {
-        logTransactionFee(5);
-        if (getActivity() != null) {
-            EthCustomSpeedFragment fragment = (EthCustomSpeedFragment) getActivity().getSupportFragmentManager()
-                    .findFragmentByTag(EthCustomSpeedFragment.TAG);
-            if (fragment == null) {
-                fragment = EthCustomSpeedFragment.getInstance();
-            }
-            fragment.setTargetFragment(this, Constants.REQUEST_CODE_SET_GAS);
-            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment)
-                    .addToBackStack(EthCustomSpeedFragment.TAG).commit();
-        }
-    }
-
-    @Override
-    public void onClickFee(int position) {
-        //todo insert selected rate into viewmodel
-        logTransactionFee(position);
-    }
+//    @Override
+//    public void onClickCustom() {
+//        logTransactionFee(5);
+//        if (getActivity() != null) {
+//            EthCustomSpeedFragment fragment = (EthCustomSpeedFragment) getActivity().getSupportFragmentManager()
+//                    .findFragmentByTag(EthCustomSpeedFragment.TAG);
+//            if (fragment == null) {
+//                fragment = EthCustomSpeedFragment.getInstance();
+//            }
+//            fragment.setTargetFragment(this, Constants.REQUEST_CODE_SET_GAS);
+//            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment)
+//                    .addToBackStack(EthCustomSpeedFragment.TAG).commit();
+//        }
+//    }
+//
+//    @Override
+//    public void onClickFee(int position) {
+//        //todo insert selected rate into viewmodel
+//        logTransactionFee(position);
+//    }
 
     public void showCustomFeeDialog(long currentValue) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = this.getLayoutInflater();
-        final View dialogView = inflater.inflate(R.layout.dialog_custom_fee, null);
+        final View dialogView = inflater.inflate(R.layout.dialog_custom_eth_fee, null);
         dialogBuilder.setView(dialogView);
 
         final TextInputEditText input = dialogView.findViewById(R.id.input_custom);
-        input.setText(currentValue == -1 ? String.valueOf(20) : String.valueOf(currentValue));
+        input.setText(currentValue == -1 ? String.valueOf(2000000000) : String.valueOf(currentValue));
 
         dialogBuilder.setTitle(R.string.custom_fee);
         dialogBuilder.setPositiveButton(R.string.done, (dialog, whichButton) -> {
@@ -170,6 +204,11 @@ public class EthTransactionFeeFragment extends BaseFragment
         Fee selectedFee = ((MyFeeAdapter) recyclerView.getAdapter()).getSelectedFee();
 
         if (selectedFee != null) {
+            if (switcher.isChecked()) {
+                viewModel.setDonationAmount(inputDonation.getText().toString());
+            } else {
+                viewModel.setDonationAmount(null);
+            }
             viewModel.setFee(selectedFee);
             ((AssetSendActivity) getActivity()).setFragment(R.string.send_amount, R.id.container, AmountChooserFragment.newInstance());
 
@@ -180,4 +219,53 @@ public class EthTransactionFeeFragment extends BaseFragment
             Toast.makeText(getActivity(), R.string.choose_transaction_speed, Toast.LENGTH_SHORT).show();
         }
     }
+
+    private void setupSwitcher() {
+        switcher.setOnCheckedChangeListener((compoundButton, b) -> {
+            if (b) {
+                textDonationAllow.setBackground(getResources().getDrawable(R.drawable.shape_top_round_white, null));
+                groupDonation.setVisibility(View.VISIBLE);
+                Analytics.getInstance(getActivity()).logTransactionFee(AnalyticsConstants.TRANSACTION_FEE_DONATION_ENABLE, viewModel.getChainId());
+            } else {
+                textDonationAllow.setBackground(getResources().getDrawable(R.drawable.shape_squircle_white, null));
+                groupDonation.setVisibility(View.GONE);
+                hideKeyboard(getActivity());
+                Analytics.getInstance(getActivity()).logTransactionFee(AnalyticsConstants.TRANSACTION_FEE_DONATION_DISABLE, viewModel.getChainId());
+            }
+        });
+    }
+
+    private void setupInput() {
+        if (viewModel.getCurrenciesRate() != null) {
+            textFeeCurrency.setText(new DecimalFormat(formatPattern).format(Double.parseDouble(inputDonation.getText().toString()) * viewModel.getCurrenciesRate().getBtcToUsd()));
+        }
+        textFeeCurrency.append(Constants.SPACE);
+        textFeeCurrency.append(CurrencyCode.USD.name());
+
+        inputDonation.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (!TextUtils.isEmpty(charSequence)) {
+                    textFeeCurrency.setText(new DecimalFormat(formatPattern)
+                            .format(Double.parseDouble(charSequence.toString()) * viewModel.getCurrenciesRate().getEthToUsd()));
+                    textFeeCurrency.append(Constants.SPACE);
+                    textFeeCurrency.append(CurrencyCode.USD.name());
+                } else {
+                    textFeeCurrency.setText(Constants.SPACE);
+                }
+                isDonationChanged = true;
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+    }
+
 }
