@@ -6,139 +6,237 @@
 
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@drawable/background_gradient_blue"
     android:clickable="true"
     android:focusable="true">
 
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/container_root"
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/receivers_view_pager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="200dp"
+        android:layout_marginTop="24dp"
+        android:clipToPadding="false"
+        android:paddingLeft="100dp"
+        android:paddingRight="100dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_amount_receive" />
+
+        <TextView
+            android:id="@+id/text_active_requests"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Active Requests"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <pl.bclogic.pulsator4droid.library.PulsatorLayout
+            android:id="@+id/bluetooth_image"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            app:layout_constraintBottom_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="parent"
+            app:pulse_color="@color/white"
+            app:pulse_count="4"
+            app:pulse_duration="3000"
+            app:pulse_interpolator="Decelerate"
+            app:pulse_repeat="0"
+            android:visibility="visible"
+            app:pulse_startFromScratch="true">
+
+            <ImageView
+                android:layout_width="66dp"
+                android:layout_height="66dp"
+                android:layout_centerInParent="true"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="128dp"
+                android:background="@drawable/circle_button_bg"
+                android:scaleType="center"
+
+                app:srcCompat="@drawable/ic_bluetooth_black_48dp" />
+        </pl.bclogic.pulsator4droid.library.PulsatorLayout>
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/button_send"
+        android:layout_width="250dp"
+        android:layout_height="@dimen/list_item_height"
+        android:layout_marginBottom="90dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/rectangle_rounded_15dp"
+        android:foreground="?android:attr/selectableItemBackground"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_fast_send" />
 
         <TextView
             android:id="@+id/text_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="56dp"
-            android:fontFamily="@font/montserrat"
-            android:text="@string/fast_operations"
-            android:textColor="@color/text_main"
-            android:textSize="24sp"
-            android:textStyle="bold"
+            android:layout_marginTop="8dp"
+            android:text="Send"
+            android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <android.support.v7.widget.CardView
-            android:id="@+id/button_send"
-            style="@style/FastButton"
-            android:layout_marginStart="58dp"
-            android:layout_marginTop="80dp"
-            app:cardCornerRadius="43dp"
-            app:cardElevation="4dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_title">
-
-            <ImageView
-                style="@style/FastImage"
-                app:srcCompat="@drawable/ic_fast_send" />
-        </android.support.v7.widget.CardView>
-
         <TextView
-            android:id="@+id/send"
-            style="@style/FastTitle"
-            android:text="@string/send"
-            app:layout_constraintEnd_toEndOf="@+id/button_send"
-            app:layout_constraintStart_toStartOf="@+id/button_send"
-            app:layout_constraintTop_toBottomOf="@+id/button_send" />
-
-        <android.support.v7.widget.CardView
-            android:id="@+id/button_receive"
-            style="@style/FastButton"
-            android:layout_marginEnd="58dp"
-            android:layout_marginTop="80dp"
-            app:cardCornerRadius="43dp"
-            app:cardElevation="4dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_title">
-
-            <ImageView
-                style="@style/FastImage"
-                app:srcCompat="@drawable/ic_fast_recieve" />
-        </android.support.v7.widget.CardView>
-
-        <TextView
-            android:id="@+id/receive"
-            style="@style/FastTitle"
-            android:text="@string/receive"
-            app:layout_constraintEnd_toEndOf="@+id/button_receive"
-            app:layout_constraintStart_toStartOf="@+id/button_receive"
-            app:layout_constraintTop_toBottomOf="@+id/button_receive" />
-
-        <android.support.v7.widget.CardView
-            android:id="@+id/button_nfc"
-            style="@style/FastButton"
-            android:layout_marginTop="41dp"
-            android:visibility="gone"
-            app:cardCornerRadius="43dp"
-            app:cardElevation="4dp"
-            app:layout_constraintEnd_toEndOf="@+id/button_send"
-            app:layout_constraintStart_toStartOf="@+id/button_send"
-            app:layout_constraintTop_toBottomOf="@+id/send">
-
-            <ImageView
-                style="@style/FastImage"
-                app:srcCompat="@drawable/ic_f_ast_nfc" />
-        </android.support.v7.widget.CardView>
-
-        <TextView
-            android:id="@+id/text_nfc"
-            style="@style/FastTitle"
-            android:text="@string/nfc"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="@+id/button_nfc"
-            app:layout_constraintStart_toStartOf="@+id/button_nfc"
-            app:layout_constraintTop_toBottomOf="@+id/button_nfc" />
-
-        <android.support.v7.widget.CardView
-            android:id="@+id/button_scan_qr"
-            style="@style/FastButton"
-            android:layout_marginTop="40dp"
-            app:cardCornerRadius="43dp"
-            app:cardElevation="4dp"
-            app:layout_constraintEnd_toEndOf="@+id/button_receive"
-            app:layout_constraintStart_toStartOf="@+id/button_send"
-            app:layout_constraintTop_toBottomOf="@+id/receive">
-
-            <ImageView
-                style="@style/FastImage"
-                app:srcCompat="@drawable/ic_fast_scan" />
-        </android.support.v7.widget.CardView>
-
-        <TextView
-            android:id="@+id/text_scan"
-            style="@style/FastTitle"
-            android:text="@string/scan"
-            app:layout_constraintEnd_toEndOf="@+id/button_scan_qr"
-            app:layout_constraintStart_toStartOf="@+id/button_scan_qr"
-            app:layout_constraintTop_toBottomOf="@+id/button_scan_qr" />
-
-        <ImageButton
-            android:id="@+id/button_cancel"
-            android:layout_width="54dp"
-            android:layout_height="54dp"
+            android:id="@+id/text_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:background="@drawable/shape_circle_white"
-            android:clickable="true"
-            android:elevation="4dp"
-            android:focusable="true"
-            android:src="@drawable/ic_cancel_blue"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="0.1 BTC"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/currency_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:text="100$"
+            android:textColor="@color/gray"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
-
     </android.support.constraint.ConstraintLayout>
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/controls"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <ImageView
+                android:id="@+id/qr_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/ic_qr"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <ImageView
+                android:id="@+id/recent_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:layout_marginStart="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:srcCompat="@drawable/ic_access_time_white_48dp" />
+
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/wallets_view_pager"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="16dp"
+                android:clipToPadding="false"
+                android:paddingLeft="100dp"
+                android:paddingRight="100dp"
+                app:layout_constraintBottom_toTopOf="@+id/button_cancel"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <ImageButton
+                android:id="@+id/button_cancel"
+                android:layout_width="54dp"
+                android:layout_height="54dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/shape_circle_white"
+                android:clickable="true"
+                android:elevation="4dp"
+                android:focusable="true"
+                android:src="@drawable/ic_cancel_blue"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <android.support.constraint.Group
+                android:id="@+id/group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:constraint_referenced_ids="wallets_view_pager, recent_image, button_cancel, qr_image" />
+        </android.support.constraint.ConstraintLayout>
+
+
+
+
+    <TextView
+        android:id="@+id/text_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="64dp"
+        android:text="dhjkYhjkhhjk7Ghgkj7HGFj"
+        android:textColor="#80ffffff"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_active_requests" />
+
+    <TextView
+        android:id="@+id/text_amount_receive"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="0.005 BTC"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_address" />
+
+    <android.support.constraint.Group
+        android:id="@+id/receivers_group"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="text_amount_receive, text_address, receivers_view_pager"/>
+
+
 </android.support.constraint.ConstraintLayout>

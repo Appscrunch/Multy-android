@@ -217,7 +217,8 @@ public class RequestSummaryFragment extends BaseFragment {
     void onClickWirelessScan() {
         Analytics.getInstance(getActivity()).logReceiveSummary(AnalyticsConstants.RECEIVE_SUMMARY_WIRELESS, viewModel.getChainId());
         if (getActivity() != null) {
-            DonateDialog.getInstance(Constants.DONATE_ADDING_WIRELESS_SCAN).show(getActivity().getSupportFragmentManager(), DonateDialog.TAG);
+            ((AssetRequestActivity)getActivity()).receiveByBluetooth();
+//            DonateDialog.getInstance(Constants.DONATE_ADDING_WIRELESS_SCAN).show(getActivity().getSupportFragmentManager(), DonateDialog.TAG);
         }
     }
 

@@ -59,7 +59,7 @@ android {
         externalNativeBuild {
             cmake {
                 cppFlags "-std=c++11"
-                arguments "-DMULTY_ANDROID_PATH_TO_JNI_WRAPPER=C:\\workspace\\Multy-android\\app\\src\\main\\cpp\\scratch.cpp"
+                arguments "-DMULTY_ANDROID_PATH_TO_JNI_WRAPPER=C:\\Users\\Lenovo\\Documents\\Multy-android-dev\\app\\src\\main\\cpp\\scratch.cpp"
 //                arguments "-DMULTY_ANDROID_PATH_TO_JNI_WRAPPER=/Users/appscrunch/AndroidStudioProjects/Multy-android/app/src/main/cpp/scratch.cpp"
                 arguments "-DANDROID_STL=c++_shared"
                 arguments "-DMULTY_WITH_TESTS=ON"
@@ -94,7 +94,7 @@ android {
         }
         externalNativeBuild {
             cmake {
-                path "C:\\workspace\\Multy-Core\\CMakeLists.txt"
+                path "C:\\Users\\Lenovo\\Documents\\Multy-Core\\CMakeLists.txt"
             }
         }
         debug {
@@ -167,6 +167,9 @@ dependencies {
     implementation 'com.github.tozny:java-aes-crypto:1.1.0'
     implementation 'com.github.khirr:Android-Foreground-Detection:1.0.1'
     implementation 'org.greenrobot:eventbus:3.1.1'
+    implementation 'com.github.nkzawa:socket.io-client:0.3.0'
+    implementation 'pl.bclogic:pulsator4droid:1.0.3'
+    implementation 'com.github.woxthebox:draglistview:1.6.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

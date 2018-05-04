@@ -22,17 +22,15 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.multy.R;
 import io.multy.model.entities.wallet.Wallet;
-import io.multy.model.entities.wallet.WalletRealmObject;
 import io.multy.storage.RealmManager;
 import io.multy.ui.activities.AssetRequestActivity;
-import io.multy.ui.activities.AssetSendActivity;
-import io.multy.ui.activities.MainActivity;
 import io.multy.ui.fragments.BaseFragment;
 import io.multy.util.AnimationUtils;
 import io.multy.util.Constants;
 import io.multy.util.analytics.Analytics;
 import io.multy.util.analytics.AnalyticsConstants;
 import io.realm.RealmResults;
+import pl.bclogic.pulsator4droid.library.PulsatorLayout;
 
 /**
  * Created by Ihar Paliashchuk on 02.11.2017.
@@ -49,20 +47,24 @@ public class FastOperationsFragment extends BaseFragment {
     @BindView(R.id.container)
     View container;
 
+//    @BindView(R.id.container_root)
+//    View buttonsGroup;
+
     @BindColor(R.color.colorPrimary)
     int colorBlue;
 
     @BindColor(R.color.white)
     int colorWhite;
 
+    @BindView(R.id.bluetooth_image)
+    PulsatorLayout rippleLayout;
+
     private int revealX;
     private int revealY;
     private boolean isCanceling = false;
 
-    public static FastOperationsFragment newInstance(int revealX, int revealY) {
+    public static FastOperationsFragment newInstance() {
         FastOperationsFragment fragment = new FastOperationsFragment();
-        fragment.setRevealX(revealX);
-        fragment.setRevealY(revealY);
         return fragment;
     }
 
@@ -78,9 +80,10 @@ public class FastOperationsFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_fast_operations, container, false);
         ButterKnife.bind(this, view);
         Analytics.getInstance(getActivity()).logFastOperationsLaunch();
-        AnimationUtils.createReveal(view, revealX, revealY, colorBlue, colorWhite);
+//        AnimationUtils.createReveal(view, revealX, revealY, colorBlue, colorWhite);
         buttonCancel.setEnabled(false);
         buttonCancel.postDelayed(() -> buttonCancel.setEnabled(true), AnimationUtils.DURATION_MEDIUM);
+        rippleLayout.start();
         return view;
     }
 
@@ -102,17 +105,17 @@ public class FastOperationsFragment extends BaseFragment {
         return wallets != null && wallets.size() > 0;
     }
 
-    @OnClick(R.id.button_send)
-    void onSendClick() {
-        Analytics.getInstance(getActivity()).logFastOperations(AnalyticsConstants.FAST_OPERATIONS_SEND);
-        if (Prefs.getBoolean(Constants.PREF_APP_INITIALIZED) && isWalletsAvailable()) {
-            startActivity(new Intent(getContext(), AssetSendActivity.class));
-        } else {
-            Toast.makeText(getActivity(), "Please, create wallet", Toast.LENGTH_SHORT).show();
-        }
-    }
+//    @OnClick(R.id.button_send)
+//    void onSendClick() {
+//        Analytics.getInstance(getActivity()).logFastOperations(AnalyticsConstants.FAST_OPERATIONS_SEND);
+//        if (Prefs.getBoolean(Constants.PREF_APP_INITIALIZED) && isWalletsAvailable()) {
+//            startActivity(new Intent(getContext(), AssetSendActivity.class));
+//        } else {
+//            Toast.makeText(getActivity(), "Please, create wallet", Toast.LENGTH_SHORT).show();
+//        }
+//    }
 
-    @OnClick(R.id.button_receive)
+    @OnClick(R.id.recent_image)
     void onReceiveClick() {
         Analytics.getInstance(getActivity()).logFastOperations(AnalyticsConstants.FAST_OPERATIONS_RECEIVE);
         if (Prefs.getBoolean(Constants.PREF_APP_INITIALIZED) && isWalletsAvailable()) {
@@ -122,20 +125,22 @@ public class FastOperationsFragment extends BaseFragment {
         }
     }
 
-    @OnClick(R.id.button_nfc)
+    @OnClick(R.id.bluetooth_image)
     void onNfcClick() {
-        Analytics.getInstance(getActivity()).logFastOperations(AnalyticsConstants.FAST_OPERATIONS_NFC);
-        Toast.makeText(getActivity(), R.string.not_implemented, Toast.LENGTH_SHORT).show();
+//        Analytics.getInstance(getActivity()).logFastOperations(AnalyticsConstants.FAST_OPERATIONS_NFC);
+//        Toast.makeText(getActivity(), R.string.not_implemented, Toast.LENGTH_SHORT).show();
+//        startActivity(new Intent(getContext(), BluetoothSendActivity.class));
+//        ((FastOperationsActivity) getActivity()).setFragment(R.string.addresses_empty, BluetoothSendFragment.newInstance());
     }
 
-    @OnClick(R.id.button_scan_qr)
+    @OnClick(R.id.qr_image)
     void onScanClick() {
-        Analytics.getInstance(getActivity()).logFastOperations(AnalyticsConstants.FAST_OPERATIONS_SCAN);
-        if (Prefs.getBoolean(Constants.PREF_APP_INITIALIZED) && isWalletsAvailable()) {
-            ((MainActivity) getActivity()).showScanScreen();
-        } else {
-            Toast.makeText(getActivity(), "Please, create wallet", Toast.LENGTH_SHORT).show();
-        }
+//        Analytics.getInstance(getActivity()).logFastOperations(AnalyticsConstants.FAST_OPERATIONS_SCAN);
+//        if (Prefs.getBoolean(Constants.PREF_APP_INITIALIZED) && isWalletsAvailable()) {
+//            ((MainActivity) getActivity()).showScanScreen();
+//        } else {
+//            Toast.makeText(getActivity(), "Please, create wallet", Toast.LENGTH_SHORT).show();
+//        }
     }
 
     @OnClick(R.id.button_cancel)

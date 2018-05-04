@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2018 Idealnaya rabota LLC
+  ~ Licensed under Multy.io license.
+  ~ See LICENSE for details
+  -->
+
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/list_item_height"
+    android:background="@drawable/shape_squircle_white"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:elevation="@dimen/elevation_4dp"
+    android:layout_margin="4dp">
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/image_logo"
+        android:layout_width="@dimen/list_item_image"
+        android:layout_height="@dimen/list_item_image"
+        android:layout_marginStart="@dimen/margin_13dp"
+        android:src="@drawable/ic_btc"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="contentDescription" />
+
+    <TextView
+        android:id="@+id/text_name"
+        android:layout_width="@dimen/dp0"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:ellipsize="end"
+        android:maxLines="@integer/one"
+        android:text="BTC*Personal"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:textColor="@color/orange"
+        app:layout_constraintStart_toEndOf="@+id/image_logo"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/text_balance_original"
+        android:layout_width="@dimen/dp0"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:ellipsize="end"
+        android:maxLines="@integer/one"
+        android:text="0239429834"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@color/text_main_dark"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/image_logo"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/text_balance_currency"
+        android:layout_width="@dimen/dp0"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="16dp"
+        android:ellipsize="end"
+        android:maxLines="@integer/one"
+        android:text="BTC"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textColor="@color/text_grey"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/image_logo" />
+
+</android.support.constraint.ConstraintLayout>

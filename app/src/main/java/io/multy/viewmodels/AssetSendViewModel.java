@@ -10,10 +10,13 @@ import android.arch.lifecycle.MutableLiveData;
 import android.os.Handler;
 import android.util.Log;
 
+import java.util.List;
+
 import io.multy.Multy;
 import io.multy.R;
 import io.multy.api.MultyApi;
 import io.multy.api.socket.CurrenciesRate;
+import io.multy.model.entities.BluetoothReceiver;
 import io.multy.model.entities.Fee;
 import io.multy.model.entities.FeeEth;
 import io.multy.model.entities.wallet.Wallet;
@@ -37,6 +40,7 @@ public class AssetSendViewModel extends BaseViewModel {
     public MutableLiveData<String> thoseAddress = new MutableLiveData<>();
     public static MutableLiveData<Long> transactionPrice = new MutableLiveData<>();
     public SingleLiveEvent<String> transaction = new SingleLiveEvent<>();
+    public MutableLiveData<List<BluetoothReceiver>> bluetoothLiveData = new MutableLiveData<>();
     private double amount;
     private boolean isPayForCommission;
     private String donationAmount = "0";

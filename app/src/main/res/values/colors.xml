@@ -53,4 +53,8 @@
     <color name="blue_lightest">#e6ecf3</color>
     <color name="background_black_transparent">#ca20060b</color>
     <color name="blue_sky">#00b7ff</color>
+
+    <color name="circle_1">#E91E63</color>
+    <color name="circle_2">#3F51B5</color>
+    <color name="circle_3">#9C27B0</color>
 </resources>
