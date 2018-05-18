@@ -13,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.math.BigDecimal;
@@ -57,6 +58,8 @@ public class WalletChooserFragment extends BaseFragment implements MyWalletsAdap
 
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
+    @BindView(R.id.text_no_wallets)
+    TextView textNoWallets;
 
     private AssetSendViewModel viewModel;
     int blockchainId;
@@ -118,8 +121,16 @@ public class WalletChooserFragment extends BaseFragment implements MyWalletsAdap
             return;
         }
         if (viewModel.isAmountScanned()) {
-            if (Double.parseDouble(CryptoFormatUtils
-                    .satoshiToBtc(wallet.getPendingBalance().longValue())) >= viewModel.getAmount()) {
+            double walletAmount = 0;
+            switch (NativeDataHelper.Blockchain.valueOf(wallet.getCurrencyId())) {
+                case BTC:
+                    walletAmount = CryptoFormatUtils.satoshiToBtcDouble(wallet.getAvailableBalanceNumeric().longValue());
+                    break;
+                case ETH:
+                    walletAmount = CryptoFormatUtils.weiToEth(wallet.getAvailableBalance());
+                    break;
+            }
+            if (walletAmount >= viewModel.getAmount()) {
                 launchTransactionFee(wallet);
             } else {
                 Toast.makeText(getContext(), getString(R.string.no_balance), Toast.LENGTH_SHORT).show();
@@ -139,6 +150,11 @@ public class WalletChooserFragment extends BaseFragment implements MyWalletsAdap
             wallets = RealmManager.getAssetsDao().getWallets(blockchainId, networkId);
         }
         recyclerView.setAdapter(new MyWalletsAdapter(this, wallets));
+        if (wallets.size() == 0 && blockchainId != NO_VALUE) {
+            textNoWallets.setVisibility(View.VISIBLE);
+            textNoWallets.setText(String.format(getString(R.string.no_some_wallet),
+                    NativeDataHelper.Blockchain.valueOf(blockchainId).name()));
+        }
     }
 
     private void launchTransactionFee(Wallet wallet) {

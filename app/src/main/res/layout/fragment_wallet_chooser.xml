@@ -40,4 +40,19 @@
         app:layout_constraintTop_toBottomOf="@+id/text_select_wallet"
         tools:listitem="@layout/item_wallet" />
 
+    <TextView
+        android:id="@+id/text_no_wallets"
+        android:layout_width="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_select_wallet"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="@string/no_some_wallet"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="center"
+        android:visibility="gone"
+        android:textColor="@color/text_grey"
+        android:layout_height="wrap_content" />
+
 </android.support.constraint.ConstraintLayout>

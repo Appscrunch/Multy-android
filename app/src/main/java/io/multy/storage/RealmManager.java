@@ -7,13 +7,11 @@
 package io.multy.storage;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.io.File;
 
 import io.multy.Multy;
 import io.realm.Realm;
-import timber.log.Timber;
 
 public class RealmManager {
 
@@ -67,7 +65,7 @@ public class RealmManager {
     private static void isRealmAvailable() {
         try {
             if (realm == null || realm.isClosed()) {
-                Log.e(TAG, "ERROR DB IS CLOSED OR NULL");
+                throw new IllegalStateException("ERROR DB IS CLOSED OR NULL");
             }
         } catch (IllegalStateException e) {
             e.printStackTrace();
