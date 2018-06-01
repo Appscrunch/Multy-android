@@ -114,7 +114,7 @@ public class SecurityHelper {
         return false;
     }
 
-    public static boolean Connected() {
+    public static boolean isConnected() {
         return GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(Multy.getContext()) == ConnectionResult.SUCCESS;
     }
 
@@ -123,7 +123,7 @@ public class SecurityHelper {
 
         Pass = true;
 
-        if (Connected()) {
+        if (isConnected()) {
             sendSafetyNetRequest(activity);
         }
 
