@@ -26,7 +26,7 @@ import io.multy.ui.fragments.dialogs.SimpleDialogFragment;
 public class FirstLaunchHelper {
 
     public static boolean preventRootIfDetected(AppCompatActivity activity) {
-        if (SecurityHelper.notSecured(activity)) {
+        if (!SecurityHelper.isSecured(activity)) {
             SimpleDialogFragment.newInstanceNegative(R.string.root_title, R.string.root_message, view -> {
                 closeApp(activity);
             }).show(activity.getSupportFragmentManager(), "");

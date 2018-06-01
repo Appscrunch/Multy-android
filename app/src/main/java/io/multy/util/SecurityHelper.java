@@ -3,7 +3,6 @@ package io.multy.util;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
-import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -28,50 +27,49 @@ import java.util.Random;
 
 import io.multy.BuildConfig;
 import io.multy.Multy;
+import timber.log.Timber;
 
 public class SecurityHelper {
 
-    private static Random mRandom = new SecureRandom();
-    private static String mResult;
-    private static boolean Pass;
+    private static Random random = new SecureRandom();
+    private static String result;
+    private static boolean pass;
 
-    private static OnSuccessListener<SafetyNetApi.AttestationResponse> SuccessListener =
+    private static OnSuccessListener<SafetyNetApi.AttestationResponse> successListener =
             new OnSuccessListener<SafetyNetApi.AttestationResponse>() {
                 @Override
                 public void onSuccess(SafetyNetApi.AttestationResponse attestationResponse) {
-                    mResult = attestationResponse.getJwsResult();
-                    final String[] jwt = mResult.split("\\.");
+                    result = attestationResponse.getJwsResult();
+                    final String[] jwt = result.split("\\.");
                     String decodedPayload = new String(Base64.decode(jwt[1], Base64.DEFAULT));
                     if (decodedPayload != null) {
                         try {
                             JSONObject jsonObj = new JSONObject(decodedPayload);
-                            Pass = jsonObj.getString("basicIntegrity").equals("true");
+                            pass = jsonObj.getString("basicIntegrity").equals("true");
                         } catch (final JSONException e) {
-                            Log.e("Error", "Json parsing: " + e.getMessage());
+                            e.printStackTrace();
                         }
                     }
                 }
             };
 
-    private static OnFailureListener FailureListener = new OnFailureListener() {
+    private static OnFailureListener failureListener = new OnFailureListener() {
         @Override
         public void onFailure(@NonNull Exception e) {
-            mResult = null;
-
+            result = null;
             if (e instanceof ApiException) {
                 ApiException apiException = (ApiException) e;
-                Log.d("Error",  CommonStatusCodes.getStatusCodeString(apiException.getStatusCode()) + ": " + apiException);
+                Timber.d("Error: " + CommonStatusCodes.getStatusCodeString(apiException.getStatusCode()) + ": " + apiException);
             } else {
-                Log.d("Error", e.getMessage());
+                Timber.d("Error: " + e.getMessage());
             }
-
         }
     };
 
     private static byte[] getNonce(String data) {
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
         byte[] bytes = new byte[24];
-        mRandom.nextBytes(bytes);
+        random.nextBytes(bytes);
 
         try {
             byteStream.write(bytes);
@@ -88,9 +86,8 @@ public class SecurityHelper {
         byte[] nonce = getNonce(nonceData);
 
         SafetyNetClient client = SafetyNet.getClient(activity);
-
         Task<SafetyNetApi.AttestationResponse> task = client.attest(nonce, BuildConfig.GCC_API_KEY);
-        task.addOnSuccessListener(activity, SuccessListener).addOnFailureListener(activity, FailureListener);
+        task.addOnSuccessListener(activity, successListener).addOnFailureListener(activity, failureListener);
     }
 
 
@@ -118,15 +115,12 @@ public class SecurityHelper {
         return GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(Multy.getContext()) == ConnectionResult.SUCCESS;
     }
 
-    public static boolean notSecured(AppCompatActivity activity){
+    public static boolean isSecured(AppCompatActivity activity){
         RootBeer rootBeer = new RootBeer(activity);
-
-        Pass = true;
-
+        pass = true;
         if (isConnected()) {
             sendSafetyNetRequest(activity);
         }
-
-        return rootBeer.detectRootManagementApps(Constants.rootApplications) || rootBeer.isRootedWithoutBusyBoxCheck() || checkForBinaries() || !Pass;
+        return !(rootBeer.detectRootManagementApps(Constants.rootApplications) || rootBeer.isRootedWithoutBusyBoxCheck() || checkForBinaries() || !pass);
     }
 }
