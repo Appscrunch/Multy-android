@@ -75,6 +75,7 @@ public class SecurityHelper {
             byteStream.write(bytes);
             byteStream.write(data.getBytes());
         } catch (IOException e) {
+            e.printStackTrace();
             return null;
         }
 
