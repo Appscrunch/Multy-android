@@ -12,9 +12,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 
 import com.samwolfand.oneprefs.Prefs;
-import com.scottyab.rootbeer.RootBeer;
-
-import java.io.File;
 
 import io.multy.R;
 import io.multy.model.entities.ByteSeed;
@@ -28,33 +25,8 @@ import io.multy.ui.fragments.dialogs.SimpleDialogFragment;
 
 public class FirstLaunchHelper {
 
-    public static boolean checkForBinary(String filename) {
-        for (String path : Constants.rootPaths) {
-            final String completePath = path + filename;
-            final File f = new File(completePath);
-            if (f.exists()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static boolean checkForBinaries(){
-        for (String filename : Constants.rootFiles){
-            if (checkForBinary(filename)){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static boolean isRooted(AppCompatActivity activity){
-        RootBeer rootBeer = new RootBeer(activity);
-        return rootBeer.detectRootManagementApps(Constants.rootApplications) || rootBeer.isRootedWithoutBusyBoxCheck() || checkForBinaries();
-    }
-
     public static boolean preventRootIfDetected(AppCompatActivity activity) {
-        if (isRooted(activity)) {
+        if (!SecurityHelper.isSecured(activity)) {
             SimpleDialogFragment.newInstanceNegative(R.string.root_title, R.string.root_message, view -> {
                 closeApp(activity);
             }).show(activity.getSupportFragmentManager(), "");
